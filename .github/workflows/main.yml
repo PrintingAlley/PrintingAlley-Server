@@ -16,28 +16,11 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v2
 
-      - name: Set build variables
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "NODE_ENV=prod" >> $GITHUB_ENV
-            echo "ENV_FILE_NAME=.env.prod" >> $GITHUB_ENV
-            echo "CURRENT_ENV=${{ secrets.PROD_ENV }}" >> $GITHUB_ENV
-            echo "BUILD_SCRIPT=build:prod" >> $GITHUB_ENV
-            echo "PORT=8080" >> $GITHUB_ENV
-          else
-            echo "NODE_ENV=dev" >> $GITHUB_ENV
-            echo "ENV_FILE_NAME=.env.dev" >> $GITHUB_ENV
-            echo "CURRENT_ENV=${{ secrets.DEV_ENV }}" >> $GITHUB_ENV
-            echo "BUILD_SCRIPT=build:dev" >> $GITHUB_ENV
-            echo "PORT=3000" >> $GITHUB_ENV
-          fi
-          echo "NAME=go_cicd_${NODE_ENV}" >> $GITHUB_ENV
-
-      - name: Set up docker buildx
+      - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Cache docker layers
+      - name: Cache Docker layers
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
@@ -59,10 +42,11 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ env.DOCKER_IMAGE }}:${{ env.NODE_ENV }}
-          build-args: BUILD_SCRIPT=${{ env.BUILD_SCRIPT }}
-            ENV_FILE_NAME=${{ env.ENV_FILE_NAME }}
-            ENV_FILE_CONTENT=${{ env.CURRENT_ENV }}
+          tags: ${{ env.DOCKER_IMAGE }}:${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+          build-args: |
+            BUILD_SCRIPT=${{ github.ref == 'refs/heads/main' && 'build:prod' || 'build:dev' }}
+            ENV_FILE_NAME=${{ github.ref == 'refs/heads/main' && '.env.prod' || '.env.dev' }}
+            ENV_FILE_CONTENT=${{ github.ref == 'refs/heads/main' && secrets.PROD_ENV || secrets.DEV_ENV }}
 
   deploy:
     needs: build
@@ -78,9 +62,13 @@ jobs:
 
       - name: Docker run
         run: |
-          docker stop ${{ env.NAME }} || true
-          docker rm ${{ env.NAME }} || true
-          docker rmi ${{ env.DOCKER_IMAGE }}:${{ env.NODE_ENV }} || true
-          docker run -d -p ${{ env.PORT }}:8080 --name ${{ env.NAME }} --restart always ${{ env.DOCKER_IMAGE }}:${{ env.NODE_ENV }}
+          NAME=go_cicd_${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+          PORT=${{ github.ref == 'refs/heads/main' && '8080' || '3000' }}
+          NODE_ENV=${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+
+          docker stop $NAME || true
+          docker rm $NAME || true
+          docker rmi ${{ env.DOCKER_IMAGE }}:$NODE_ENV || true
+          docker run -d -p $PORT:8080 --name $NAME --restart always ${{ env.DOCKER_IMAGE }}:$NODE_ENV
 
 # dev서버와 prod서버를 구분하기 위해 외부포트만 다르게 설정
