@@ -2,12 +2,11 @@ name: CI/CD Docker
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
 
 env:
   DOCKER_IMAGE: ghcr.io/${{ github.actor }}/trading
   VERSION: ${{ github.sha }}
-  NAME: go_cicd
 
 jobs:
   build:
@@ -16,9 +15,28 @@ jobs:
     steps:
       - name: Check out source code
         uses: actions/checkout@v2
+
+      - name: Set build variables
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "NODE_ENV=prod" >> $GITHUB_ENV
+            echo "ENV_FILE_NAME=.env.prod" >> $GITHUB_ENV
+            echo "CURRENT_ENV=${{ secrets.PROD_ENV }}" >> $GITHUB_ENV
+            echo "BUILD_SCRIPT=build:prod" >> $GITHUB_ENV
+            echo "PORT=8080" >> $GITHUB_ENV
+          else
+            echo "NODE_ENV=dev" >> $GITHUB_ENV
+            echo "ENV_FILE_NAME=.env.dev" >> $GITHUB_ENV
+            echo "CURRENT_ENV=${{ secrets.DEV_ENV }}" >> $GITHUB_ENV
+            echo "BUILD_SCRIPT=build:dev" >> $GITHUB_ENV
+            echo "PORT=3000" >> $GITHUB_ENV
+          fi
+          echo "NAME=go_cicd_${NODE_ENV}" >> $GITHUB_ENV
+
       - name: Set up docker buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
+
       - name: Cache docker layers
         uses: actions/cache@v2
         with:
@@ -26,19 +44,25 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ env.VERSION }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+
       - name: Login to ghcr
         uses: docker/login-action@v1
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
+
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
           push: true
-          tags: ${{ env.DOCKER_IMAGE }}:latest
+          tags: ${{ env.DOCKER_IMAGE }}:${{ env.NODE_ENV }}
+          build-args: BUILD_SCRIPT=${{ env.BUILD_SCRIPT }}
+            ENV_FILE_NAME=${{ env.ENV_FILE_NAME }}
+            ENV_FILE_CONTENT=${{ env.CURRENT_ENV }}
 
   deploy:
     needs: build
@@ -51,7 +75,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
+
       - name: Docker run
         run: |
-          docker stop ${{ env.NAME }} && docker rm ${{ env.NAME }} && docker rmi ${{ env.DOCKER_IMAGE }}:latest
-          docker run -d -p 8080:8080 --name go_cicd --restart always ${{ env.DOCKER_IMAGE }}:latest
+          docker stop ${{ env.NAME }} || true
+          docker rm ${{ env.NAME }} || true
+          docker rmi ${{ env.DOCKER_IMAGE }}:${{ env.NODE_ENV }} || true
+          docker run -d -p ${{ env.PORT }}:8080 --name ${{ env.NAME }} --restart always ${{ env.DOCKER_IMAGE }}:${{ env.NODE_ENV }}
+
+# dev서버와 prod서버를 구분하기 위해 외부포트만 다르게 설정
