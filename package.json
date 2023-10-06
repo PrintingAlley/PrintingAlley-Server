@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "build:local": "cross-env NODE_ENV=local nest build",
     "build:dev": "cross-env NODE_ENV=dev nest build",
     "build:prod": "cross-env NODE_ENV=prod nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
