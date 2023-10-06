@@ -44,7 +44,6 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
           build-args: |
-            BUILD_SCRIPT=${{ github.ref == 'refs/heads/main' && 'build:prod' || 'build:dev' }}
             START_SCRIPT=${{ github.ref == 'refs/heads/main' && 'start:prod' || 'start:dev' }}
             ENV_FILE_NAME=${{ github.ref == 'refs/heads/main' && '.env.prod' || '.env.dev' }}
             ENV_FILE_CONTENT=${{ github.ref == 'refs/heads/main' && secrets.PROD_ENV || secrets.DEV_ENV }}
