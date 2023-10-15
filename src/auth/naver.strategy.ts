@@ -13,8 +13,8 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
   }
 
   async validate(
-    accessToken: string,
-    refreshToken: string,
+    _accessToken: string,
+    _refreshToken: string,
     profile: any,
     // eslint-disable-next-line @typescript-eslint/ban-types
     done: Function,

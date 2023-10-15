@@ -11,5 +11,9 @@ export default () => ({
   NAVER_CLIENT_ID: process.env.NAVER_CLIENT_ID || '',
   NAVER_CLIENT_SECRET: process.env.NAVER_CLIENT_SECRET || '',
   KAKAO_CLIENT_ID: process.env.KAKAO_CLIENT_ID || '',
+  APPLE_CLIENT_ID: process.env.APPLE_CLIENT_ID || '',
+  APPLE_TEAM_ID: process.env.APPLE_TEAM_ID || '',
+  APPLE_KEY_ID: process.env.APPLE_KEY_ID || '',
+  APPLE_PRIVATE_KEY: process.env.APPLE_PRIVATE_KEY || '',
   JWT_SECRET: process.env.JWT_SECRET || '',
 });

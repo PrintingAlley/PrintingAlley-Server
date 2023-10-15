@@ -12,8 +12,8 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   }
 
   async validate(
-    accessToken: string,
-    refreshToken: string,
+    _accessToken: string,
+    _refreshToken: string,
     profile: any,
     // eslint-disable-next-line @typescript-eslint/ban-types
     done: Function,
