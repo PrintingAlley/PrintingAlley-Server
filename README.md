@@ -1,73 +1,31 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 🖨️ 인쇄골목 API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 🚀 소개
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+인쇄골목 API는 [NestJS](https://nestjs.com/)로 개발되었으며, 인쇄소와 관련된 다양한 기능을 제공합니다.
 
-## Description
+## 📘 API 엔드포인트
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+API에 대한 자세한 명세는 [Swagger 문서](https://api.printingstreets.com/api)에서 확인하실 수 있습니다.
 
-## Installation
+### 🏢 Print Shop
 
-```bash
-$ npm install
-```
+- `GET /print-shop`: 인쇄소 목록 조회
+- `POST /print-shop`: 인쇄소 생성
+- `PUT /print-shop/{id}`: 인쇄소 수정
+- `DELETE /print-shop/{id}`: 인쇄소 삭제
 
-## Running the app
+## 🤝 기여하기
 
-```bash
-# development
-$ npm run start
+프로젝트에 기여하고 싶으신가요? 아래 방법을 통해 기여해주세요!
 
-# watch mode
-$ npm run start:dev
+- **Pull Request 보내기**: 코드를 수정하고 Pull Request를 보내주세요.
+- **이슈 등록하기**: 버그를 발견하셨나요? 새로운 기능이 필요하신가요? [이슈](https://github.com/PrintingAlley/PrintingAlley-Server/issues)를 등록해주세요.
 
-# production mode
-$ npm run start:prod
-```
+## 📜 라이선스
 
-## Test
+이 프로젝트는 [MIT 라이선스](LICENSE) 하에 있습니다.
 
-```bash
-# unit tests
-$ npm run test
+## 📞 문의
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+추가적인 질문이나 도움이 필요하시면 [이메일](mailto:joydonald5314@gmail.com)로 연락주세요.
