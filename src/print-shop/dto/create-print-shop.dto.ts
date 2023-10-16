@@ -12,7 +12,7 @@ export class CreatePrintShopDto {
   @ApiProperty({
     description: '상호명',
     required: true,
-    example: '프린트샵',
+    example: '모든인쇄',
   })
   @IsNotEmpty()
   @MinLength(2)
@@ -93,4 +93,20 @@ export class CreatePrintShopDto {
   @IsNotEmpty()
   @IsUrl()
   backgroundImage: string;
+
+  @ApiProperty({
+    description: '위도',
+    required: true,
+    example: 37.123456,
+  })
+  @IsNotEmpty()
+  latitude: string;
+
+  @ApiProperty({
+    description: '경도',
+    required: true,
+    example: 127.123456,
+  })
+  @IsNotEmpty()
+  longitude: string;
 }

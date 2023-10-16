@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { LoggingMiddleware } from './middleware/logging.middleware';
 import { PrintShopModule } from './print-shop/print-shop.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
+import { TagModule } from './tag/tag.module';
 import ConfigModule from './config';
 
 @Module({
@@ -30,6 +31,7 @@ import ConfigModule from './config';
     UserModule,
     PrintShopModule,
     BookmarkModule,
+    TagModule,
     AuthModule,
   ],
   controllers: [AppController],

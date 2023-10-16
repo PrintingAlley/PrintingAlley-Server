@@ -3,9 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Tag } from './tag.entity';
 
 @Entity()
 export class PrintShop {
@@ -93,14 +96,31 @@ export class PrintShop {
     required: true,
     example: 37.123456,
   })
-  latitude: number;
+  @Column({ type: 'real' })
+  latitude: string;
 
   @ApiProperty({
     description: '경도',
     required: true,
     example: 127.123456,
   })
-  longitude: number;
+  @Column({ type: 'real' })
+  longitude: string;
+
+  @ApiProperty({ description: '인쇄소와 연관된 태그들', type: () => [Tag] })
+  @ManyToMany(() => Tag, (tag) => tag.printShops)
+  @JoinTable({
+    name: 'print_shop_tags',
+    joinColumn: {
+      name: 'print_shop_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'tag_id',
+      referencedColumnName: 'id',
+    },
+  })
+  tags: Tag[];
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })

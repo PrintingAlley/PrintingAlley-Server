@@ -20,7 +20,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'src/user/user.decorator';
+import { GetUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entity/user.entity';
 
 @UseGuards(AuthGuard('jwt'))
