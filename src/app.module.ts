@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggingMiddleware } from './middleware/logging.middleware';
 import { PrintShopModule } from './print-shop/print-shop.module';
+import { BookmarkModule } from './bookmark/bookmark.module';
 import ConfigModule from './config';
 
 @Module({
@@ -26,9 +27,10 @@ import ConfigModule from './config';
           ? false
           : { rejectUnauthorized: false },
     }),
-    AuthModule,
     UserModule,
     PrintShopModule,
+    BookmarkModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -9,13 +9,17 @@ import {
 
 @Entity()
 export class PrintShop {
+  @ApiProperty({
+    description: '인쇄소 ID',
+    example: 1,
+  })
   @PrimaryGeneratedColumn()
   id: number;
 
   @ApiProperty({
     description: '상호명',
     required: true,
-    example: '프린트샵',
+    example: '모든인쇄',
   })
   @Column()
   name: string;
@@ -61,15 +65,15 @@ export class PrintShop {
   representative: string;
 
   @ApiProperty({
-    description: '프린트샵 소개',
+    description: '인쇄소 소개',
     required: true,
-    example: '프린트샵 소개',
+    example: '인쇄소 소개',
   })
   @Column()
   introduction: string;
 
   @ApiProperty({
-    description: '프린트샵 로고 이미지',
+    description: '인쇄소 로고 이미지',
     required: true,
     example: 'https://www.printshop.com',
   })
@@ -77,12 +81,26 @@ export class PrintShop {
   logoImage: string;
 
   @ApiProperty({
-    description: '프린트샵 배경 이미지',
+    description: '인쇄소 배경 이미지',
     required: true,
     example: 'https://www.printshop.com',
   })
   @Column()
   backgroundImage: string;
+
+  @ApiProperty({
+    description: '위도',
+    required: true,
+    example: 37.123456,
+  })
+  latitude: number;
+
+  @ApiProperty({
+    description: '경도',
+    required: true,
+    example: 127.123456,
+  })
+  longitude: number;
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })

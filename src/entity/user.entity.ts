@@ -3,9 +3,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { BookmarkGroup } from './bookmark-group.entity';
 
 @Entity()
 export class User {
@@ -51,4 +53,8 @@ export class User {
   @ApiProperty({ description: '수정일' })
   @UpdateDateColumn({ name: 'updated_at' })
   updateAt: Date;
+
+  @ApiProperty({ description: '북마크 그룹', type: [BookmarkGroup] })
+  @OneToMany(() => BookmarkGroup, (group) => group.user)
+  bookmarkGroups: BookmarkGroup[];
 }
