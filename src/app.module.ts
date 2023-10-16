@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggingMiddleware } from './middleware/logging.middleware';
+import { PrintShopModule } from './print-shop/print-shop.module';
 import ConfigModule from './config';
 
 @Module({
@@ -27,6 +28,7 @@ import ConfigModule from './config';
     }),
     AuthModule,
     UserModule,
+    PrintShopModule,
   ],
   controllers: [AppController],
   providers: [AppService],
