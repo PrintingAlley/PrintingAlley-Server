@@ -19,7 +19,7 @@ export class User {
     required: true,
     example: '1234567890',
   })
-  @Column({ unique: true })
+  @Column({ name: 'social_id', unique: true })
   socialId: string;
 
   @ApiProperty({
@@ -46,6 +46,10 @@ export class User {
   @Column()
   email: string;
 
+  @ApiProperty({ description: '북마크 그룹', type: [BookmarkGroup] })
+  @OneToMany(() => BookmarkGroup, (group) => group.user)
+  bookmarkGroups: BookmarkGroup[];
+
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -53,8 +57,4 @@ export class User {
   @ApiProperty({ description: '수정일' })
   @UpdateDateColumn({ name: 'updated_at' })
   updateAt: Date;
-
-  @ApiProperty({ description: '북마크 그룹', type: [BookmarkGroup] })
-  @OneToMany(() => BookmarkGroup, (group) => group.user)
-  bookmarkGroups: BookmarkGroup[];
 }
