@@ -27,10 +27,10 @@ import ConfigModule from './config';
           ? false
           : { rejectUnauthorized: false },
     }),
-    AuthModule,
     UserModule,
     PrintShopModule,
     BookmarkModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -27,6 +27,10 @@ export class Bookmark {
   @JoinColumn({ name: 'print_shop_id' })
   printShop: PrintShop;
 
+  @ApiProperty({
+    description: '북마크 그룹',
+    type: () => BookmarkGroup,
+  })
   @ManyToOne(() => BookmarkGroup, (group) => group.bookmarks)
   @JoinColumn({ name: 'bookmark_group_id' })
   bookmarkGroup: BookmarkGroup;
