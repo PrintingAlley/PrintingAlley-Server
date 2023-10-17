@@ -8,7 +8,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
-  AfterLoad,
 } from 'typeorm';
 import { PrintShop } from './print-shop.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -44,9 +43,6 @@ export class Tag {
   @ManyToMany(() => PrintShop, (printShop) => printShop.tags)
   printShops: PrintShop[];
 
-  @ApiProperty({ description: '태그가 마지막 계층인지 여부', example: true })
-  isLast: boolean;
-
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -54,9 +50,4 @@ export class Tag {
   @ApiProperty({ description: '수정일' })
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @AfterLoad()
-  setIsLast() {
-    this.isLast = this.children ? this.children.length === 0 : true;
-  }
 }

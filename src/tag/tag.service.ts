@@ -61,11 +61,32 @@ export class TagService {
   }
 
   async getTagHierarchy(tagId: number): Promise<Tag> {
-    return this.tagRepository
-      .createQueryBuilder('tag')
-      .leftJoinAndSelect('tag.children', 'children')
-      .where('tag.id = :id', { id: tagId })
-      .getOne();
+    // Recursive CTE를 사용하여 주어진 태그의 모든 하위 태그를 가져옴
+    const recursiveCTE = `
+    WITH RECURSIVE hierarchy AS (
+      SELECT id, name, image, parent_id
+      FROM tag
+      WHERE id = $1
+      UNION ALL
+      SELECT t.id, t.name, t.image, t.parent_id
+      FROM tag t
+      INNER JOIN hierarchy h ON t.parent_id = h.id
+    )
+    SELECT * FROM hierarchy;
+  `;
+
+    const flatList = await this.tagRepository.query(recursiveCTE, [tagId]);
+
+    // 1차원 배열을 계층 구조로 변환
+    const buildTree = (list: any[], parentId = null) => {
+      const children = list.filter((tag) => tag.parent_id === parentId);
+      children.forEach((child) => {
+        child.children = buildTree(list, child.id);
+      });
+      return children;
+    };
+
+    return buildTree(flatList)[0];
   }
 
   async getTopLevelTags(): Promise<Tag[]> {
