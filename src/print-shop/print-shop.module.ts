@@ -4,9 +4,10 @@ import { PrintShopService } from './print-shop.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { Tag } from 'src/entity/tag.entity';
+import { Bookmark } from 'src/entity/bookmark.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PrintShop, Tag])],
+  imports: [TypeOrmModule.forFeature([PrintShop, Tag, Bookmark])],
   controllers: [PrintShopController],
   providers: [PrintShopService],
 })

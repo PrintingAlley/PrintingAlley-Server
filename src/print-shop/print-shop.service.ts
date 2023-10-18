@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { UpdatePrintShopDto } from './dto/update-print-shop.dto';
 import { Tag } from 'src/entity/tag.entity';
+import { Bookmark } from 'src/entity/bookmark.entity';
 
 @Injectable()
 export class PrintShopService {
@@ -13,19 +14,22 @@ export class PrintShopService {
     private readonly printShopRepository: Repository<PrintShop>,
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
+    @InjectRepository(Bookmark)
+    private readonly bookmarkRepository: Repository<Bookmark>,
   ) {}
 
   async findAll(
     page: number,
     size: number,
+    searchText?: string,
     tagIds?: number[],
-  ): Promise<PrintShop[]> {
+  ): Promise<{ printShops: PrintShop[]; totalCount: number }> {
     if (page < 1)
       throw new HttpException('Page should be greater than 0.', 400);
 
     return tagIds && tagIds.length
-      ? await this.getPrintShopsByTags(page, size, tagIds)
-      : await this.findAllPrintShops(page, size);
+      ? await this.getPrintShopsByTags(page, size, tagIds, searchText)
+      : await this.findAllPrintShops(page, size, searchText);
   }
 
   async findOne(id: number): Promise<PrintShop> {
@@ -52,12 +56,10 @@ export class PrintShopService {
     const { tagIds, ...restData } = updateData;
 
     await this.printShopRepository.update(id, restData);
-
     const printShop = await this.findOne(id);
 
-    if (tagIds && tagIds.length) {
-      const tags = await this.findTagsByIds(tagIds);
-      printShop.tags = tags;
+    if (tagIds !== undefined) {
+      printShop.tags = tagIds.length ? await this.findTagsByIds(tagIds) : [];
       await this.printShopRepository.save(printShop);
     }
 
@@ -65,6 +67,11 @@ export class PrintShopService {
   }
 
   async delete(id: number): Promise<void> {
+    const bookmarks = await this.bookmarkRepository.find({
+      where: { printShop: { id } },
+    });
+    await this.bookmarkRepository.remove(bookmarks);
+
     await this.printShopRepository.delete(id);
   }
 
@@ -91,31 +98,55 @@ export class PrintShopService {
   private async findAllPrintShops(
     page: number,
     size: number,
-  ): Promise<PrintShop[]> {
-    return this.printShopRepository.find({
-      skip: (page - 1) * size,
-      take: size,
-      relations: ['tags'],
-    });
+    searchText?: string,
+  ): Promise<{ printShops: PrintShop[]; totalCount: number }> {
+    const queryBuilder =
+      this.printShopRepository.createQueryBuilder('printShop');
+
+    if (searchText) {
+      queryBuilder.where('printShop.name ILIKE :searchText', {
+        searchText: `%${searchText}%`,
+      });
+    }
+
+    const totalCount = await queryBuilder.getCount();
+
+    const printShops = await queryBuilder
+      .skip((page - 1) * size)
+      .take(size)
+      .leftJoinAndSelect('printShop.tags', 'tags')
+      .getMany();
+
+    return { printShops, totalCount };
   }
 
   private async getPrintShopsByTags(
     page: number,
     size: number,
     tagIds: number[],
-  ): Promise<PrintShop[]> {
+    searchText?: string,
+  ): Promise<{ printShops: PrintShop[]; totalCount: number }> {
     await this.findTagsByIds(tagIds);
-    const offset = (page - 1) * size;
 
-    return this.printShopRepository
+    const queryBuilder = this.printShopRepository
       .createQueryBuilder('printShop')
       .innerJoin('printShop.tags', 'tag')
       .where('tag.id IN (:...tagIds)', { tagIds })
       .groupBy('printShop.id')
       .having('COUNT(DISTINCT tag.id) = :tagCount', { tagCount: tagIds.length })
-      .skip(offset)
-      .take(size)
-      .getMany();
+      .skip((page - 1) * size)
+      .take(size);
+
+    if (searchText) {
+      queryBuilder.andWhere('printShop.name ILIKE :searchText', {
+        searchText: `%${searchText}%`,
+      });
+    }
+
+    const totalCount = await queryBuilder.getCount();
+    const printShops = await queryBuilder.getMany();
+
+    return { printShops, totalCount };
   }
 
   private async findTagsByIds(tagIds: number[]): Promise<Tag[]> {

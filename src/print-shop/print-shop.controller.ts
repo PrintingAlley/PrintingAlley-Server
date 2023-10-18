@@ -24,6 +24,7 @@ import { PrintShop } from 'src/entity/print-shop.entity';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { UpdatePrintShopDto } from './dto/update-print-shop.dto';
 import { ParseOptionalArrayPipe } from './pipes/parse-optional-array.pipe';
+import { PrintShopResponseDto } from './dto/print-shop-response.dto';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
@@ -37,7 +38,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 목록 조회 성공',
-    type: [PrintShop],
+    type: PrintShopResponseDto,
   })
   @ApiQuery({
     name: 'page',
@@ -50,6 +51,11 @@ export class PrintShopController {
     description: '페이지 크기입니다. 기본값은 20입니다.',
   })
   @ApiQuery({
+    name: 'searchText',
+    required: false,
+    description: '검색할 인쇄소 이름입니다.',
+  })
+  @ApiQuery({
     name: 'tagIds',
     required: false,
     description:
@@ -59,9 +65,10 @@ export class PrintShopController {
   async findAll(
     @Query('page') page: number = 1,
     @Query('size') size: number = 20,
+    @Query('searchText') searchText?: string,
     @Query('tagIds', new ParseOptionalArrayPipe()) tagIds?: number[],
-  ): Promise<PrintShop[]> {
-    return await this.printShopService.findAll(page, size, tagIds);
+  ): Promise<PrintShopResponseDto> {
+    return await this.printShopService.findAll(page, size, searchText, tagIds);
   }
 
   @Get(':id')
