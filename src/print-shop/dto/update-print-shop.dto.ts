@@ -109,4 +109,11 @@ export class UpdatePrintShopDto {
   })
   @IsNotEmpty()
   longitude: string;
+
+  @ApiProperty({
+    description: '태그 ID 목록',
+    required: false,
+    type: [Number],
+  })
+  tagIds?: number[];
 }

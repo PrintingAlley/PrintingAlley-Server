@@ -49,8 +49,19 @@ export class PrintShopService {
   }
 
   async update(id: number, updateData: UpdatePrintShopDto): Promise<PrintShop> {
-    await this.printShopRepository.update(id, updateData);
-    return this.findOne(id);
+    const { tagIds, ...restData } = updateData;
+
+    await this.printShopRepository.update(id, restData);
+
+    const printShop = await this.findOne(id);
+
+    if (tagIds && tagIds.length) {
+      const tags = await this.findTagsByIds(tagIds);
+      printShop.tags = tags;
+      await this.printShopRepository.save(printShop);
+    }
+
+    return printShop;
   }
 
   async delete(id: number): Promise<void> {
