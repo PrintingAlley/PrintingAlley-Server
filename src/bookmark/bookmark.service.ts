@@ -31,6 +31,10 @@ export class BookmarkService {
     data: CreateBookmarkDto,
     userId: number,
   ): Promise<Bookmark> {
+    if (!data.printShopId) {
+      throw new HttpException('인쇄소 ID가 필요합니다.', 400);
+    }
+
     let groupIdToCheck = data.bookmarkGroupId;
 
     if (!groupIdToCheck) {
