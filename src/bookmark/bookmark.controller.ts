@@ -75,22 +75,6 @@ export class BookmarkController {
     return this.bookmarkService.deleteBookmark(id);
   }
 
-  @Put(':bookmarkId/group/:groupId')
-  @ApiOperation({
-    summary: '북마크에 그룹 연결',
-    description: '북마크에 그룹을 연결하는 API입니다.',
-  })
-  @ApiOkResponse({
-    description: '북마크에 그룹 연결 성공',
-    type: Bookmark,
-  })
-  async connectGroupToBookmark(
-    @Param('bookmarkId') bookmarkId: number,
-    @Param('groupId') groupId: number,
-  ): Promise<Bookmark> {
-    return this.bookmarkService.connectGroupToBookmark(bookmarkId, groupId);
-  }
-
   @Post('group')
   @ApiOperation({
     summary: '북마크 그룹 생성',
@@ -108,6 +92,22 @@ export class BookmarkController {
       createBookmarkGroupDto,
       user.id,
     );
+  }
+
+  @Put('/group/:bookmarkId/:groupId')
+  @ApiOperation({
+    summary: '북마크에 그룹 연결',
+    description: '북마크에 그룹을 연결하는 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '북마크에 그룹 연결 성공',
+    type: Bookmark,
+  })
+  async connectGroupToBookmark(
+    @Param('bookmarkId') bookmarkId: number,
+    @Param('groupId') groupId: number,
+  ): Promise<Bookmark> {
+    return this.bookmarkService.connectGroupToBookmark(bookmarkId, groupId);
   }
 
   @Delete('group/:id')
