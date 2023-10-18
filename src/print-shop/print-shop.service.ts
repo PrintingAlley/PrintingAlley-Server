@@ -21,11 +21,15 @@ export class PrintShopService {
     return await this.printShopRepository.find({
       skip: (page - 1) * size,
       take: size,
+      relations: ['tags'],
     });
   }
 
   async findOne(id: number): Promise<PrintShop> {
-    return await this.printShopRepository.findOneBy({ id });
+    return await this.printShopRepository.findOne({
+      where: { id },
+      relations: ['tags'],
+    });
   }
 
   async create(printShop: CreatePrintShopDto): Promise<PrintShop> {

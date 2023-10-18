@@ -56,6 +56,24 @@ export class PrintShopController {
     return await this.printShopService.findAll(page, size);
   }
 
+  @Get(':id')
+  @ApiOperation({
+    summary: '인쇄소 조회',
+    description: '인쇄소를 조회하는 API입니다.',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '인쇄소 ID',
+  })
+  @ApiOkResponse({
+    description: '인쇄소 조회 성공',
+    type: PrintShop,
+  })
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<PrintShop> {
+    return await this.printShopService.findOne(id);
+  }
+
   @Post()
   @ApiOperation({
     summary: '인쇄소 생성',
