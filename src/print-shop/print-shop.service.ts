@@ -52,10 +52,14 @@ export class PrintShopService {
       throw new NotFoundException('One or more tags not found');
     }
 
+    // 프린트샵과 태그를 조인하고, 원하는 태그를 모두 포함하는 프린트샵만을 선택
     return await this.printShopRepository
       .createQueryBuilder('printShop')
-      .innerJoinAndSelect('printShop.tags', 'tag')
+      .innerJoin('printShop.tags', 'tag')
       .where('tag.id IN (:...tagIds)', { tagIds })
+      .groupBy('printShop.id')
+      // 요청 받은 태그들이 모두 포함된 프린트샵만을 선택하는 쿼리
+      .having('COUNT(DISTINCT tag.id) = :tagCount', { tagCount: tagIds.length })
       .getMany();
   }
 
@@ -70,12 +74,14 @@ export class PrintShopService {
       throw new NotFoundException('PrintShop not found');
     }
 
-    const tags = await this.tagRepository.findByIds(tagIds);
+    const tags = await this.tagRepository.find({
+      where: tagIds.map((id) => ({ id })),
+    });
     if (tags.length !== tagIds.length) {
       throw new NotFoundException('One or more tags not found');
     }
 
-    printShop.tags = [...printShop.tags, ...tags];
+    printShop.tags = [...(printShop.tags || []), ...tags];
     return await this.printShopRepository.save(printShop);
   }
 

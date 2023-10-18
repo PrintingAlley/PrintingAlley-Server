@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseArrayPipe,
   ParseIntPipe,
   Post,
   Put,
@@ -125,7 +126,7 @@ export class PrintShopController {
     description: '태그 ID 목록',
   })
   async getPrintShopsByTags(
-    @Query('tagIds') tagIds: number[],
+    @Query('tagIds', ParseArrayPipe) tagIds: number[],
   ): Promise<PrintShop[]> {
     return this.printShopService.getPrintShopsByTags(tagIds);
   }
