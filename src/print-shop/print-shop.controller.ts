@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseArrayPipe,
   ParseIntPipe,
   Post,
   Put,
@@ -24,6 +23,7 @@ import {
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { UpdatePrintShopDto } from './dto/update-print-shop.dto';
+import { ParseOptionalArrayPipe } from './pipes/parse-optional-array.pipe';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
@@ -49,11 +49,19 @@ export class PrintShopController {
     required: false,
     description: '페이지 크기입니다. 기본값은 20입니다.',
   })
+  @ApiQuery({
+    name: 'tagIds',
+    required: false,
+    description:
+      '태그 ID 목록입니다. 태그 ID 목록을 지정하면, 해당 태그와 연관된 인쇄소를 가져옵니다.',
+    type: [Number],
+  })
   async findAll(
     @Query('page') page: number = 1,
     @Query('size') size: number = 20,
+    @Query('tagIds', new ParseOptionalArrayPipe()) tagIds?: number[],
   ): Promise<PrintShop[]> {
-    return await this.printShopService.findAll(page, size);
+    return await this.printShopService.findAll(page, size, tagIds);
   }
 
   @Get(':id')
@@ -122,31 +130,9 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 삭제 성공',
-    type: PrintShop,
   })
-  async delete(@Param('id', ParseIntPipe) id: number): Promise<PrintShop> {
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return await this.printShopService.delete(id);
-  }
-
-  @Get('/by-tags')
-  @ApiOperation({
-    summary: '태그로 인쇄소 검색',
-    description: '태그로 인쇄소를 검색하는 API입니다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '태그와 연관된 인쇄소를 성공적으로 가져왔습니다.',
-  })
-  @ApiQuery({
-    name: 'tagIds',
-    type: [Number],
-    required: true,
-    description: '태그 ID 목록',
-  })
-  async getPrintShopsByTags(
-    @Query('tagIds', ParseArrayPipe) tagIds: number[],
-  ): Promise<PrintShop[]> {
-    return this.printShopService.getPrintShopsByTags(tagIds);
   }
 
   @Post(':id/add-tags')
