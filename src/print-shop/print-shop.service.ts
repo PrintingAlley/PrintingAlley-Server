@@ -36,7 +36,15 @@ export class PrintShopService {
   }
 
   async create(printShopData: CreatePrintShopDto): Promise<PrintShop> {
-    const printShop = this.printShopRepository.create(printShopData);
+    const { tagIds, ...restData } = printShopData;
+
+    const printShop = this.printShopRepository.create(restData);
+
+    if (tagIds && tagIds.length) {
+      const tags = await this.findTagsByIds(tagIds);
+      printShop.tags = tags;
+    }
+
     return this.printShopRepository.save(printShop);
   }
 
