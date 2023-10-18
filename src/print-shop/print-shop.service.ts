@@ -6,6 +6,7 @@ import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { UpdatePrintShopDto } from './dto/update-print-shop.dto';
 import { Tag } from 'src/entity/tag.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
+import { PrintShopResponseDto } from './dto/print-shop-response.dto';
 
 @Injectable()
 export class PrintShopService {
@@ -23,7 +24,7 @@ export class PrintShopService {
     size: number,
     searchText?: string,
     tagIds?: number[],
-  ): Promise<{ printShops: PrintShop[]; totalCount: number }> {
+  ): Promise<PrintShopResponseDto> {
     if (page < 1)
       throw new HttpException('Page should be greater than 0.', 400);
 
@@ -99,7 +100,7 @@ export class PrintShopService {
     page: number,
     size: number,
     searchText?: string,
-  ): Promise<{ printShops: PrintShop[]; totalCount: number }> {
+  ): Promise<PrintShopResponseDto> {
     const queryBuilder =
       this.printShopRepository.createQueryBuilder('printShop');
 
@@ -125,7 +126,7 @@ export class PrintShopService {
     size: number,
     tagIds: number[],
     searchText?: string,
-  ): Promise<{ printShops: PrintShop[]; totalCount: number }> {
+  ): Promise<PrintShopResponseDto> {
     await this.findTagsByIds(tagIds);
 
     const queryBuilder = this.printShopRepository
