@@ -21,7 +21,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
         typeof errorResponse === 'object'
           ? errorResponse['message'] || 'Error'
           : errorResponse,
-      dataId: null,
     };
 
     response.status(status).json(formattedResponse);

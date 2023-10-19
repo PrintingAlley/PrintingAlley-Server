@@ -18,11 +18,26 @@ export class BookmarkService {
     private readonly groupRepository: Repository<BookmarkGroup>,
   ) {}
 
-  // 북마크 가져오기
+  // 북마크 그룹 및 하위 북마크 목록 가져오기
   async getBookmarksByUser(userId: number): Promise<BookmarkGroup[]> {
     return await this.groupRepository.find({
       where: { user: { id: userId } },
       relations: ['bookmarks', 'bookmarks.printShop'],
+    });
+  }
+
+  // 북마크 그룹 가져오기
+  async getBookmarkGroupsByUser(userId: number): Promise<BookmarkGroup[]> {
+    return await this.groupRepository.find({
+      where: { user: { id: userId } },
+    });
+  }
+
+  // 북마크 그룹 ID로 북마크 목록 가져오기
+  async getBookmarksByGroupId(groupId: number): Promise<Bookmark[]> {
+    return await this.bookmarkRepository.find({
+      where: { bookmarkGroup: { id: groupId } },
+      relations: ['printShop'],
     });
   }
 
