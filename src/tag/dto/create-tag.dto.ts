@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUrl, MaxLength, MinLength } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsUrl,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateTagDto {
   @ApiProperty({
@@ -17,6 +24,7 @@ export class CreateTagDto {
     required: false,
     example: 'https://www.printshop.com',
   })
+  @IsOptional()
   @IsUrl()
   image?: string;
 
@@ -25,5 +33,7 @@ export class CreateTagDto {
     required: false,
     example: 1,
   })
+  @IsOptional()
+  @IsInt()
   parentId?: number;
 }

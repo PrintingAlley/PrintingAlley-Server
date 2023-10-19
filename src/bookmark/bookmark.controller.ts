@@ -111,20 +111,22 @@ export class BookmarkController {
     return createResponse(200, '성공', bookmarkId);
   }
 
-  @Delete('group/:id')
+  @Post()
   @ApiOperation({
-    summary: '북마크 그룹 삭제',
-    description: '북마크 그룹을 삭제하는 API입니다.',
+    summary: '북마크 추가',
+    description:
+      '북마크를 추가하는 API입니다. bookmarkGroupId은 옵션입니다. 생략하면 기본 그룹에 추가됩니다.',
   })
-  @ApiOkResponse({
-    description: '북마크 그룹 삭제 성공',
-    type: CommonResponseDto,
-  })
-  async deleteBookmarkGroup(
-    @Param('id') id: number,
+  @ApiOkResponse({ description: '북마크 추가 성공', type: CommonResponseDto })
+  async addBookmark(
+    @Body(new ValidationPipe()) createBookmarkDto: CreateBookmarkDto,
+    @GetUser() user: User,
   ): Promise<CommonResponseDto> {
-    await this.bookmarkService.deleteBookmarkGroup(id);
-    return createResponse(200, '성공', id);
+    const addedBookmark = await this.bookmarkService.addBookmark(
+      createBookmarkDto,
+      user.id,
+    );
+    return createResponse(200, '성공', addedBookmark.id);
   }
 
   @Delete('groups')
@@ -145,22 +147,20 @@ export class BookmarkController {
     return createResponse(200, '성공', deleteGroupsDto.groupIds);
   }
 
-  @Post()
+  @Delete('group/:id')
   @ApiOperation({
-    summary: '북마크 추가',
-    description:
-      '북마크를 추가하는 API입니다. bookmarkGroupId은 옵션입니다. 생략하면 기본 그룹에 추가됩니다.',
+    summary: '북마크 그룹 삭제',
+    description: '북마크 그룹을 삭제하는 API입니다.',
   })
-  @ApiOkResponse({ description: '북마크 추가 성공', type: CommonResponseDto })
-  async addBookmark(
-    @Body(new ValidationPipe()) createBookmarkDto: CreateBookmarkDto,
-    @GetUser() user: User,
+  @ApiOkResponse({
+    description: '북마크 그룹 삭제 성공',
+    type: CommonResponseDto,
+  })
+  async deleteBookmarkGroup(
+    @Param('id') id: number,
   ): Promise<CommonResponseDto> {
-    const addedBookmark = await this.bookmarkService.addBookmark(
-      createBookmarkDto,
-      user.id,
-    );
-    return createResponse(200, '성공', addedBookmark.id);
+    await this.bookmarkService.deleteBookmarkGroup(id);
+    return createResponse(200, '성공', id);
   }
 
   @Delete('batch')

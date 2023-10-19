@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsInt } from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty } from 'class-validator';
 
 export class DeleteMultipleGroupsDto {
   @ApiProperty({
@@ -7,6 +7,7 @@ export class DeleteMultipleGroupsDto {
     required: true,
     example: [1, 2, 3],
   })
+  @IsNotEmpty()
   @IsArray()
   @IsInt({ each: true })
   groupIds: number[];

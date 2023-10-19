@@ -19,10 +19,8 @@ import {
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { User } from 'src/entity/user.entity';
-import {
-  ThirdPartyLoginDto,
-  ThirdPartyLoginResponseDto,
-} from './dto/third-party-login.dto';
+import { SocialLoginDto } from './dto/social-login.dto';
+import { SocialLoginResponseDto } from './dto/social-login-response.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -33,15 +31,33 @@ export class AuthController {
     private readonly userService: UserService,
   ) {}
 
-  private async handleAuthRedirect(req, res) {
-    const { id, provider, displayName, emails } = req.user;
-
-    const email = emails && emails[0]?.value ? emails[0].value : '이메일없음';
-    const name = displayName || '이름없음';
-
+  @Post('login')
+  @ApiOperation({
+    summary: '소셜 로그인',
+    description: '소셜 로그인 OAuth를 이용한 인증 API입니다.',
+  })
+  @ApiOkResponse({
+    description: 'JWT 토큰을 반환합니다.',
+    type: SocialLoginResponseDto,
+  })
+  async socialLogin(
+    @Body(new ValidationPipe()) data: SocialLoginDto,
+  ): Promise<SocialLoginResponseDto> {
+    const { id, provider, name, email } =
+      await this.authService.validateAndRetrieveUser(
+        data.access_token,
+        data.provider,
+      );
     const user = await this.userService.findOrCreate(id, provider, name, email);
-    const jwt = await this.jwtService.signAsync({ userId: user.id });
-    res.redirect(`${process.env.CLIENT_URL}/login?token=${jwt}`);
+
+    const payload = { userId: user.id };
+    const jwt = await this.jwtService.signAsync(payload);
+
+    return {
+      statusCode: 200,
+      message: '성공',
+      access_token: jwt,
+    };
   }
 
   @Get('google')
@@ -116,26 +132,15 @@ export class AuthController {
     return this.handleAuthRedirect(req, res);
   }
 
-  @Post('login')
-  @ApiOperation({
-    summary: '소셜 로그인',
-    description: '소셜 로그인 OAuth를 이용한 인증 API입니다.',
-  })
-  @ApiOkResponse({
-    description: 'JWT 토큰을 반환합니다.',
-    type: ThirdPartyLoginResponseDto,
-  })
-  async thirdPartyLogin(@Body(new ValidationPipe()) data: ThirdPartyLoginDto) {
-    const { id, provider, name, email } =
-      await this.authService.validateAndRetrieveUser(
-        data.access_token,
-        data.provider,
-      );
-    const user = await this.userService.findOrCreate(id, provider, name, email);
+  private async handleAuthRedirect(req, res) {
+    const { id, provider, displayName, emails } = req.user;
 
-    const payload = { userId: user.id };
-    const jwt = await this.jwtService.signAsync(payload);
-    return { access_token: jwt };
+    const email = emails && emails[0]?.value ? emails[0].value : '이메일없음';
+    const name = displayName || '이름없음';
+
+    const user = await this.userService.findOrCreate(id, provider, name, email);
+    const jwt = await this.jwtService.signAsync({ userId: user.id });
+    res.redirect(`${process.env.CLIENT_URL}/login?token=${jwt}`);
   }
 
   @Get('jwt-test')

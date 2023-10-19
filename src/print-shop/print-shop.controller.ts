@@ -12,12 +12,10 @@ import {
 } from '@nestjs/common';
 import { PrintShopService } from './print-shop.service';
 import {
-  ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiQuery,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { PrintShop } from 'src/entity/print-shop.entity';
@@ -25,6 +23,8 @@ import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { UpdatePrintShopDto } from './dto/update-print-shop.dto';
 import { ParseOptionalArrayPipe } from './pipes/parse-optional-array.pipe';
 import { PrintShopResponseDto } from './dto/print-shop-response.dto';
+import { CommonResponseDto } from 'src/common/dto/common-response.dto';
+import { createResponse } from 'src/common/utils/response.helper';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
@@ -96,12 +96,13 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 생성 성공',
-    type: PrintShop,
+    type: CommonResponseDto,
   })
   async create(
     @Body(new ValidationPipe()) printShop: CreatePrintShopDto,
-  ): Promise<PrintShop> {
-    return await this.printShopService.create(printShop);
+  ): Promise<CommonResponseDto> {
+    const createdPrintShop = await this.printShopService.create(printShop);
+    return createResponse(200, '성공', createdPrintShop.id);
   }
 
   @Put(':id')
@@ -116,13 +117,14 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 수정 성공',
-    type: PrintShop,
+    type: CommonResponseDto,
   })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) printShop: UpdatePrintShopDto,
-  ): Promise<PrintShop> {
-    return await this.printShopService.update(id, printShop);
+  ): Promise<CommonResponseDto> {
+    await this.printShopService.update(id, printShop);
+    return createResponse(200, '성공', id);
   }
 
   @Delete(':id')
@@ -137,42 +139,12 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 삭제 성공',
+    type: CommonResponseDto,
   })
-  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return await this.printShopService.delete(id);
-  }
-
-  @Post(':id/add-tags')
-  @ApiOperation({
-    summary: '인쇄소에 태그 추가',
-    description: '인쇄소에 태그를 추가하는 API입니다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '태그가 성공적으로 추가되었습니다.',
-  })
-  @ApiBody({ description: '태그 ID 목록', type: [Number] })
-  async addTagsToPrintShop(
-    @Param('id') id: number,
-    @Body('tagIds') tagIds: number[],
-  ): Promise<PrintShop> {
-    return this.printShopService.addTagsToPrintShop(id, tagIds);
-  }
-
-  @Post(':id/remove-tags')
-  @ApiOperation({
-    summary: '인쇄소에서 태그 연결 해제',
-    description: '인쇄소에서 태그를 연결 해제하는 API입니다.',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '태그가 성공적으로 연결 해제되었습니다.',
-  })
-  @ApiBody({ description: '태그 ID 목록', type: [Number] })
-  async removeTagsFromPrintShop(
-    @Param('id') id: number,
-    @Body('tagIds') tagIds: number[],
-  ): Promise<PrintShop> {
-    return this.printShopService.removeTagsFromPrintShop(id, tagIds);
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<CommonResponseDto> {
+    await this.printShopService.delete(id);
+    return createResponse(200, '성공', id);
   }
 }

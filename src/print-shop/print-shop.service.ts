@@ -76,26 +76,6 @@ export class PrintShopService {
     await this.printShopRepository.delete(id);
   }
 
-  async addTagsToPrintShop(
-    printShopId: number,
-    tagIds: number[],
-  ): Promise<PrintShop> {
-    const printShop = await this.findOne(printShopId);
-    const tags = await this.findTagsByIds(tagIds);
-
-    printShop.tags = [...(printShop.tags || []), ...tags];
-    return this.printShopRepository.save(printShop);
-  }
-
-  async removeTagsFromPrintShop(
-    printShopId: number,
-    tagIds: number[],
-  ): Promise<PrintShop> {
-    const printShop = await this.findOne(printShopId);
-    printShop.tags = printShop.tags.filter((tag) => !tagIds.includes(tag.id));
-    return this.printShopRepository.save(printShop);
-  }
-
   private async findAllPrintShops(
     page: number,
     size: number,

@@ -7,10 +7,12 @@ import {
   Post,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
 import { Tag } from 'src/entity/tag.entity';
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
+import { CommonResponseDto } from 'src/common/dto/common-response.dto';
+import { createResponse } from 'src/common/utils/response.helper';
 
 @ApiTags('Tag')
 @Controller('tag')
@@ -23,15 +25,15 @@ export class TagController {
     description:
       '태그를 생성하는 API입니다. 부모 태그 ID와 태그 이미지는 옵션입니다. 부모 태그가 없다면, 해당 태그는 최상위 태그가 됩니다.',
   })
-  @ApiResponse({
-    status: 201,
+  @ApiOkResponse({
     description: '태그가 성공적으로 생성되었습니다.',
+    type: CommonResponseDto,
   })
-  @ApiBody({ description: '태그 이름 및 부모 태그 ID', type: CreateTagDto })
   async createTag(
     @Body(new ValidationPipe()) createTagDto: CreateTagDto,
-  ): Promise<Tag> {
-    return this.tagService.createTag(createTagDto);
+  ): Promise<CommonResponseDto> {
+    const tag = await this.tagService.createTag(createTagDto);
+    return createResponse(200, '성공', tag.id);
   }
 
   @Get(':id/hierarchy')
@@ -39,9 +41,9 @@ export class TagController {
     summary: '태그 계층 구조 조회',
     description: '태그 계층 구조를 조회하는 API입니다.',
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: '태그 계층 구조를 성공적으로 가져왔습니다.',
+    type: Tag,
   })
   async getTagHierarchy(@Param('id') id: number): Promise<Tag> {
     return this.tagService.getTagHierarchy(id);
@@ -52,8 +54,7 @@ export class TagController {
     summary: '최상위 태그 가져오기',
     description: '최상위 태그를 가져오는 API입니다.',
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: '최상위 태그를 성공적으로 가져왔습니다.',
     type: [Tag],
   })
@@ -66,11 +67,12 @@ export class TagController {
     summary: '태그 삭제',
     description: '태그를 삭제하는 API입니다.',
   })
-  @ApiResponse({
-    status: 200,
+  @ApiOkResponse({
     description: '태그가 성공적으로 삭제되었습니다.',
+    type: CommonResponseDto,
   })
-  async deleteTag(@Param('id') id: number): Promise<void> {
-    return this.tagService.deleteTag(id);
+  async deleteTag(@Param('id') id: number): Promise<CommonResponseDto> {
+    await this.tagService.deleteTag(id);
+    return createResponse(200, '성공', id);
   }
 }

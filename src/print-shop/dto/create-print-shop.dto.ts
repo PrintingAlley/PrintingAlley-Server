@@ -1,7 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsEmail,
+  IsInt,
   IsNotEmpty,
+  IsNumber,
+  IsOptional,
   IsPhoneNumber,
   IsUrl,
   MaxLength,
@@ -100,6 +104,7 @@ export class CreatePrintShopDto {
     example: 37.123456,
   })
   @IsNotEmpty()
+  @IsNumber()
   latitude: string;
 
   @ApiProperty({
@@ -108,6 +113,7 @@ export class CreatePrintShopDto {
     example: 127.123456,
   })
   @IsNotEmpty()
+  @IsNumber()
   longitude: string;
 
   @ApiProperty({
@@ -115,5 +121,8 @@ export class CreatePrintShopDto {
     required: false,
     type: [Number],
   })
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
   tagIds?: number[];
 }
