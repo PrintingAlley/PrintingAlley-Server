@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
@@ -121,7 +121,37 @@ export class BookmarkService {
 
   // 북마크 그룹 삭제
   async deleteBookmarkGroup(groupId: number): Promise<void> {
-    await this.groupRepository.delete(groupId);
+    // 해당 그룹에 연결된 모든 북마크를 찾습니다.
+
+    const bookmarks = await this.bookmarkRepository.find({
+      where: { bookmarkGroup: { id: groupId } },
+    });
+
+    // 해당 북마크들을 삭제합니다.
+    await this.bookmarkRepository.remove(bookmarks);
+
+    // 북마크 그룹을 삭제합니다.
+    const result = await this.groupRepository.delete(groupId);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `북마크 그룹 ID ${groupId}를 찾을 수 없습니다.`,
+      );
+    }
+  }
+
+  // 여러 북마크 그룹 삭제
+  async deleteMultipleBookmarkGroups(groupIds: number[]): Promise<void> {
+    // 각 그룹 ID에 대해 연결된 모든 북마크를 찾아 삭제합니다.
+    for (const groupId of groupIds) {
+      const bookmarks = await this.bookmarkRepository.find({
+        where: { bookmarkGroup: { id: groupId } },
+      });
+      await this.bookmarkRepository.remove(bookmarks);
+    }
+
+    // 모든 북마크가 삭제된 후 해당 북마크 그룹들을 삭제합니다.
+    await this.groupRepository.delete(groupIds);
   }
 
   // 유저의 기본 북마크 그룹 가져오기 (없으면 생성)

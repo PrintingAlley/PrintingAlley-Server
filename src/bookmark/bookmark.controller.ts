@@ -23,6 +23,7 @@ import { GetUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entity/user.entity';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
+import { DeleteMultipleGroupsDto } from './dto/delete-multiple-groups.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('bookmark')
@@ -42,35 +43,6 @@ export class BookmarkController {
   @ApiOkResponse({ description: '내 북마크 조회 성공', type: [BookmarkGroup] })
   async getMyBookmarks(@GetUser() user: User): Promise<BookmarkGroup[]> {
     return this.bookmarkService.getBookmarksByUser(user.id);
-  }
-
-  @Post()
-  @ApiOperation({
-    summary: '북마크 추가',
-    description:
-      '북마크를 추가하는 API입니다. bookmarkGroupId은 옵션입니다. 생략하면 기본 그룹에 추가됩니다.',
-  })
-  @ApiOkResponse({ description: '북마크 추가 성공', type: CommonResponseDto })
-  async addBookmark(
-    @Body() createBookmarkDto: CreateBookmarkDto,
-    @GetUser() user: User,
-  ): Promise<CommonResponseDto> {
-    const addedBookmark = await this.bookmarkService.addBookmark(
-      createBookmarkDto,
-      user.id,
-    );
-    return createResponse(200, '성공', addedBookmark.id);
-  }
-
-  @Delete(':id')
-  @ApiOperation({
-    summary: '북마크 해제',
-    description: '북마크를 해제하는 API입니다.',
-  })
-  @ApiOkResponse({ description: '북마크 해제 성공', type: CommonResponseDto })
-  async deleteBookmark(@Param('id') id: number): Promise<CommonResponseDto> {
-    await this.bookmarkService.deleteBookmark(id);
-    return createResponse(200, '성공', id);
   }
 
   @Post('group')
@@ -123,6 +95,53 @@ export class BookmarkController {
     @Param('id') id: number,
   ): Promise<CommonResponseDto> {
     await this.bookmarkService.deleteBookmarkGroup(id);
+    return createResponse(200, '성공', id);
+  }
+
+  @Delete('groups')
+  @ApiOperation({
+    summary: '여러 북마크 그룹 삭제',
+    description: '여러 북마크 그룹을 삭제하는 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '북마크 그룹들 삭제 성공',
+    type: CommonResponseDto,
+  })
+  async deleteMultipleBookmarkGroups(
+    @Body() deleteGroupsDto: DeleteMultipleGroupsDto,
+  ): Promise<CommonResponseDto> {
+    await this.bookmarkService.deleteMultipleBookmarkGroups(
+      deleteGroupsDto.groupIds,
+    );
+    return createResponse(200, '성공', deleteGroupsDto.groupIds);
+  }
+
+  @Post()
+  @ApiOperation({
+    summary: '북마크 추가',
+    description:
+      '북마크를 추가하는 API입니다. bookmarkGroupId은 옵션입니다. 생략하면 기본 그룹에 추가됩니다.',
+  })
+  @ApiOkResponse({ description: '북마크 추가 성공', type: CommonResponseDto })
+  async addBookmark(
+    @Body() createBookmarkDto: CreateBookmarkDto,
+    @GetUser() user: User,
+  ): Promise<CommonResponseDto> {
+    const addedBookmark = await this.bookmarkService.addBookmark(
+      createBookmarkDto,
+      user.id,
+    );
+    return createResponse(200, '성공', addedBookmark.id);
+  }
+
+  @Delete(':id')
+  @ApiOperation({
+    summary: '북마크 해제',
+    description: '북마크를 해제하는 API입니다.',
+  })
+  @ApiOkResponse({ description: '북마크 해제 성공', type: CommonResponseDto })
+  async deleteBookmark(@Param('id') id: number): Promise<CommonResponseDto> {
+    await this.bookmarkService.deleteBookmark(id);
     return createResponse(200, '성공', id);
   }
 }

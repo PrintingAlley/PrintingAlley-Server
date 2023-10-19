@@ -17,5 +17,5 @@ export class CommonResponseDto {
     description: '응답 데이터 ID',
     example: 1,
   })
-  dataId?: number;
+  dataId?: number | number[];
 }
