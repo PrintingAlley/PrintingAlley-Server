@@ -83,6 +83,11 @@ export class BookmarkService {
     await this.bookmarkRepository.delete(bookmarkId);
   }
 
+  // 여러 북마크 삭제
+  async deleteMultipleBookmarks(bookmarkIds: number[]): Promise<void> {
+    await this.bookmarkRepository.delete(bookmarkIds);
+  }
+
   // 북마크에 그룹 연결
   async connectGroupToBookmark(
     bookmarkId: number,

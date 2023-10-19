@@ -24,6 +24,7 @@ import { User } from 'src/entity/user.entity';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
 import { DeleteMultipleGroupsDto } from './dto/delete-multiple-groups.dto';
+import { DeleteMultipleBookmarksDto } from './dto/delete-multiple-bookmarks.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('bookmark')
@@ -132,6 +133,24 @@ export class BookmarkController {
       user.id,
     );
     return createResponse(200, '성공', addedBookmark.id);
+  }
+
+  @Delete('batch')
+  @ApiOperation({
+    summary: '여러 북마크 해제',
+    description: '여러 북마크를 해제하는 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '북마크들 해제 성공',
+    type: CommonResponseDto,
+  })
+  async deleteMultipleBookmarks(
+    @Body() deleteBookmarksDto: DeleteMultipleBookmarksDto,
+  ): Promise<CommonResponseDto> {
+    await this.bookmarkService.deleteMultipleBookmarks(
+      deleteBookmarksDto.bookmarkIds,
+    );
+    return createResponse(200, '성공', deleteBookmarksDto.bookmarkIds);
   }
 
   @Delete(':id')
