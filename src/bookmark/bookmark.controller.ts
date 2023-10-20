@@ -22,7 +22,6 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entity/user.entity';
-import { Bookmark } from 'src/entity/bookmark.entity';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
 import { DeleteMultipleGroupsDto } from './dto/delete-multiple-groups.dto';
@@ -62,16 +61,14 @@ export class BookmarkController {
     return this.bookmarkService.getBookmarkGroupsByUser(user.id);
   }
 
-  @Get('group/:groupId')
+  @Get('group/:id')
   @ApiOperation({
-    summary: '그룹 ID로 북마크 배열 조회',
-    description: '주어진 그룹 ID에 해당하는 모든 북마크를 조회하는 API입니다.',
+    summary: '북마크 그룹 조회',
+    description: '북마크 그룹을 조회하는 API입니다.',
   })
-  @ApiOkResponse({ description: '북마크 배열 조회 성공', type: [Bookmark] })
-  async getBookmarksByGroupId(
-    @Param('groupId') groupId: number,
-  ): Promise<Bookmark[]> {
-    return this.bookmarkService.getBookmarksByGroupId(groupId);
+  @ApiOkResponse({ description: '북마크 그룹 조회 성공', type: BookmarkGroup })
+  async getBookmarkGroup(@Param('id') id: number): Promise<BookmarkGroup> {
+    return this.bookmarkService.getBookmarkGroupById(id);
   }
 
   @Post('group')
@@ -92,6 +89,26 @@ export class BookmarkController {
       user.id,
     );
     return createResponse(200, '성공', createdGroup.id);
+  }
+
+  @Put('group/:id')
+  @ApiOperation({
+    summary: '북마크 그룹 수정',
+    description: '북마크 그룹을 수정하는 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '북마크 그룹 수정 성공',
+    type: CommonResponseDto,
+  })
+  async updateBookmarkGroup(
+    @Param('id') id: number,
+    @Body(new ValidationPipe()) createBookmarkGroupDto: CreateBookmarkGroupDto,
+  ): Promise<CommonResponseDto> {
+    const updatedGroup = await this.bookmarkService.updateBookmarkGroup(
+      id,
+      createBookmarkGroupDto,
+    );
+    return createResponse(200, '성공', updatedGroup.id);
   }
 
   @Put('group/:bookmarkId/:groupId')

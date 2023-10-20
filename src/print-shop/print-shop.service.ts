@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { Repository } from 'typeorm';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
-import { UpdatePrintShopDto } from './dto/update-print-shop.dto';
 import { Tag } from 'src/entity/tag.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
 import { PrintShopResponseDto } from './dto/print-shop-response.dto';
@@ -53,7 +52,7 @@ export class PrintShopService {
     return this.printShopRepository.save(printShop);
   }
 
-  async update(id: number, updateData: UpdatePrintShopDto): Promise<PrintShop> {
+  async update(id: number, updateData: CreatePrintShopDto): Promise<PrintShop> {
     const { tagIds, ...restData } = updateData;
 
     await this.printShopRepository.update(id, restData);

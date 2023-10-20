@@ -20,7 +20,6 @@ import {
 } from '@nestjs/swagger';
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
-import { UpdatePrintShopDto } from './dto/update-print-shop.dto';
 import { ParseOptionalArrayPipe } from './pipes/parse-optional-array.pipe';
 import { PrintShopResponseDto } from './dto/print-shop-response.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
@@ -121,7 +120,7 @@ export class PrintShopController {
   })
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body(new ValidationPipe()) printShop: UpdatePrintShopDto,
+    @Body(new ValidationPipe()) printShop: CreatePrintShopDto,
   ): Promise<CommonResponseDto> {
     await this.printShopService.update(id, printShop);
     return createResponse(200, '성공', id);

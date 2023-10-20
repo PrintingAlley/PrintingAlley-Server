@@ -22,7 +22,12 @@ export class BookmarkService {
   async getBookmarksByUser(userId: number): Promise<BookmarkGroup[]> {
     return await this.groupRepository.find({
       where: { user: { id: userId } },
-      relations: ['bookmarks', 'bookmarks.printShop'],
+      relations: [
+        'bookmarks',
+        'bookmarks.printShop',
+        'bookmarks.printShop.tags',
+      ],
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -30,15 +35,28 @@ export class BookmarkService {
   async getBookmarkGroupsByUser(userId: number): Promise<BookmarkGroup[]> {
     return await this.groupRepository.find({
       where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
     });
   }
 
-  // 북마크 그룹 ID로 북마크 목록 가져오기
-  async getBookmarksByGroupId(groupId: number): Promise<Bookmark[]> {
-    return await this.bookmarkRepository.find({
-      where: { bookmarkGroup: { id: groupId } },
-      relations: ['printShop'],
+  // 북마크 그룹 ID로 북마크 그룹 가져오기
+  async getBookmarkGroupById(groupId: number): Promise<BookmarkGroup> {
+    const group = await this.groupRepository.findOne({
+      where: { id: groupId },
+      relations: [
+        'bookmarks',
+        'bookmarks.printShop',
+        'bookmarks.printShop.tags',
+      ],
     });
+
+    if (!group) {
+      throw new NotFoundException(
+        `북마크 그룹 ID ${groupId}를 찾을 수 없습니다.`,
+      );
+    }
+
+    return group;
   }
 
   // 북마크 추가
@@ -95,7 +113,12 @@ export class BookmarkService {
 
   // 북마크 삭제
   async deleteBookmark(bookmarkId: number): Promise<void> {
-    await this.bookmarkRepository.delete(bookmarkId);
+    const result = await this.bookmarkRepository.delete(bookmarkId);
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `북마크 ID ${bookmarkId}를 찾을 수 없습니다.`,
+      );
+    }
   }
 
   // 여러 북마크 삭제
@@ -136,6 +159,21 @@ export class BookmarkService {
       name: data.name,
       user: { id: userId },
     });
+    return await this.groupRepository.save(group);
+  }
+
+  // 북마크 그룹 수정
+  async updateBookmarkGroup(
+    groupId: number,
+    data: CreateBookmarkGroupDto,
+  ): Promise<BookmarkGroup> {
+    const group = await this.groupRepository.findOneBy({ id: groupId });
+    if (!group) {
+      throw new NotFoundException(
+        `북마크 그룹 ID ${groupId}를 찾을 수 없습니다.`,
+      );
+    }
+    group.name = data.name;
     return await this.groupRepository.save(group);
   }
 

@@ -25,4 +25,15 @@ export class UserService {
     }
     return user;
   }
+
+  // ID로 사용자 조회
+  async getUserById(userId: number): Promise<User> {
+    return this.userRepository.findOneBy({ id: userId });
+  }
+
+  // 이름 수정
+  async updateName(userId: number, name: string): Promise<User> {
+    await this.userRepository.update(userId, { name });
+    return this.userRepository.findOneBy({ id: userId });
+  }
 }

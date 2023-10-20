@@ -14,12 +14,11 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ApiProperty({
-    description: '소셜 로그인 ID',
-    required: true,
-    example: '1234567890',
+  @Column({
+    name: 'social_id',
+    unique: true,
+    select: false,
   })
-  @Column({ name: 'social_id', unique: true })
   socialId: string;
 
   @ApiProperty({
