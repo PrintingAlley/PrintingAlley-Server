@@ -15,10 +15,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { UpdateNameDto } from './dto/update-name.dto';
 import { GetUser } from 'src/decorators/user.decorator';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
+import { UpdateUserNameDto } from './dto/update-user-name.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
@@ -38,7 +39,7 @@ export class UserController {
   })
   @ApiOkResponse({
     description: '내 정보 조회 성공',
-    type: User,
+    type: UserResponseDto,
   })
   async getMyInfo(@GetUser() user: User): Promise<User> {
     return this.userService.getUserById(user.id);
@@ -55,7 +56,7 @@ export class UserController {
     type: CommonResponseDto,
   })
   async updateName(
-    @Body(new ValidationPipe()) updateNameDto: UpdateNameDto,
+    @Body(new ValidationPipe()) updateNameDto: UpdateUserNameDto,
     @GetUser() user: User,
   ): Promise<CommonResponseDto> {
     await this.userService.updateName(user.id, updateNameDto.name);
