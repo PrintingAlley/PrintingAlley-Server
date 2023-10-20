@@ -26,6 +26,7 @@ import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
 import { DeleteMultipleGroupsDto } from './dto/delete-multiple-groups.dto';
 import { DeleteMultipleBookmarksDto } from './dto/delete-multiple-bookmarks.dto';
+import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('bookmark')
@@ -37,18 +38,7 @@ import { DeleteMultipleBookmarksDto } from './dto/delete-multiple-bookmarks.dto'
 export class BookmarkController {
   constructor(private readonly bookmarkService: BookmarkService) {}
 
-  @Get('my-bookmarks')
-  @ApiOperation({
-    summary: '내 북마크 그룹 및 하위 북마크 목록 조회',
-    description:
-      '로그인한 사용자의 모든 북마크 그룹 및 하위 북마크 목록을 조회하는 API입니다.',
-  })
-  @ApiOkResponse({ description: '내 북마크 조회 성공', type: [BookmarkGroup] })
-  async getMyBookmarks(@GetUser() user: User): Promise<BookmarkGroup[]> {
-    return this.bookmarkService.getBookmarksByUser(user.id);
-  }
-
-  @Get('my-groups')
+  @Get('group')
   @ApiOperation({
     summary: '내 북마크 그룹 조회',
     description: '로그인한 사용자의 모든 북마크 그룹을 조회하는 API입니다.',
@@ -111,39 +101,20 @@ export class BookmarkController {
     return createResponse(200, '성공', updatedGroup.id);
   }
 
-  @Put('group/:bookmarkId/:groupId')
+  @Delete('group/:id')
   @ApiOperation({
-    summary: '북마크에 그룹 연결',
-    description: '북마크에 그룹을 연결하는 API입니다.',
+    summary: '북마크 그룹 삭제',
+    description: '북마크 그룹을 삭제하는 API입니다.',
   })
   @ApiOkResponse({
-    description: '북마크에 그룹 연결 성공',
+    description: '북마크 그룹 삭제 성공',
     type: CommonResponseDto,
   })
-  async connectGroupToBookmark(
-    @Param('bookmarkId') bookmarkId: number,
-    @Param('groupId') groupId: number,
+  async deleteBookmarkGroup(
+    @Param('id') id: number,
   ): Promise<CommonResponseDto> {
-    await this.bookmarkService.connectGroupToBookmark(bookmarkId, groupId);
-    return createResponse(200, '성공', bookmarkId);
-  }
-
-  @Post()
-  @ApiOperation({
-    summary: '북마크 추가',
-    description:
-      '북마크를 추가하는 API입니다. bookmarkGroupId은 옵션입니다. 생략하면 기본 그룹에 추가됩니다.',
-  })
-  @ApiOkResponse({ description: '북마크 추가 성공', type: CommonResponseDto })
-  async addBookmark(
-    @Body(new ValidationPipe()) createBookmarkDto: CreateBookmarkDto,
-    @GetUser() user: User,
-  ): Promise<CommonResponseDto> {
-    const addedBookmark = await this.bookmarkService.addBookmark(
-      createBookmarkDto,
-      user.id,
-    );
-    return createResponse(200, '성공', addedBookmark.id);
+    await this.bookmarkService.deleteBookmarkGroup(id);
+    return createResponse(200, '성공', id);
   }
 
   @Delete('groups')
@@ -164,19 +135,41 @@ export class BookmarkController {
     return createResponse(200, '성공', deleteGroupsDto.groupIds);
   }
 
-  @Delete('group/:id')
+  @Post()
   @ApiOperation({
-    summary: '북마크 그룹 삭제',
-    description: '북마크 그룹을 삭제하는 API입니다.',
+    summary: '북마크 추가',
+    description:
+      '북마크를 추가하는 API입니다. bookmarkGroupId은 옵션입니다. 생략하면 기본 그룹에 추가됩니다.',
+  })
+  @ApiOkResponse({ description: '북마크 추가 성공', type: CommonResponseDto })
+  async addBookmark(
+    @Body(new ValidationPipe()) createBookmarkDto: CreateBookmarkDto,
+    @GetUser() user: User,
+  ): Promise<CommonResponseDto> {
+    const addedBookmark = await this.bookmarkService.addBookmark(
+      createBookmarkDto,
+      user.id,
+    );
+    return createResponse(200, '성공', addedBookmark.id);
+  }
+
+  @Put(':id')
+  @ApiOperation({
+    summary: '북마크에 다른 그룹 연결',
+    description: '북마크에 다른 그룹을 연결하는 API입니다.',
   })
   @ApiOkResponse({
-    description: '북마크 그룹 삭제 성공',
+    description: '북마크에 그룹 연결 성공',
     type: CommonResponseDto,
   })
-  async deleteBookmarkGroup(
+  async connectGroupToBookmark(
     @Param('id') id: number,
+    @Body(new ValidationPipe()) connectGroupDto: UpdateBookmarkDto,
   ): Promise<CommonResponseDto> {
-    await this.bookmarkService.deleteBookmarkGroup(id);
+    await this.bookmarkService.connectGroupToBookmark(
+      id,
+      connectGroupDto.groupId,
+    );
     return createResponse(200, '성공', id);
   }
 
