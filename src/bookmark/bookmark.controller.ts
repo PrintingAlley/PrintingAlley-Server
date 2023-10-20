@@ -27,6 +27,8 @@ import { createResponse } from 'src/common/utils/response.helper';
 import { DeleteMultipleGroupsDto } from './dto/delete-multiple-groups.dto';
 import { DeleteMultipleBookmarksDto } from './dto/delete-multiple-bookmarks.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
+import { BookmarkGroupResponseDto } from './dto/bookmark-group-response.dto';
+import { BookmarkGroupDetailResponseDto } from './dto/bookmark-group-detail-response.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('bookmark')
@@ -45,7 +47,7 @@ export class BookmarkController {
   })
   @ApiOkResponse({
     description: '내 북마크 그룹 조회 성공',
-    type: [BookmarkGroup],
+    type: [BookmarkGroupResponseDto],
   })
   async getMyBookmarkGroups(@GetUser() user: User): Promise<BookmarkGroup[]> {
     return this.bookmarkService.getBookmarkGroupsByUser(user.id);
@@ -56,7 +58,10 @@ export class BookmarkController {
     summary: '북마크 그룹 조회',
     description: '북마크 그룹을 조회하는 API입니다.',
   })
-  @ApiOkResponse({ description: '북마크 그룹 조회 성공', type: BookmarkGroup })
+  @ApiOkResponse({
+    description: '북마크 그룹 조회 성공',
+    type: BookmarkGroupDetailResponseDto,
+  })
   async getBookmarkGroup(@Param('id') id: number): Promise<BookmarkGroup> {
     return this.bookmarkService.getBookmarkGroupById(id);
   }
@@ -139,7 +144,7 @@ export class BookmarkController {
   @ApiOperation({
     summary: '북마크 추가',
     description:
-      '북마크를 추가하는 API입니다. bookmarkGroupId은 옵션입니다. 생략하면 기본 그룹에 추가됩니다.',
+      '북마크를 추가하는 API입니다. groupId은 옵션입니다. 생략하면 기본 그룹에 추가됩니다.',
   })
   @ApiOkResponse({ description: '북마크 추가 성공', type: CommonResponseDto })
   async addBookmark(

@@ -17,5 +17,5 @@ export class CreateBookmarkDto {
   })
   @IsOptional()
   @IsInt()
-  bookmarkGroupId?: number;
+  groupId?: number;
 }

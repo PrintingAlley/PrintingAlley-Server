@@ -37,6 +37,9 @@ export class BookmarkGroup {
   @OneToMany(() => Bookmark, (bookmark) => bookmark.bookmarkGroup)
   bookmarks: Bookmark[];
 
+  @ApiProperty({ description: '북마크 개수', example: 3 })
+  bookmarkCount?: number;
+
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

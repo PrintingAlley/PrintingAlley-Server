@@ -20,10 +20,21 @@ export class BookmarkService {
 
   // 유저의 모든 북마크 그룹 가져오기
   async getBookmarkGroupsByUser(userId: number): Promise<BookmarkGroup[]> {
-    return await this.groupRepository.find({
+    const groups = await this.groupRepository.find({
       where: { user: { id: userId } },
       order: { createdAt: 'DESC' },
+      relations: ['bookmarks'],
     });
+
+    // 각 그룹의 북마크 수를 계산하고 bookmarkCount 필드를 업데이트합니다.
+    for (const group of groups) {
+      group.bookmarkCount = group.bookmarks.length;
+    }
+
+    // 북마크 배열은 필요하지 않으므로 삭제합니다.
+    groups.forEach((group) => delete group.bookmarks);
+
+    return groups;
   }
 
   // 북마크 그룹 ID로 북마크 그룹 가져오기
@@ -125,7 +136,7 @@ export class BookmarkService {
       throw new HttpException('인쇄소 ID가 필요합니다.', 400);
     }
 
-    let groupIdToCheck = data.bookmarkGroupId;
+    let groupIdToCheck = data.groupId;
 
     if (!groupIdToCheck) {
       const defaultGroup = await this.getDefaultGroupForUser(userId);
@@ -153,9 +164,9 @@ export class BookmarkService {
     const bookmark = new Bookmark();
     bookmark.printShop = printShop;
 
-    if (data.bookmarkGroupId) {
+    if (data.groupId) {
       const group = await this.groupRepository.findOneBy({
-        id: data.bookmarkGroupId,
+        id: data.groupId,
       });
       if (!group) {
         throw new HttpException('해당 북마크 그룹을 찾을 수 없습니다.', 400);
