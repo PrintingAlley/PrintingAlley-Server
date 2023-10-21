@@ -7,6 +7,7 @@ import {
   Post,
   Body,
   ValidationPipe,
+  Delete,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
@@ -18,9 +19,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { User } from 'src/entity/user.entity';
 import { SocialLoginDto } from './dto/social-login.dto';
 import { SocialLoginResponseDto } from './dto/social-login-response.dto';
+import { CommonResponseDto } from 'src/common/dto/common-response.dto';
+import { createResponse } from 'src/common/utils/response.helper';
+import { GetUser } from 'src/decorators/user.decorator';
+import { User } from 'src/entity/user.entity';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -58,6 +62,47 @@ export class AuthController {
       message: '성공',
       access_token: jwt,
     };
+  }
+
+  @Post('logout')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiOperation({
+    summary: '로그아웃',
+    description: '로그아웃 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '로그아웃 성공',
+    type: CommonResponseDto,
+  })
+  async logout(@GetUser() user: User): Promise<CommonResponseDto> {
+    console.log(user);
+    // TODO: 로그아웃 처리
+    return createResponse(200, '성공', null);
+  }
+
+  // 회원 탈퇴
+  @Delete('withdrawal')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiOperation({
+    summary: '회원 탈퇴',
+    description: '회원 탈퇴 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '회원 탈퇴 성공',
+    type: CommonResponseDto,
+  })
+  async deleteUser(@GetUser() user: User): Promise<CommonResponseDto> {
+    console.log(user);
+    // TODO: 회원 탈퇴 처리
+    return createResponse(200, '성공', null);
   }
 
   @Get('google')
@@ -141,23 +186,5 @@ export class AuthController {
     const user = await this.userService.findOrCreate(id, provider, name, email);
     const jwt = await this.jwtService.signAsync({ userId: user.id });
     res.redirect(`${process.env.CLIENT_URL}/login?token=${jwt}`);
-  }
-
-  @Get('jwt-test')
-  @UseGuards(AuthGuard('jwt'))
-  @ApiOperation({
-    summary: 'JWT 테스트',
-    description: 'JWT 인증 테스트 API입니다.',
-  })
-  @ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer {JWT 토큰}',
-  })
-  @ApiOkResponse({
-    description: '유저 정보를 반환합니다.',
-    type: User,
-  })
-  jwtAuth(@Req() req) {
-    return req.user;
   }
 }
