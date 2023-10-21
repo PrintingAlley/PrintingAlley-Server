@@ -2,10 +2,11 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import axios from 'axios';
 import * as jwt from 'jsonwebtoken';
 import * as jwkToPem from 'jwk-to-pem';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 @Injectable()
 export class AuthService {
-  constructor() {}
+  constructor(private readonly tokenBlacklistService: TokenBlacklistService) {}
 
   async validateAndRetrieveUser(token: string, provider: string): Promise<any> {
     let userInfo: {
@@ -104,5 +105,9 @@ export class AuthService {
     }
 
     return userInfo;
+  }
+
+  async logout(token: string): Promise<void> {
+    this.tokenBlacklistService.blacklistToken(token);
   }
 }

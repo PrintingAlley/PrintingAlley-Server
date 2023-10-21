@@ -8,6 +8,8 @@ import {
   Body,
   ValidationPipe,
   Delete,
+  Headers,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
@@ -78,9 +80,15 @@ export class AuthController {
     description: '로그아웃 성공',
     type: CommonResponseDto,
   })
-  async logout(@GetUser() user: User): Promise<CommonResponseDto> {
-    console.log(user);
-    // TODO: 로그아웃 처리
+  async logout(
+    @Headers('authorization') authHeader: string,
+  ): Promise<CommonResponseDto> {
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      throw new BadRequestException('Invalid token');
+    }
+    await this.authService.logout(token);
+
     return createResponse(200, '성공', null);
   }
 

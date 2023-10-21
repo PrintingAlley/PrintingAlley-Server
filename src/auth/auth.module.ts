@@ -11,6 +11,7 @@ import { GoogleStrategy } from './google.strategy';
 import { NaverStrategy } from './naver.strategy';
 import { KakaoStrategy } from './kakao.strategy';
 import { ConfigService } from '@nestjs/config';
+import { TokenBlacklistService } from './token-blacklist.service';
 // TODO:: Add Apple Auth Setting
 // import { AppleStrategy } from './apple.strategy';
 
@@ -30,6 +31,7 @@ import { ConfigService } from '@nestjs/config';
   providers: [
     AuthService,
     UserService,
+    TokenBlacklistService,
     JwtStrategy,
     GoogleStrategy,
     NaverStrategy,
