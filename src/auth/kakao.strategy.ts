@@ -12,12 +12,12 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   }
 
   async validate(
-    _accessToken: string,
-    _refreshToken: string,
+    accessToken: string,
+    refreshToken: string,
     profile: any,
     // eslint-disable-next-line @typescript-eslint/ban-types
     done: Function,
   ) {
-    done(null, profile);
+    done(null, { ...profile, accessToken, refreshToken });
   }
 }

@@ -230,13 +230,10 @@ export class AuthController {
   }
 
   private async handleAuthRedirect(req, res) {
-    const { id, provider, displayName, emails } = req.user;
+    const { id, accessToken, provider, displayName, emails } = req.user;
 
     const email = emails && emails[0]?.value ? emails[0].value : '이메일없음';
     const name = displayName || '이름없음';
-
-    // TODO: accessToken을 어떻게 가져올지 고민해보기
-    const accessToken = 'accessToken';
 
     const user = await this.userService.findOrCreate(
       id,

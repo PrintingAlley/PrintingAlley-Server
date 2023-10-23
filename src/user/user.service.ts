@@ -22,7 +22,7 @@ export class UserService {
     });
     if (!user) {
       const userCount = await this.userRepository.count();
-      const name = `${userCount + 1}번째 골목 대장`;
+      const name = `${userCount + 1}번째 골목대장`;
       user = this.userRepository.create({
         socialId,
         accessToken,
