@@ -12,6 +12,7 @@ export class UserService {
 
   async findOrCreate(
     socialId: string,
+    accessToken: string,
     provider: string,
     name: string,
     email: string,
@@ -20,10 +21,28 @@ export class UserService {
       where: { socialId, provider },
     });
     if (!user) {
-      user = this.userRepository.create({ socialId, provider, name, email });
+      user = this.userRepository.create({
+        socialId,
+        accessToken,
+        provider,
+        name,
+        email,
+      });
+      await this.userRepository.save(user);
+    } else {
+      user.accessToken = accessToken;
       await this.userRepository.save(user);
     }
     return user;
+  }
+
+  // 소셜 access token 조회
+  async getSocialAccessToken(userId: number): Promise<string> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['accessToken'],
+    });
+    return user.accessToken;
   }
 
   // ID로 사용자 조회
@@ -35,5 +54,10 @@ export class UserService {
   async updateName(userId: number, name: string): Promise<User> {
     await this.userRepository.update(userId, { name });
     return this.userRepository.findOneBy({ id: userId });
+  }
+
+  // 사용자 삭제
+  async deleteUser(userId: number): Promise<void> {
+    await this.userRepository.delete(userId);
   }
 }

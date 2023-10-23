@@ -10,6 +10,7 @@ import {
   Delete,
   Headers,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
@@ -27,6 +28,7 @@ import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
 import { GetUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entity/user.entity';
+import { VerifyTokenResponseDto } from './dto/verify-token-response.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -49,12 +51,18 @@ export class AuthController {
   async socialLogin(
     @Body(new ValidationPipe()) data: SocialLoginDto,
   ): Promise<SocialLoginResponseDto> {
-    const { id, provider, name, email } =
+    const { id, accessToken, provider, name, email } =
       await this.authService.validateAndRetrieveUser(
         data.access_token,
         data.provider,
       );
-    const user = await this.userService.findOrCreate(id, provider, name, email);
+    const user = await this.userService.findOrCreate(
+      id,
+      accessToken,
+      provider,
+      name,
+      email,
+    );
 
     const payload = { userId: user.id };
     const jwt = await this.jwtService.signAsync(payload);
@@ -92,7 +100,31 @@ export class AuthController {
     return createResponse(200, '성공', null);
   }
 
-  // 회원 탈퇴
+  @Get('verify')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiOperation({
+    summary: '소셜 access Token 검증',
+    description: '소셜 access Token 검증 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '소셜 access Token 검증 성공',
+    type: VerifyTokenResponseDto,
+  })
+  async verifySocialAccessToken(
+    @GetUser() user: User,
+  ): Promise<VerifyTokenResponseDto> {
+    const accessToken = await this.userService.getSocialAccessToken(user.id);
+    const isValid = await this.authService.verifySocialAccessToken(
+      accessToken,
+      user.provider,
+    );
+    return { isValid };
+  }
+
   @Delete('withdrawal')
   @UseGuards(AuthGuard('jwt'))
   @ApiHeader({
@@ -108,9 +140,21 @@ export class AuthController {
     type: CommonResponseDto,
   })
   async deleteUser(@GetUser() user: User): Promise<CommonResponseDto> {
-    console.log(user);
-    // TODO: 회원 탈퇴 처리
-    return createResponse(200, '성공', null);
+    console.log('user.accessToken', user.accessToken);
+    try {
+      // Step 1: 소셜 계정 연동 해제
+      const accessToken = await this.userService.getSocialAccessToken(user.id);
+      await this.authService.unlinkUser(accessToken, user.provider);
+
+      // Step 2: 사용자 삭제
+      await this.userService.deleteUser(user.id);
+
+      return createResponse(200, '성공', null);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        '회원 탈퇴 실패: ' + error.message,
+      );
+    }
   }
 
   @Get('google')
@@ -191,7 +235,16 @@ export class AuthController {
     const email = emails && emails[0]?.value ? emails[0].value : '이메일없음';
     const name = displayName || '이름없음';
 
-    const user = await this.userService.findOrCreate(id, provider, name, email);
+    // TODO: accessToken을 어떻게 가져올지 고민해보기
+    const accessToken = 'accessToken';
+
+    const user = await this.userService.findOrCreate(
+      id,
+      accessToken,
+      provider,
+      name,
+      email,
+    );
     const jwt = await this.jwtService.signAsync({ userId: user.id });
     res.redirect(`${process.env.CLIENT_URL}/login?token=${jwt}`);
   }

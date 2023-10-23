@@ -21,6 +21,12 @@ export class User {
   })
   socialId: string;
 
+  @Column({
+    name: 'access_token',
+    select: false,
+  })
+  accessToken: string;
+
   @ApiProperty({
     description: '소셜 로그인 제공업체',
     required: true,
@@ -42,8 +48,8 @@ export class User {
     required: false,
     example: 'abc@gmail.com',
   })
-  @Column()
-  email: string;
+  @Column({ nullable: true })
+  email: string | null;
 
   @ApiProperty({ description: '북마크 그룹', type: [BookmarkGroup] })
   @OneToMany(() => BookmarkGroup, (group) => group.user)
