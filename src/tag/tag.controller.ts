@@ -13,11 +13,38 @@ import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
+import { TagResponseDTO, TagsResponseDTO } from './dto/tag-response.dto';
 
 @ApiTags('Tag')
 @Controller('tag')
 export class TagController {
   constructor(private readonly tagService: TagService) {}
+
+  @Get()
+  @ApiOperation({
+    summary: '전체 태그 계층 구조 조회',
+    description: '전체 태그 계층 구조를 조회하는 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '전체 태그 계층 구조를 성공적으로 가져왔습니다.',
+    type: TagsResponseDTO,
+  })
+  async getTags(): Promise<Tag[]> {
+    return this.tagService.getTags();
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'ID로 해당 태그 계층 구조 조회',
+    description: 'ID로 해당 태그 계층 구조를 조회하는 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '태그 계층 구조를 성공적으로 가져왔습니다.',
+    type: TagResponseDTO,
+  })
+  async getTag(@Param('id') id: number): Promise<Tag> {
+    return this.tagService.getTag(id);
+  }
 
   @Post()
   @ApiOperation({
@@ -34,32 +61,6 @@ export class TagController {
   ): Promise<CommonResponseDto> {
     const tag = await this.tagService.createTag(createTagDto);
     return createResponse(200, '성공', tag.id);
-  }
-
-  @Get(':id/hierarchy')
-  @ApiOperation({
-    summary: '태그 계층 구조 조회',
-    description: '태그 계층 구조를 조회하는 API입니다.',
-  })
-  @ApiOkResponse({
-    description: '태그 계층 구조를 성공적으로 가져왔습니다.',
-    type: Tag,
-  })
-  async getTagHierarchy(@Param('id') id: number): Promise<Tag> {
-    return this.tagService.getTagHierarchy(id);
-  }
-
-  @Get('/top-level')
-  @ApiOperation({
-    summary: '최상위 태그 가져오기',
-    description: '최상위 태그를 가져오는 API입니다.',
-  })
-  @ApiOkResponse({
-    description: '최상위 태그를 성공적으로 가져왔습니다.',
-    type: [Tag],
-  })
-  async getTopLevelTags(): Promise<Tag[]> {
-    return this.tagService.getTopLevelTags();
   }
 
   @Delete(':id')

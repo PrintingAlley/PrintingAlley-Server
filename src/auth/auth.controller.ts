@@ -140,7 +140,6 @@ export class AuthController {
     type: CommonResponseDto,
   })
   async deleteUser(@GetUser() user: User): Promise<CommonResponseDto> {
-    console.log('user.accessToken', user.accessToken);
     try {
       // Step 1: 소셜 계정 연동 해제
       const accessToken = await this.userService.getSocialAccessToken(user.id);
