@@ -72,7 +72,7 @@ export class PrintShop {
     required: true,
     example: '인쇄소 소개',
   })
-  @Column()
+  @Column({ type: 'text' })
   introduction: string;
 
   @ApiProperty({

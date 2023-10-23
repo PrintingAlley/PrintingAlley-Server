@@ -16,7 +16,6 @@ export class User {
 
   @Column({
     name: 'social_id',
-    unique: true,
     select: false,
   })
   socialId: string;

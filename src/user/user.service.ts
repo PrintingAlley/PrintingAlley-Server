@@ -14,13 +14,15 @@ export class UserService {
     socialId: string,
     accessToken: string,
     provider: string,
-    name: string,
+    _name: string,
     email: string,
   ): Promise<User> {
     let user = await this.userRepository.findOne({
       where: { socialId, provider },
     });
     if (!user) {
+      const userCount = await this.userRepository.count();
+      const name = `${userCount + 1}번째 골목 대장`;
       user = this.userRepository.create({
         socialId,
         accessToken,
