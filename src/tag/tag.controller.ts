@@ -14,7 +14,11 @@ import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
-import { TagResponseDTO, TagsResponseDTO } from './dto/tag-response.dto';
+import {
+  TagResponseDTOForSwagger,
+  TagsResponseDTO,
+  TagsResponseDTOForSwagger,
+} from './dto/tag-response.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 
 @ApiTags('Tag')
@@ -29,10 +33,11 @@ export class TagController {
   })
   @ApiOkResponse({
     description: '전체 태그 계층 구조를 성공적으로 가져왔습니다.',
-    type: TagsResponseDTO,
+    type: TagsResponseDTOForSwagger,
   })
-  async getTags(): Promise<Tag[]> {
-    return this.tagService.getTags();
+  async getTags(): Promise<TagsResponseDTO> {
+    const hierarchies = await this.tagService.getTags();
+    return { hierarchies };
   }
 
   @Get(':id')
@@ -42,7 +47,7 @@ export class TagController {
   })
   @ApiOkResponse({
     description: '태그 계층 구조를 성공적으로 가져왔습니다.',
-    type: TagResponseDTO,
+    type: TagResponseDTOForSwagger,
   })
   async getTag(@Param('id') id: number): Promise<Tag> {
     return this.tagService.getTag(id);
