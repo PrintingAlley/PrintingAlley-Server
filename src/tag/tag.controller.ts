@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
@@ -14,6 +15,7 @@ import { CreateTagDto } from './dto/create-tag.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
 import { TagResponseDTO, TagsResponseDTO } from './dto/tag-response.dto';
+import { UpdateTagDto } from './dto/update-tag.dto';
 
 @ApiTags('Tag')
 @Controller('tag')
@@ -61,6 +63,24 @@ export class TagController {
   ): Promise<CommonResponseDto> {
     const tag = await this.tagService.createTag(createTagDto);
     return createResponse(200, '성공', tag.id);
+  }
+
+  @Put(':id')
+  @ApiOperation({
+    summary: '태그 수정',
+    description: '태그를 수정하는 API입니다. 모든 필드는 옵션입니다.',
+  })
+  @ApiOkResponse({
+    description: '태그가 성공적으로 수정되었습니다.',
+    type: CommonResponseDto,
+  })
+  async updateTag(
+    @Param('id') id: number,
+    @Body(new ValidationPipe()) updateTagDto: UpdateTagDto,
+  ): Promise<CommonResponseDto> {
+    await this.tagService.updateTag(id, updateTagDto);
+
+    return createResponse(200, '성공', id);
   }
 
   @Delete(':id')
