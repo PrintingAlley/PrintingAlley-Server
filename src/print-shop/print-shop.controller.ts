@@ -21,7 +21,11 @@ import {
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { ParseOptionalArrayPipe } from './pipes/parse-optional-array.pipe';
-import { PrintShopResponseDto } from './dto/print-shop-response.dto';
+import {
+  PrintShopResponseDtoForSwagger,
+  PrintShopsResponseDto,
+  PrintShopsResponseDtoForSwagger,
+} from './dto/print-shop-response.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
 
@@ -37,7 +41,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 목록 조회 성공',
-    type: PrintShopResponseDto,
+    type: PrintShopsResponseDtoForSwagger,
   })
   @ApiQuery({
     name: 'page',
@@ -66,7 +70,7 @@ export class PrintShopController {
     @Query('size') size: number = 20,
     @Query('searchText') searchText?: string,
     @Query('tagIds', new ParseOptionalArrayPipe()) tagIds?: number[],
-  ): Promise<PrintShopResponseDto> {
+  ): Promise<PrintShopsResponseDto> {
     return await this.printShopService.findAll(page, size, searchText, tagIds);
   }
 
@@ -82,7 +86,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 조회 성공',
-    type: PrintShop,
+    type: PrintShopResponseDtoForSwagger,
   })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<PrintShop> {
     return await this.printShopService.findOne(id);

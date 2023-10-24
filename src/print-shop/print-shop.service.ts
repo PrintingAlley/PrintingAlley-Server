@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { Tag } from 'src/entity/tag.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
-import { PrintShopResponseDto } from './dto/print-shop-response.dto';
+import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
 
 @Injectable()
 export class PrintShopService {
@@ -23,7 +23,7 @@ export class PrintShopService {
     size: number,
     searchText?: string,
     tagIds?: number[],
-  ): Promise<PrintShopResponseDto> {
+  ): Promise<PrintShopsResponseDto> {
     if (page < 1)
       throw new HttpException('Page should be greater than 0.', 400);
 
@@ -79,7 +79,7 @@ export class PrintShopService {
     page: number,
     size: number,
     searchText?: string,
-  ): Promise<PrintShopResponseDto> {
+  ): Promise<PrintShopsResponseDto> {
     const queryBuilder =
       this.printShopRepository.createQueryBuilder('printShop');
 
@@ -105,7 +105,7 @@ export class PrintShopService {
     size: number,
     tagIds: number[],
     searchText?: string,
-  ): Promise<PrintShopResponseDto> {
+  ): Promise<PrintShopsResponseDto> {
     await this.findTagsByIds(tagIds);
 
     const queryBuilder = this.printShopRepository
