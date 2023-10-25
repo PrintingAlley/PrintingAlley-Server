@@ -6,7 +6,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
-  IsUrl,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -52,12 +51,11 @@ export class CreatePrintShopDto {
 
   @ApiProperty({
     description: '홈페이지',
-    required: true,
+    required: false,
     example: 'https://www.printshop.com',
   })
-  @IsNotEmpty()
-  @IsUrl()
-  homepage: string;
+  @IsOptional()
+  homepage?: string;
 
   @ApiProperty({
     description: '대표자명',
@@ -81,19 +79,19 @@ export class CreatePrintShopDto {
 
   @ApiProperty({
     description: '프린트샵 로고 이미지',
-    required: true,
+    required: false,
     example: 'https://www.printshop.com',
   })
-  @IsNotEmpty()
-  logoImage: string;
+  @IsOptional()
+  logoImage?: string;
 
   @ApiProperty({
     description: '프린트샵 배경 이미지',
-    required: true,
+    required: false,
     example: 'https://www.printshop.com',
   })
-  @IsNotEmpty()
-  backgroundImage: string;
+  @IsOptional()
+  backgroundImage?: string;
 
   @ApiProperty({
     description: '위도',

@@ -53,11 +53,11 @@ export class PrintShop {
 
   @ApiProperty({
     description: '홈페이지',
-    required: true,
+    required: false,
     example: 'https://www.printshop.com',
   })
-  @Column()
-  homepage: string;
+  @Column({ nullable: true })
+  homepage: string | null;
 
   @ApiProperty({
     description: '대표자명',
@@ -77,19 +77,19 @@ export class PrintShop {
 
   @ApiProperty({
     description: '인쇄소 로고 이미지',
-    required: true,
+    required: false,
     example: 'https://www.printshop.com',
   })
-  @Column()
-  logoImage: string;
+  @Column({ nullable: true })
+  logoImage?: string;
 
   @ApiProperty({
     description: '인쇄소 배경 이미지',
-    required: true,
+    required: false,
     example: 'https://www.printshop.com',
   })
-  @Column()
-  backgroundImage: string;
+  @Column({ nullable: true })
+  backgroundImage?: string;
 
   @ApiProperty({
     description: '위도',
