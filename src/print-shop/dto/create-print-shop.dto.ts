@@ -4,7 +4,6 @@ import {
   IsEmail,
   IsInt,
   IsNotEmpty,
-  IsNumber,
   IsOptional,
   IsPhoneNumber,
   IsUrl,
@@ -86,7 +85,6 @@ export class CreatePrintShopDto {
     example: 'https://www.printshop.com',
   })
   @IsNotEmpty()
-  @IsUrl()
   logoImage: string;
 
   @ApiProperty({
@@ -95,7 +93,6 @@ export class CreatePrintShopDto {
     example: 'https://www.printshop.com',
   })
   @IsNotEmpty()
-  @IsUrl()
   backgroundImage: string;
 
   @ApiProperty({
@@ -104,7 +101,6 @@ export class CreatePrintShopDto {
     example: 37.123456,
   })
   @IsNotEmpty()
-  @IsNumber()
   latitude: string;
 
   @ApiProperty({
@@ -113,7 +109,6 @@ export class CreatePrintShopDto {
     example: 127.123456,
   })
   @IsNotEmpty()
-  @IsNumber()
   longitude: string;
 
   @ApiProperty({
