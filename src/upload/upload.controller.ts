@@ -8,6 +8,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudflareService } from './cloudflare.service';
 import {
+  ApiBody,
+  ApiConsumes,
   ApiHeader,
   ApiOkResponse,
   ApiOperation,
@@ -32,9 +34,17 @@ export class UploadController {
     summary: '파일 업로드',
     description: '파일을 업로드하는 API입니다.',
   })
-  @ApiHeader({
-    name: 'Content-Type',
-    description: 'multipart/form-data',
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
   })
   @ApiOkResponse({
     description: '파일 업로드 성공',
