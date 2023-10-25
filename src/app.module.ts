@@ -8,6 +8,7 @@ import { LoggingMiddleware } from './middleware/logging.middleware';
 import { PrintShopModule } from './print-shop/print-shop.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { TagModule } from './tag/tag.module';
+import { UploadModule } from './upload/upload.module';
 import ConfigModule from './config';
 
 @Module({
@@ -33,6 +34,7 @@ import ConfigModule from './config';
     BookmarkModule,
     TagModule,
     AuthModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
