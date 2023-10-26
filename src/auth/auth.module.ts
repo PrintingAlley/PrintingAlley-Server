@@ -12,12 +12,14 @@ import { NaverStrategy } from './naver.strategy';
 import { KakaoStrategy } from './kakao.strategy';
 import { ConfigService } from '@nestjs/config';
 import { TokenBlacklistService } from './token-blacklist.service';
+import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
+import { Bookmark } from 'src/entity/bookmark.entity';
 // TODO:: Add Apple Auth Setting
 // import { AppleStrategy } from './apple.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, BookmarkGroup, Bookmark]),
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],

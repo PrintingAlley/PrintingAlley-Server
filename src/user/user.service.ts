@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
+import { Bookmark } from 'src/entity/bookmark.entity';
 import { User } from 'src/entity/user.entity';
 import { Repository } from 'typeorm';
 
@@ -8,6 +10,10 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Bookmark)
+    private bookmarkRepository: Repository<Bookmark>,
+    @InjectRepository(BookmarkGroup)
+    private bookmarkGroupRepository: Repository<BookmarkGroup>,
   ) {}
 
   async findOrCreate(
@@ -60,6 +66,16 @@ export class UserService {
 
   // 사용자 삭제
   async deleteUser(userId: number): Promise<void> {
+    const userBookmarkGroups = await this.bookmarkGroupRepository.find({
+      where: { user: { id: userId } },
+    });
+
+    for (const group of userBookmarkGroups) {
+      await this.bookmarkRepository.delete({ bookmarkGroup: { id: group.id } });
+    }
+
+    await this.bookmarkGroupRepository.remove(userBookmarkGroups);
+
     await this.userRepository.delete(userId);
   }
 }
