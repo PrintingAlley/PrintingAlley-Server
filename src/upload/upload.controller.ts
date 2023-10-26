@@ -53,7 +53,7 @@ export class UploadController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     const uniqueFileName = `${uuidv4()}_${file.originalname}`;
-    const url = await this.cloudflareService.uploadFile(
+    const url = await this.cloudflareService.resizeAndUploadFile(
       file.buffer,
       uniqueFileName,
     );

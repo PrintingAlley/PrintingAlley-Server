@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
+import * as sharp from 'sharp';
+import { DEFAULT_WIDTH } from 'src/config/constants';
 
 @Injectable()
 export class CloudflareService {
@@ -16,18 +18,52 @@ export class CloudflareService {
     });
   }
 
-  async uploadFile(fileBuffer: Buffer, fileName: string): Promise<string> {
-    await this.s3
-      .upload({
-        Bucket: this.configService.get('R2_BUCKET_NAME'),
-        Key: fileName,
-        Body: fileBuffer,
-      })
-      .promise();
+  async resizeAndUploadFile(
+    fileBuffer: Buffer,
+    fileName: string,
+    width: number = DEFAULT_WIDTH,
+    height?: number,
+  ): Promise<string> {
+    const resizedBuffer = await this.resizeImage(fileBuffer, width, height);
+    await this.uploadToR2(resizedBuffer, fileName);
+    return this.buildFilePath(fileName);
+  }
 
+  private async resizeImage(
+    fileBuffer: Buffer,
+    width: number,
+    height?: number,
+  ): Promise<Buffer> {
+    try {
+      return await sharp(fileBuffer)
+        .resize(width, height || undefined)
+        .toBuffer();
+    } catch (error) {
+      console.error('Failed to resize image:', error);
+      throw new NotFoundException('Failed to resize image');
+    }
+  }
+
+  private async uploadToR2(
+    fileBuffer: Buffer,
+    fileName: string,
+  ): Promise<void> {
+    try {
+      await this.s3
+        .upload({
+          Bucket: this.configService.get('R2_BUCKET_NAME'),
+          Key: fileName,
+          Body: fileBuffer,
+        })
+        .promise();
+    } catch (error) {
+      console.error('Failed to upload to R2:', error);
+      throw new NotFoundException('Failed to upload to R2');
+    }
+  }
+
+  private buildFilePath(fileName: string): string {
     const publicDomain = this.configService.get('R2_PUBLIC_DOMAIN');
-    const filePath = `${publicDomain}/${fileName}`;
-
-    return filePath;
+    return `${publicDomain}/${fileName}`;
   }
 }
