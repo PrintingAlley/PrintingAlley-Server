@@ -15,6 +15,7 @@ import {
   ApiOkResponse,
   ApiQuery,
   ApiParam,
+  ApiTags,
 } from '@nestjs/swagger';
 import { ParseOptionalArrayPipe } from './pipes/parse-optional-array.pipe';
 import { Product } from 'src/entity/product.entity';
@@ -23,8 +24,11 @@ import { ProductsResponseDto } from './dto/product-response.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
+import { ProductsResponseSwaggerDto } from './dto/product-list.swagger.dto';
+import { ProductDetailSwaggerDto } from './dto/product-detail.swagger.dto';
 
 @Controller('product')
+@ApiTags('Product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
@@ -35,7 +39,7 @@ export class ProductController {
   })
   @ApiOkResponse({
     description: '제품 목록 조회 성공',
-    // type: ProductsResponseDtoForSwagger,
+    type: ProductsResponseSwaggerDto,
   })
   @ApiQuery({
     name: 'page',
@@ -80,7 +84,7 @@ export class ProductController {
   })
   @ApiOkResponse({
     description: '제품 조회 성공',
-    // type: ProductDetailSwaggerDto,
+    type: ProductDetailSwaggerDto,
   })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Product> {
     return await this.productService.findOne(id);
