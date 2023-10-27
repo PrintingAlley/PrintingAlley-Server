@@ -44,10 +44,19 @@ export class ProductService {
   }
 
   async findOne(id: number): Promise<Product> {
-    const product = await this.productRepository.findOneBy({ id });
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['category', 'printShop', 'tags'],
+    });
     if (!product) {
       throw new NotFoundException('제품을 찾을 수 없습니다.');
     }
+
+    const bookmarkCount = await this.bookmarkRepository.count({
+      where: { product: { id } },
+    });
+    product.bookmarkCount = bookmarkCount;
+
     return product;
   }
 
