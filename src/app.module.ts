@@ -9,6 +9,7 @@ import { PrintShopModule } from './print-shop/print-shop.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { TagModule } from './tag/tag.module';
 import { UploadModule } from './upload/upload.module';
+import { ProductModule } from './product/product.module';
 import ConfigModule from './config';
 
 @Module({
@@ -35,6 +36,7 @@ import ConfigModule from './config';
     TagModule,
     AuthModule,
     UploadModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

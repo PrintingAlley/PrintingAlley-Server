@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProductCategory } from './category.entity';
+import { Category } from './category.entity';
 import { Tag } from './tag.entity';
 import { PrintShop } from './print-shop.entity';
 import { ProductReview } from './product-review.entity';
@@ -41,6 +41,14 @@ export class Product {
   priceInfo?: string;
 
   @ApiProperty({
+    description: '제품 소개',
+    required: true,
+    example: '간단한 제품 소개',
+  })
+  @Column({ type: 'text' })
+  introduction: string;
+
+  @ApiProperty({
     description: '제품 설명',
     required: true,
     example: '제품 설명',
@@ -51,26 +59,26 @@ export class Product {
   @ApiProperty({
     description: '제품 메인 이미지',
     required: true,
-    example: 'https://www.printshop.com',
+    example: 'https://www.printshop.com/image1.jpg',
   })
   @Column()
   mainImage: string;
 
   @ApiProperty({
     description: '제품 이미지들',
-    required: true,
-    example: ['https://www.printshop.com'],
+    required: false,
+    example: ['https://www.printshop.com/image1.jpg'],
   })
-  @Column({ type: 'text', array: true })
-  images: string[];
+  @Column({ type: 'text', array: true, nullable: true })
+  images?: string[];
 
   @ApiProperty({
     description: '제품 카테고리',
     required: true,
     example: '명함',
   })
-  @ManyToOne(() => ProductCategory, (category) => category.products)
-  category: ProductCategory;
+  @ManyToOne(() => Category, (category) => category.products)
+  category: Category;
 
   @ApiProperty({
     description: '제품 제작 인쇄사',
@@ -80,7 +88,9 @@ export class Product {
   printShop: PrintShop;
 
   @ApiProperty({ description: '리뷰 목록', type: () => [ProductReview] })
-  @OneToMany(() => ProductReview, (review) => review.product)
+  @OneToMany(() => ProductReview, (review) => review.product, {
+    onDelete: 'CASCADE',
+  })
   reviews: ProductReview[];
 
   @ApiProperty({ description: '제품과 연관된 태그들', type: () => [Tag] })

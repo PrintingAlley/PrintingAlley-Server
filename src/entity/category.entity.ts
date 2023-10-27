@@ -10,7 +10,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Product } from './product.entity';
 
 @Entity()
-export class ProductCategory {
+export class Category {
   @ApiProperty({ description: '카테고리 ID', example: 1 })
   @PrimaryGeneratedColumn()
   id: number;

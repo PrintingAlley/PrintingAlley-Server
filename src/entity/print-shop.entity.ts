@@ -78,7 +78,7 @@ export class PrintShop {
   @ApiProperty({
     description: '인쇄사 로고 이미지',
     required: false,
-    example: 'https://www.printshop.com',
+    example: 'https://www.printshop.com/image1.jpg',
   })
   @Column({ nullable: true })
   logoImage?: string;
@@ -86,7 +86,7 @@ export class PrintShop {
   @ApiProperty({
     description: '인쇄사 배경 이미지',
     required: false,
-    example: 'https://www.printshop.com',
+    example: 'https://www.printshop.com/image1.jpg',
   })
   @Column({ nullable: true })
   backgroundImage?: string;

@@ -3,13 +3,13 @@ import { PrintShop } from 'src/entity/print-shop.entity';
 
 export class PrintShopsResponseDto {
   @ApiProperty({
-    description: '인쇄소 목록',
+    description: '인쇄사 목록',
     type: [PrintShop],
   })
   printShops: PrintShop[];
 
   @ApiProperty({
-    description: '총 인쇄소 수',
+    description: '총 인쇄사 수',
     type: Number,
     example: 1,
   })
