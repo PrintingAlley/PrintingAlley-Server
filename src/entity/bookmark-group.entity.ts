@@ -24,7 +24,7 @@ export class BookmarkGroup {
   @ApiProperty({
     description: '그룹명',
     required: true,
-    example: '내 주변 인쇄소',
+    example: '명함 북마크',
   })
   @Column()
   name: string;

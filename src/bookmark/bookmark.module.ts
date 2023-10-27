@@ -4,10 +4,10 @@ import { BookmarkService } from './bookmark.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Bookmark } from 'src/entity/bookmark.entity';
 import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
-import { PrintShop } from 'src/entity/print-shop.entity';
+import { Product } from 'src/entity/product.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Bookmark, BookmarkGroup, PrintShop])],
+  imports: [TypeOrmModule.forFeature([Bookmark, BookmarkGroup, Product])],
   controllers: [BookmarkController],
   providers: [BookmarkService],
 })

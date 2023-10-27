@@ -7,8 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { BookmarkGroup } from './bookmark-group.entity';
-import { PrintShop } from './print-shop.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Product } from './product.entity';
 
 @Entity()
 export class Bookmark {
@@ -20,12 +20,12 @@ export class Bookmark {
   id: number;
 
   @ApiProperty({
-    description: '인쇄소',
-    type: () => PrintShop,
+    description: '제품',
+    type: () => Product,
   })
-  @ManyToOne(() => PrintShop)
-  @JoinColumn({ name: 'print_shop_id' })
-  printShop: PrintShop;
+  @ManyToOne(() => Product)
+  @JoinColumn({ name: 'product_id' })
+  product: Product;
 
   @ApiProperty({
     description: '북마크 그룹',

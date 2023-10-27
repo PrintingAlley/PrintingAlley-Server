@@ -1,21 +1,25 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
 import { Repository } from 'typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
-import { PrintShop } from 'src/entity/print-shop.entity';
 import { CreateBookmarkGroupDto } from './dto/create-bookmark-group.dto';
+import { Product } from 'src/entity/product.entity';
 
 @Injectable()
 export class BookmarkService {
   constructor(
     @InjectRepository(Bookmark)
     private readonly bookmarkRepository: Repository<Bookmark>,
-    @InjectRepository(PrintShop)
-    private readonly printShopRepository: Repository<PrintShop>,
     @InjectRepository(BookmarkGroup)
     private readonly groupRepository: Repository<BookmarkGroup>,
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
   ) {}
 
   // 유저의 모든 북마크 그룹 가져오기
@@ -41,11 +45,7 @@ export class BookmarkService {
   async getBookmarkGroupById(groupId: number): Promise<BookmarkGroup> {
     const group = await this.groupRepository.findOne({
       where: { id: groupId },
-      relations: [
-        'bookmarks',
-        'bookmarks.printShop',
-        'bookmarks.printShop.tags',
-      ],
+      relations: ['bookmarks', 'bookmarks.product', 'bookmarks.product.tags'],
     });
 
     if (!group) {
@@ -67,7 +67,7 @@ export class BookmarkService {
       where: { name: data.name, user: { id: userId } },
     });
     if (existing) {
-      throw new HttpException('이미 같은 이름의 그룹이 있습니다.', 400);
+      throw new BadRequestException('이미 같은 이름의 그룹이 있습니다.');
     }
 
     const group = this.groupRepository.create({
@@ -132,8 +132,8 @@ export class BookmarkService {
     data: CreateBookmarkDto,
     userId: number,
   ): Promise<Bookmark> {
-    if (!data.printShopId) {
-      throw new HttpException('인쇄소 ID가 필요합니다.', 400);
+    if (!data.productId) {
+      throw new BadRequestException('제품 ID가 필요합니다.');
     }
 
     let groupIdToCheck = data.groupId;
@@ -147,29 +147,33 @@ export class BookmarkService {
     const existing = await this.bookmarkRepository.findOne({
       where: {
         bookmarkGroup: { id: groupIdToCheck },
-        printShop: { id: data.printShopId },
+        product: { id: data.productId },
       },
     });
     if (existing) {
-      throw new HttpException('이미 북마크가 추가되어 있습니다.', 400);
+      throw new BadRequestException('이미 북마크가 추가되어 있습니다.');
     }
 
-    const printShop = await this.printShopRepository.findOneBy({
-      id: data.printShopId,
+    const product = await this.productRepository.findOneBy({
+      id: data.productId,
     });
-    if (!printShop) {
-      throw new HttpException('해당 인쇄소를 찾을 수 없습니다.', 400);
+    if (!product) {
+      throw new NotFoundException(
+        `제품 ID ${data.productId}를 찾을 수 없습니다.`,
+      );
     }
 
     const bookmark = new Bookmark();
-    bookmark.printShop = printShop;
+    bookmark.product = product;
 
     if (data.groupId) {
       const group = await this.groupRepository.findOneBy({
         id: data.groupId,
       });
       if (!group) {
-        throw new HttpException('해당 북마크 그룹을 찾을 수 없습니다.', 400);
+        throw new NotFoundException(
+          `북마크 그룹 ID ${data.groupId}를 찾을 수 없습니다.`,
+        );
       }
       bookmark.bookmarkGroup = group;
     } else {
@@ -186,15 +190,17 @@ export class BookmarkService {
   ): Promise<Bookmark> {
     const bookmark = await this.bookmarkRepository.findOne({
       where: { id: bookmarkId },
-      relations: ['printShop'],
+      relations: ['product'],
     });
     const group = await this.groupRepository.findOneBy({ id: groupId });
     if (!bookmark || !group) {
-      throw new HttpException('북마크 또는 그룹을 찾을 수 없습니다.', 400);
+      throw new NotFoundException(
+        `북마크 ID ${bookmarkId} 또는 그룹 ID ${groupId}를 찾을 수 없습니다.`,
+      );
     }
 
     await this.ensureGroupNotConnected(bookmarkId, groupId);
-    await this.ensurePrintShopNotConnected(bookmark.printShop.id, groupId);
+    await this.ensureProductNotConnected(bookmark.product.id, groupId);
 
     bookmark.bookmarkGroup = group;
     return await this.bookmarkRepository.save(bookmark);
@@ -241,22 +247,19 @@ export class BookmarkService {
       where: { bookmarkGroup: { id: groupId }, id: bookmarkId },
     });
     if (existing) {
-      throw new HttpException('이미 같은 그룹에 연결되어 있습니다.', 400);
+      throw new BadRequestException('이미 같은 그룹에 연결되어 있습니다.');
     }
   }
 
-  private async ensurePrintShopNotConnected(
-    printShopId: number,
+  private async ensureProductNotConnected(
+    productId: number,
     groupId: number,
   ): Promise<void> {
-    const existingPrintShop = await this.bookmarkRepository.findOne({
-      where: { bookmarkGroup: { id: groupId }, printShop: { id: printShopId } },
+    const existingProduct = await this.bookmarkRepository.findOne({
+      where: { bookmarkGroup: { id: groupId }, product: { id: productId } },
     });
-    if (existingPrintShop) {
-      throw new HttpException(
-        '이미 해당 그룹에 동일한 인쇄소가 있습니다.',
-        400,
-      );
+    if (existingProduct) {
+      throw new BadRequestException('이미 해당 그룹에 동일한 제품이 있습니다.');
     }
   }
 }

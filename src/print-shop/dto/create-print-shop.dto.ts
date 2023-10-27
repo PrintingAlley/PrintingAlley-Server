@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsArray,
   IsEmail,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
@@ -18,7 +16,7 @@ export class CreatePrintShopDto {
   })
   @IsNotEmpty()
   @MinLength(2)
-  @MaxLength(20)
+  @MaxLength(50)
   name: string;
 
   @ApiProperty({
@@ -68,9 +66,9 @@ export class CreatePrintShopDto {
   representative: string;
 
   @ApiProperty({
-    description: '프린트샵 소개',
+    description: '인쇄사 소개',
     required: true,
-    example: '프린트샵 소개',
+    example: '인쇄사 소개',
   })
   @IsNotEmpty()
   @MinLength(2)
@@ -78,7 +76,7 @@ export class CreatePrintShopDto {
   introduction: string;
 
   @ApiProperty({
-    description: '프린트샵 로고 이미지',
+    description: '인쇄사 로고 이미지',
     required: false,
     example: 'https://www.printshop.com',
   })
@@ -86,7 +84,7 @@ export class CreatePrintShopDto {
   logoImage?: string;
 
   @ApiProperty({
-    description: '프린트샵 배경 이미지',
+    description: '인쇄사 배경 이미지',
     required: false,
     example: 'https://www.printshop.com',
   })
@@ -108,14 +106,4 @@ export class CreatePrintShopDto {
   })
   @IsNotEmpty()
   longitude: string;
-
-  @ApiProperty({
-    description: '태그 ID 목록',
-    required: false,
-    type: [Number],
-  })
-  @IsOptional()
-  @IsArray()
-  @IsInt({ each: true })
-  tagIds?: number[];
 }

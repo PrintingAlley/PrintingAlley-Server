@@ -3,13 +3,13 @@ import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateBookmarkDto {
   @ApiProperty({
-    description: '인쇄소 ID',
+    description: '제품 ID',
     required: true,
     example: 1,
   })
   @IsNotEmpty()
   @IsInt()
-  printShopId: number;
+  productId: number;
 
   @ApiProperty({
     description: '북마크 그룹 ID, 없으면 기본 그룹으로 지정',

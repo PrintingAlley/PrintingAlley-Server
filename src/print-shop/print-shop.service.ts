@@ -1,141 +1,99 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { Repository } from 'typeorm';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
-import { Tag } from 'src/entity/tag.entity';
-import { Bookmark } from 'src/entity/bookmark.entity';
 import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
+
+type FindAllParams = {
+  page: number;
+  size: number;
+  searchText?: string;
+};
 
 @Injectable()
 export class PrintShopService {
   constructor(
     @InjectRepository(PrintShop)
     private readonly printShopRepository: Repository<PrintShop>,
-    @InjectRepository(Tag)
-    private readonly tagRepository: Repository<Tag>,
-    @InjectRepository(Bookmark)
-    private readonly bookmarkRepository: Repository<Bookmark>,
   ) {}
 
   async findAll(
     page: number,
     size: number,
     searchText?: string,
-    tagIds?: number[],
   ): Promise<PrintShopsResponseDto> {
-    if (page < 1)
-      throw new HttpException('Page should be greater than 0.', 400);
+    if (page < 1) {
+      throw new NotFoundException('page는 1보다 커야 합니다.');
+    }
 
-    return tagIds && tagIds.length
-      ? await this.getPrintShopsByTags(page, size, tagIds, searchText)
-      : await this.findAllPrintShops(page, size, searchText);
+    return this.findAllPrintShops({ page, size, searchText });
   }
 
   async findOne(id: number): Promise<PrintShop> {
-    return this.printShopRepository.findOne({
+    const printShop = await this.printShopRepository.findOne({
       where: { id },
-      relations: ['tags'],
+      relations: ['products', 'products.category', 'reviews'],
     });
+    if (!printShop) {
+      throw new NotFoundException(`인쇄사 ID ${id}를 찾을 수 없습니다.`);
+    }
+    return printShop;
   }
 
-  async create(printShopData: CreatePrintShopDto): Promise<PrintShop> {
-    const { tagIds, ...restData } = printShopData;
-
-    const printShop = this.printShopRepository.create(restData);
-
-    if (tagIds && tagIds.length) {
-      const tags = await this.findTagsByIds(tagIds);
-      printShop.tags = tags;
-    }
-
+  async create(createPrintShopDto: CreatePrintShopDto): Promise<PrintShop> {
+    const printShop = this.printShopRepository.create(createPrintShopDto);
     return this.printShopRepository.save(printShop);
   }
 
   async update(id: number, updateData: CreatePrintShopDto): Promise<PrintShop> {
-    const { tagIds, ...restData } = updateData;
-
-    await this.printShopRepository.update(id, restData);
-    const printShop = await this.findOne(id);
-
-    if (tagIds !== undefined) {
-      printShop.tags = tagIds.length ? await this.findTagsByIds(tagIds) : [];
-      await this.printShopRepository.save(printShop);
+    await this.printShopRepository.update(id, updateData);
+    const updatedPrintShop = await this.printShopRepository.findOneBy({ id });
+    if (!updatedPrintShop) {
+      throw new NotFoundException(`인쇄사 ID ${id}를 찾을 수 없습니다.`);
     }
-
-    return printShop;
+    return updatedPrintShop;
   }
 
   async delete(id: number): Promise<void> {
-    const bookmarks = await this.bookmarkRepository.find({
-      where: { printShop: { id } },
-    });
-    await this.bookmarkRepository.remove(bookmarks);
-
-    await this.printShopRepository.delete(id);
+    const printShop = await this.findOne(id);
+    await this.printShopRepository.remove(printShop);
   }
 
   private async findAllPrintShops(
-    page: number,
-    size: number,
-    searchText?: string,
+    params: FindAllParams,
   ): Promise<PrintShopsResponseDto> {
+    const queryBuilder = this.buildQuery(params);
+    const [printShops, totalCount] = await this.executePaginatedQuery(
+      queryBuilder,
+      params.page,
+      params.size,
+    );
+    return { printShops, totalCount };
+  }
+
+  private buildQuery(params: FindAllParams) {
     const queryBuilder =
       this.printShopRepository.createQueryBuilder('printShop');
 
-    if (searchText) {
+    if (params.searchText) {
       queryBuilder.where('printShop.name ILIKE :searchText', {
-        searchText: `%${searchText}%`,
+        searchText: `%${params.searchText}%`,
       });
     }
 
-    const totalCount = await queryBuilder.getCount();
-
-    const printShops = await queryBuilder
-      .skip((page - 1) * size)
-      .take(size)
-      .leftJoinAndSelect('printShop.tags', 'tags')
-      .getMany();
-
-    return { printShops, totalCount };
+    return queryBuilder;
   }
 
-  private async getPrintShopsByTags(
+  private async executePaginatedQuery(
+    queryBuilder: any,
     page: number,
     size: number,
-    tagIds: number[],
-    searchText?: string,
-  ): Promise<PrintShopsResponseDto> {
-    await this.findTagsByIds(tagIds);
-
-    const queryBuilder = this.printShopRepository
-      .createQueryBuilder('printShop')
-      .innerJoin('printShop.tags', 'tag')
-      .where('tag.id IN (:...tagIds)', { tagIds })
-      .groupBy('printShop.id')
-      .having('COUNT(DISTINCT tag.id) = :tagCount', { tagCount: tagIds.length })
+  ) {
+    const [printShops, totalCount] = await queryBuilder
       .skip((page - 1) * size)
-      .take(size);
-
-    if (searchText) {
-      queryBuilder.andWhere('printShop.name ILIKE :searchText', {
-        searchText: `%${searchText}%`,
-      });
-    }
-
-    const totalCount = await queryBuilder.getCount();
-    const printShops = await queryBuilder.getMany();
-
-    return { printShops, totalCount };
-  }
-
-  private async findTagsByIds(tagIds: number[]): Promise<Tag[]> {
-    const tags = await this.tagRepository.find({
-      where: tagIds.map((id) => ({ id })),
-    });
-    if (tags.length !== tagIds.length) {
-      throw new NotFoundException('One or more tags not found');
-    }
-    return tags;
+      .take(size)
+      .getManyAndCount();
+    return [printShops, totalCount];
   }
 }

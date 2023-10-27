@@ -3,17 +3,17 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Tag } from './tag.entity';
+import { Product } from './product.entity';
+import { PrintShopReview } from './print-shop-review.entity';
 
 @Entity()
 export class PrintShop {
   @ApiProperty({
-    description: '인쇄소 ID',
+    description: '인쇄사 ID',
     example: 1,
   })
   @PrimaryGeneratedColumn()
@@ -57,7 +57,7 @@ export class PrintShop {
     example: 'https://www.printshop.com',
   })
   @Column({ nullable: true })
-  homepage: string | null;
+  homepage?: string;
 
   @ApiProperty({
     description: '대표자명',
@@ -68,15 +68,15 @@ export class PrintShop {
   representative: string;
 
   @ApiProperty({
-    description: '인쇄소 소개',
+    description: '인쇄사 소개',
     required: true,
-    example: '인쇄소 소개',
+    example: '인쇄사 소개',
   })
   @Column({ type: 'text' })
   introduction: string;
 
   @ApiProperty({
-    description: '인쇄소 로고 이미지',
+    description: '인쇄사 로고 이미지',
     required: false,
     example: 'https://www.printshop.com',
   })
@@ -84,7 +84,7 @@ export class PrintShop {
   logoImage?: string;
 
   @ApiProperty({
-    description: '인쇄소 배경 이미지',
+    description: '인쇄사 배경 이미지',
     required: false,
     example: 'https://www.printshop.com',
   })
@@ -107,20 +107,20 @@ export class PrintShop {
   @Column({ type: 'real' })
   longitude: string;
 
-  @ApiProperty({ description: '인쇄소와 연관된 태그들', type: () => [Tag] })
-  @ManyToMany(() => Tag, (tag) => tag.printShops)
-  @JoinTable({
-    name: 'print_shop_tags',
-    joinColumn: {
-      name: 'print_shop_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'tag_id',
-      referencedColumnName: 'id',
-    },
+  @ApiProperty({
+    description: '제품 목록',
+    type: () => [Product],
   })
-  tags: Tag[];
+  @OneToMany(() => Product, (product) => product.printShop, {
+    onDelete: 'CASCADE',
+  })
+  products: Product[];
+
+  @ApiProperty({ description: '리뷰 목록', type: () => [PrintShopReview] })
+  @OneToMany(() => PrintShopReview, (review) => review.printShop, {
+    onDelete: 'CASCADE',
+  })
+  reviews: PrintShopReview[];
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })

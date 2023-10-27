@@ -20,14 +20,11 @@ import {
 } from '@nestjs/swagger';
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
-import { ParseOptionalArrayPipe } from './pipes/parse-optional-array.pipe';
-import {
-  PrintShopResponseDtoForSwagger,
-  PrintShopsResponseDto,
-  PrintShopsResponseDtoForSwagger,
-} from './dto/print-shop-response.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
+import { PrintShopsResponseSwaggerDto } from './dto/print-shop-list.swagger.dto';
+import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
+import { PrintShopDetailSwaggerDto } from './dto/print-shop-detail.swagger.dto';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
@@ -41,7 +38,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 목록 조회 성공',
-    type: PrintShopsResponseDtoForSwagger,
+    type: PrintShopsResponseSwaggerDto,
   })
   @ApiQuery({
     name: 'page',
@@ -58,20 +55,12 @@ export class PrintShopController {
     required: false,
     description: '검색할 인쇄소 이름입니다.',
   })
-  @ApiQuery({
-    name: 'tagIds',
-    required: false,
-    description:
-      '태그 ID 목록입니다. 태그 ID 목록을 지정하면, 해당 태그와 연관된 인쇄소를 가져옵니다.',
-    type: [Number],
-  })
   async findAll(
     @Query('page') page: number = 1,
     @Query('size') size: number = 20,
     @Query('searchText') searchText?: string,
-    @Query('tagIds', new ParseOptionalArrayPipe()) tagIds?: number[],
   ): Promise<PrintShopsResponseDto> {
-    return await this.printShopService.findAll(page, size, searchText, tagIds);
+    return await this.printShopService.findAll(page, size, searchText);
   }
 
   @Get(':id')
@@ -86,7 +75,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 조회 성공',
-    type: PrintShopResponseDtoForSwagger,
+    type: PrintShopDetailSwaggerDto,
   })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<PrintShop> {
     return await this.printShopService.findOne(id);
