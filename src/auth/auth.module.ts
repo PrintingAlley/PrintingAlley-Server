@@ -14,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { TokenBlacklistService } from './token-blacklist.service';
 import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
+import { ProductReviewModule } from 'src/product-review/product-review.module';
 // TODO:: Add Apple Auth Setting
 // import { AppleStrategy } from './apple.strategy';
 
@@ -28,6 +29,7 @@ import { Bookmark } from 'src/entity/bookmark.entity';
         signOptions: { expiresIn: '1y' },
       }),
     }),
+    ProductReviewModule,
   ],
   controllers: [AuthController],
   providers: [

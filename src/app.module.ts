@@ -10,6 +10,8 @@ import { BookmarkModule } from './bookmark/bookmark.module';
 import { TagModule } from './tag/tag.module';
 import { UploadModule } from './upload/upload.module';
 import { ProductModule } from './product/product.module';
+import { ProductReviewModule } from './product-review/product-review.module';
+import { PrintShopReviewModule } from './print-shop-review/print-shop-review.module';
 import ConfigModule from './config';
 
 @Module({
@@ -37,6 +39,8 @@ import ConfigModule from './config';
     TagModule,
     AuthModule,
     UploadModule,
+    ProductReviewModule,
+    PrintShopReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

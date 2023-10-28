@@ -30,18 +30,18 @@ export class PrintShopReview {
   @ApiProperty({
     description: '별점',
     required: true,
-    example: 4.5,
+    example: 4,
   })
-  @Column({ type: 'real' })
+  @Column({ type: 'int' })
   rating: number;
 
   @ApiProperty({
     description: '이미지 URL 배열',
-    required: true,
+    required: false,
     example: ['https://www.printshop.com'],
   })
-  @Column({ type: 'text', array: true })
-  images: string[];
+  @Column({ type: 'text', array: true, nullable: true })
+  images?: string[];
 
   @ApiProperty({
     description: '작성자',
@@ -56,6 +56,10 @@ export class PrintShopReview {
   })
   @ManyToOne(() => PrintShop, (printShop) => printShop.id)
   printShop: PrintShop;
+
+  @ApiProperty({ description: '좋아요 수', example: 1 })
+  @Column({ type: 'int', default: 0 })
+  likeCount: number;
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })

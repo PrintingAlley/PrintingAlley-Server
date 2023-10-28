@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import {
@@ -16,6 +17,7 @@ import {
   ApiQuery,
   ApiParam,
   ApiTags,
+  ApiHeader,
 } from '@nestjs/swagger';
 import { ParseOptionalArrayPipe } from './pipes/parse-optional-array.pipe';
 import { Product } from 'src/entity/product.entity';
@@ -26,11 +28,20 @@ import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
 import { ProductsResponseSwaggerDto } from './dto/product-list.swagger.dto';
 import { ProductDetailSwaggerDto } from './dto/product-detail.swagger.dto';
+import { ProductReviewService } from 'src/product-review/product-review.service';
+import { CreateProductReviewDto } from 'src/product-review/dto/create-product-review.dto';
+import { GetUser } from 'src/decorators/user.decorator';
+import { User } from 'src/entity/user.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { ProductReview } from 'src/entity/product-review.entity';
 
 @Controller('product')
 @ApiTags('Product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly productReviewService: ProductReviewService,
+  ) {}
 
   @Get()
   @ApiOperation({
@@ -147,5 +158,171 @@ export class ProductController {
   ): Promise<CommonResponseDto> {
     await this.productService.delete(id);
     return createResponse(200, '성공', id);
+  }
+
+  @Get(':id/review')
+  @ApiOperation({
+    summary: '제품 리뷰 조회',
+    description: '제품 리뷰를 조회하는 API입니다.',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '제품 ID',
+  })
+  @ApiOkResponse({
+    description: '제품 리뷰 조회 성공',
+    type: [ProductReview],
+  })
+  async getReview(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ProductReview[]> {
+    return await this.productReviewService.findAllByProductId(id);
+  }
+
+  @Post(':id/review')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '제품 리뷰 생성',
+    description: '제품 리뷰를 생성하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '제품 ID',
+  })
+  @ApiOkResponse({
+    description: '제품 리뷰 생성 성공',
+    type: CommonResponseDto,
+  })
+  async createReview(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ValidationPipe()) reviewData: CreateProductReviewDto,
+    @GetUser() user: User,
+  ): Promise<CommonResponseDto> {
+    const createdReview = await this.productReviewService.create(
+      id,
+      user.id,
+      reviewData,
+    );
+
+    return createResponse(200, '성공', createdReview.id);
+  }
+
+  @Put(':id/review/:reviewId')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '제품 리뷰 수정',
+    description: '제품 리뷰를 수정하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '제품 ID',
+  })
+  @ApiOkResponse({
+    description: '제품 리뷰 수정 성공',
+    type: CommonResponseDto,
+  })
+  async updateReview(
+    @Param('id', ParseIntPipe) _id: number,
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+    @GetUser() user: User,
+    @Body(new ValidationPipe()) reviewData: CreateProductReviewDto,
+  ): Promise<CommonResponseDto> {
+    await this.productReviewService.update(reviewId, user.id, reviewData);
+    return createResponse(200, '성공', reviewId);
+  }
+
+  @Delete(':id/review/:reviewId')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '제품 리뷰 삭제',
+    description: '제품 리뷰를 삭제하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '제품 ID',
+  })
+  @ApiOkResponse({
+    description: '제품 리뷰 삭제 성공',
+    type: CommonResponseDto,
+  })
+  async deleteReview(
+    @Param('id', ParseIntPipe) _id: number,
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+    @GetUser() user: User,
+  ): Promise<CommonResponseDto> {
+    await this.productReviewService.delete(reviewId, user.id);
+    return createResponse(200, '성공', reviewId);
+  }
+
+  @Post(':id/review/:reviewId/like')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '제품 리뷰 좋아요',
+    description: '제품 리뷰에 좋아요를 누르는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '제품 리뷰 ID',
+  })
+  @ApiOkResponse({
+    description: '제품 리뷰 좋아요 성공',
+    type: CommonResponseDto,
+  })
+  async likeReview(
+    @Param('id', ParseIntPipe) _id: number,
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+    @GetUser() user: User,
+  ): Promise<CommonResponseDto> {
+    await this.productReviewService.like(reviewId, user.id);
+    return createResponse(200, '성공', reviewId);
+  }
+
+  @Delete(':id/review/:reviewId/like')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '제품 리뷰 좋아요 취소',
+    description: '제품 리뷰에 좋아요를 취소하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '제품 리뷰 ID',
+  })
+  @ApiOkResponse({
+    description: '제품 리뷰 좋아요 취소 성공',
+    type: CommonResponseDto,
+  })
+  async unlikeReview(
+    @Param('id', ParseIntPipe) _id: number,
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+    @GetUser() user: User,
+  ): Promise<CommonResponseDto> {
+    await this.productReviewService.unlike(reviewId, user.id);
+    return createResponse(200, '성공', reviewId);
   }
 }

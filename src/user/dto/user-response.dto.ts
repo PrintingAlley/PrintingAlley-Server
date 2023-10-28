@@ -16,9 +16,9 @@ export class UserResponseDto {
   @ApiProperty({
     description: '프로필 이미지 URL',
     example: null,
-    nullable: true,
+    required: false,
   })
-  profileImage: string | null;
+  profileImage?: string;
 
   @ApiProperty({ description: '이메일', example: 'abc@gmail.com' })
   email: string;

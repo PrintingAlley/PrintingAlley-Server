@@ -5,9 +5,13 @@ import { UserController } from './user.controller';
 import { User } from 'src/entity/user.entity';
 import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
+import { ProductReviewModule } from 'src/product-review/product-review.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, BookmarkGroup, Bookmark])],
+  imports: [
+    TypeOrmModule.forFeature([User, BookmarkGroup, Bookmark]),
+    ProductReviewModule,
+  ],
   providers: [UserService],
   controllers: [UserController],
   exports: [UserService],
