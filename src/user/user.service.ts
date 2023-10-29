@@ -1,7 +1,6 @@
+import { BookmarkService } from './../bookmark/bookmark.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
-import { Bookmark } from 'src/entity/bookmark.entity';
 import { PrintShopReview } from 'src/entity/print-shop-review.entity';
 import { ProductReview } from 'src/entity/product-review.entity';
 import { User } from 'src/entity/user.entity';
@@ -14,10 +13,7 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Bookmark)
-    private readonly bookmarkRepository: Repository<Bookmark>,
-    @InjectRepository(BookmarkGroup)
-    private readonly bookmarkGroupRepository: Repository<BookmarkGroup>,
+    private readonly bookmarkService: BookmarkService,
     private readonly printShopReviewService: PrintShopReviewService,
     private readonly productReviewService: ProductReviewService,
   ) {}
@@ -84,16 +80,8 @@ export class UserService {
 
   // 사용자 삭제
   async deleteUser(userId: number): Promise<void> {
-    // TODO: 사용자의 북마크 삭제 로직을 bookmark.service.ts로 이동
-    const userBookmarkGroups = await this.bookmarkGroupRepository.find({
-      where: { user: { id: userId } },
-    });
-
-    for (const group of userBookmarkGroups) {
-      await this.bookmarkRepository.delete({ bookmarkGroup: { id: group.id } });
-    }
-
-    await this.bookmarkGroupRepository.remove(userBookmarkGroups);
+    // 사용자와 연결된 북마크 및 북마크 그룹 삭제
+    await this.bookmarkService.deleteByUserId(userId);
 
     // 사용자가 작성한 인쇄사 리뷰 삭제
     await this.printShopReviewService.deleteByUserId(userId);

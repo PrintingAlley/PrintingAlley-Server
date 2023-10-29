@@ -12,16 +12,15 @@ import { NaverStrategy } from './naver.strategy';
 import { KakaoStrategy } from './kakao.strategy';
 import { ConfigService } from '@nestjs/config';
 import { TokenBlacklistService } from './token-blacklist.service';
-import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
-import { Bookmark } from 'src/entity/bookmark.entity';
 import { ProductReviewModule } from 'src/product-review/product-review.module';
 import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
+import { BookmarkModule } from 'src/bookmark/bookmark.module';
 // TODO:: Add Apple Auth Setting
 // import { AppleStrategy } from './apple.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, BookmarkGroup, Bookmark]),
+    TypeOrmModule.forFeature([User]),
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -30,6 +29,7 @@ import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.m
         signOptions: { expiresIn: '1y' },
       }),
     }),
+    BookmarkModule,
     PrintShopReviewModule,
     ProductReviewModule,
   ],

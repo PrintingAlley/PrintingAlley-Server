@@ -3,14 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User } from 'src/entity/user.entity';
-import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
-import { Bookmark } from 'src/entity/bookmark.entity';
 import { ProductReviewModule } from 'src/product-review/product-review.module';
 import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
+import { BookmarkModule } from 'src/bookmark/bookmark.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, BookmarkGroup, Bookmark]),
+    TypeOrmModule.forFeature([User]),
+    BookmarkModule,
     PrintShopReviewModule,
     ProductReviewModule,
   ],

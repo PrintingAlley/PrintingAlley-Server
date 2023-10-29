@@ -10,5 +10,6 @@ import { Product } from 'src/entity/product.entity';
   imports: [TypeOrmModule.forFeature([Bookmark, BookmarkGroup, Product])],
   controllers: [BookmarkController],
   providers: [BookmarkService],
+  exports: [BookmarkService],
 })
 export class BookmarkModule {}

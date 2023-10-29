@@ -262,4 +262,39 @@ export class BookmarkService {
       throw new BadRequestException('이미 해당 그룹에 동일한 제품이 있습니다.');
     }
   }
+
+  async countByProductId(productId: number): Promise<number> {
+    return await this.bookmarkRepository.count({
+      where: { product: { id: productId } },
+    });
+  }
+
+  // 유저 ID로 북마크 및 북마크 그룹 삭제
+  async deleteByUserId(userId: number): Promise<void> {
+    const userBookmarkGroups = await this.groupRepository.find({
+      where: { user: { id: userId } },
+    });
+
+    for (const group of userBookmarkGroups) {
+      await this.bookmarkRepository.delete({ bookmarkGroup: { id: group.id } });
+    }
+
+    await this.groupRepository.remove(userBookmarkGroups);
+  }
+
+  // 제품 ID로 북마크 삭제
+  async deleteBookmarksByProductId(productId: number): Promise<void> {
+    await this.bookmarkRepository.delete({ product: { id: productId } });
+  }
+
+  // 인쇄소 ID로 북마크 삭제
+  async deleteBookmarksByPrintShopId(printShopId: number): Promise<void> {
+    const products = await this.productRepository.find({
+      where: { printShop: { id: printShopId } },
+    });
+
+    for (const product of products) {
+      await this.bookmarkRepository.delete({ product: { id: product.id } });
+    }
+  }
 }

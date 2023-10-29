@@ -9,9 +9,9 @@ import { Product } from 'src/entity/product.entity';
 import { Category } from 'src/entity/category.entity';
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { Tag } from 'src/entity/tag.entity';
-import { Bookmark } from 'src/entity/bookmark.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductsResponseDto } from './dto/product-response.dto';
+import { BookmarkService } from './../bookmark/bookmark.service';
 import { ProductReviewService } from 'src/product-review/product-review.service';
 
 @Injectable()
@@ -25,8 +25,7 @@ export class ProductService {
     private readonly printShopRepository: Repository<PrintShop>,
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
-    @InjectRepository(Bookmark)
-    private readonly bookmarkRepository: Repository<Bookmark>,
+    private readonly bookmarkService: BookmarkService,
     private readonly productReviewService: ProductReviewService,
   ) {}
 
@@ -54,9 +53,7 @@ export class ProductService {
       throw new NotFoundException('제품을 찾을 수 없습니다.');
     }
 
-    const bookmarkCount = await this.bookmarkRepository.count({
-      where: { product: { id } },
-    });
+    const bookmarkCount = await this.bookmarkService.countByProductId(id);
     product.bookmarkCount = bookmarkCount;
 
     return product;
@@ -130,13 +127,12 @@ export class ProductService {
     }
 
     // 제품에 대한 북마크 삭제
-    const bookmarks = await this.bookmarkRepository.find({
-      where: { product: { id } },
-    });
-    await this.bookmarkRepository.remove(bookmarks);
+    await this.bookmarkService.deleteBookmarksByProductId(id);
 
     //  제품 리뷰 삭제
     await this.productReviewService.deleteByProductId(id);
+
+    // TODO: 전체적인 삭제 로직을 transaction으로 묶기
 
     await this.productRepository.delete(id);
   }
