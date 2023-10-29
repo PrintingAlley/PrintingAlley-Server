@@ -13,7 +13,7 @@ export class ProductReviewService {
 
   async findAll(): Promise<ProductReview[]> {
     return await this.productReviewRepository.find({
-      relations: ['product', 'user', 'product_review_likes'],
+      relations: ['product', 'user'],
     });
   }
 
@@ -104,21 +104,5 @@ export class ProductReviewService {
     return await this.productReviewRepository.count({
       where: { user: { id: userId } },
     });
-  }
-
-  async like(reviewId: number, userId: number): Promise<void> {
-    await this.productReviewRepository
-      .createQueryBuilder()
-      .relation(ProductReview, 'product_review_likes')
-      .of(reviewId)
-      .add(userId);
-  }
-
-  async unlike(reviewId: number, userId: number): Promise<void> {
-    await this.productReviewRepository
-      .createQueryBuilder()
-      .relation(ProductReview, 'product_review_likes')
-      .of(reviewId)
-      .remove(userId);
   }
 }

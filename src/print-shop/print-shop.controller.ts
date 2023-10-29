@@ -8,10 +8,12 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
 import { PrintShopService } from './print-shop.service';
 import {
+  ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -25,11 +27,20 @@ import { createResponse } from 'src/common/utils/response.helper';
 import { PrintShopsResponseSwaggerDto } from './dto/print-shop-list.swagger.dto';
 import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
 import { PrintShopDetailSwaggerDto } from './dto/print-shop-detail.swagger.dto';
+import { PrintShopReviewService } from 'src/print-shop-review/print-shop-review.service';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/decorators/user.decorator';
+import { PrintShopReview } from 'src/entity/print-shop-review.entity';
+import { CreatePrintShopReviewDto } from 'src/print-shop-review/dto/create-print-shop-review.dto';
+import { User } from 'src/entity/user.entity';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
 export class PrintShopController {
-  constructor(private readonly printShopService: PrintShopService) {}
+  constructor(
+    private readonly printShopService: PrintShopService,
+    private readonly printShopReviewService: PrintShopReviewService,
+  ) {}
 
   @Get()
   @ApiOperation({
@@ -138,5 +149,115 @@ export class PrintShopController {
   ): Promise<CommonResponseDto> {
     await this.printShopService.delete(id);
     return createResponse(200, '성공', id);
+  }
+
+  @Get(':id/review')
+  @ApiOperation({
+    summary: '인쇄사 리뷰 조회',
+    description: '인쇄사 리뷰를 조회하는 API입니다.',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '인쇄사 ID',
+  })
+  @ApiOkResponse({
+    description: '인쇄사 리뷰 조회 성공',
+    type: [PrintShopReview],
+  })
+  async getReview(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<PrintShopReview[]> {
+    return await this.printShopReviewService.findAllByPrintShopId(id);
+  }
+
+  @Post(':id/review')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '인쇄사 리뷰 생성',
+    description: '인쇄사 리뷰를 생성하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '인쇄사 ID',
+  })
+  @ApiOkResponse({
+    description: '인쇄사 리뷰 생성 성공',
+    type: CommonResponseDto,
+  })
+  async createReview(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ValidationPipe()) reviewData: CreatePrintShopReviewDto,
+    @GetUser() user: User,
+  ): Promise<CommonResponseDto> {
+    const createdReview = await this.printShopReviewService.create(
+      id,
+      user.id,
+      reviewData,
+    );
+
+    return createResponse(200, '성공', createdReview.id);
+  }
+
+  @Put(':id/review/:reviewId')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '인쇄사 리뷰 수정',
+    description: '인쇄사 리뷰를 수정하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '인쇄사 ID',
+  })
+  @ApiOkResponse({
+    description: '인쇄사 리뷰 수정 성공',
+    type: CommonResponseDto,
+  })
+  async updateReview(
+    @Param('id', ParseIntPipe) _id: number,
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+    @GetUser() user: User,
+    @Body(new ValidationPipe()) reviewData: CreatePrintShopReviewDto,
+  ): Promise<CommonResponseDto> {
+    await this.printShopReviewService.update(reviewId, user.id, reviewData);
+    return createResponse(200, '성공', reviewId);
+  }
+
+  @Delete(':id/review/:reviewId')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    summary: '인쇄사 리뷰 삭제',
+    description: '인쇄사 리뷰를 삭제하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '인쇄사 ID',
+  })
+  @ApiOkResponse({
+    description: '인쇄사 리뷰 삭제 성공',
+    type: CommonResponseDto,
+  })
+  async deleteReview(
+    @Param('id', ParseIntPipe) _id: number,
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+    @GetUser() user: User,
+  ): Promise<CommonResponseDto> {
+    await this.printShopReviewService.delete(reviewId, user.id);
+    return createResponse(200, '성공', reviewId);
   }
 }

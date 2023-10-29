@@ -57,10 +57,6 @@ export class PrintShopReview {
   @ManyToOne(() => PrintShop, (printShop) => printShop.id)
   printShop: PrintShop;
 
-  @ApiProperty({ description: '좋아요 수', example: 1 })
-  @Column({ type: 'int', default: 0 })
-  likeCount: number;
-
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
