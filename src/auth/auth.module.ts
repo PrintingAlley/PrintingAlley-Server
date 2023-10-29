@@ -15,6 +15,7 @@ import { TokenBlacklistService } from './token-blacklist.service';
 import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
 import { ProductReviewModule } from 'src/product-review/product-review.module';
+import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
 // TODO:: Add Apple Auth Setting
 // import { AppleStrategy } from './apple.strategy';
 
@@ -29,6 +30,7 @@ import { ProductReviewModule } from 'src/product-review/product-review.module';
         signOptions: { expiresIn: '1y' },
       }),
     }),
+    PrintShopReviewModule,
     ProductReviewModule,
   ],
   controllers: [AuthController],

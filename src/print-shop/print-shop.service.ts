@@ -4,6 +4,8 @@ import { PrintShop } from 'src/entity/print-shop.entity';
 import { Repository } from 'typeorm';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
+import { PrintShopReviewService } from 'src/print-shop-review/print-shop-review.service';
+import { ProductService } from 'src/product/product.service';
 
 type FindAllParams = {
   page: number;
@@ -16,6 +18,8 @@ export class PrintShopService {
   constructor(
     @InjectRepository(PrintShop)
     private readonly printShopRepository: Repository<PrintShop>,
+    private readonly productService: ProductService,
+    private readonly printShopReviewService: PrintShopReviewService,
   ) {}
 
   async findAll(
@@ -57,6 +61,18 @@ export class PrintShopService {
 
   async delete(id: number): Promise<void> {
     const printShop = await this.findOne(id);
+    if (!printShop) {
+      throw new NotFoundException(`인쇄사 ID ${id}를 찾을 수 없습니다.`);
+    }
+
+    // 인쇄사에 등록된 제품 삭제
+    await this.productService.deleteByPrintShopId(id);
+
+    // 인쇄사 리뷰 삭제
+    await this.printShopReviewService.deleteByPrintShopId(id);
+
+    // TODO: 전체적인 삭제 로직을 transaction으로 묶기
+
     await this.printShopRepository.remove(printShop);
   }
 

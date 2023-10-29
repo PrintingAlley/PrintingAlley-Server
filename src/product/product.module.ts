@@ -16,5 +16,6 @@ import { ProductReviewModule } from 'src/product-review/product-review.module';
   ],
   controllers: [ProductController],
   providers: [ProductService],
+  exports: [ProductService],
 })
 export class ProductModule {}

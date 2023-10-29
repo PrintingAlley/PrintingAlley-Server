@@ -20,6 +20,7 @@ import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
 import { UpdateUserNameDto } from './dto/update-user-name.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { PrintShopReview } from 'src/entity/print-shop-review.entity';
 import { ProductReview } from 'src/entity/product-review.entity';
 
 @UseGuards(AuthGuard('jwt'))
@@ -44,6 +45,22 @@ export class UserController {
   })
   async getMyInfo(@GetUser() user: User): Promise<User> {
     return this.userService.getUserById(user.id);
+  }
+
+  // 작성한 인쇄소 리뷰 조회
+  @Get('print-shop-review')
+  @ApiOperation({
+    summary: '내가 작성한 인쇄소 리뷰 조회',
+    description: '로그인한 사용자가 작성한 인쇄소 리뷰를 조회하는 API입니다.',
+  })
+  @ApiOkResponse({
+    description: '내가 작성한 인쇄소 리뷰 조회 성공',
+    type: [PrintShopReview],
+  })
+  async getMyPrintShopReviews(
+    @GetUser() user: User,
+  ): Promise<PrintShopReview[]> {
+    return this.userService.getPrintShopReviewsByUserId(user.id);
   }
 
   // 작성한 제품 리뷰 조회

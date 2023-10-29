@@ -6,10 +6,12 @@ import { User } from 'src/entity/user.entity';
 import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
 import { ProductReviewModule } from 'src/product-review/product-review.module';
+import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, BookmarkGroup, Bookmark]),
+    PrintShopReviewModule,
     ProductReviewModule,
   ],
   providers: [UserService],

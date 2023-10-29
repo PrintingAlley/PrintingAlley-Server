@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
 import { Bookmark } from 'src/entity/bookmark.entity';
+import { PrintShopReview } from 'src/entity/print-shop-review.entity';
 import { ProductReview } from 'src/entity/product-review.entity';
 import { User } from 'src/entity/user.entity';
+import { PrintShopReviewService } from 'src/print-shop-review/print-shop-review.service';
 import { ProductReviewService } from 'src/product-review/product-review.service';
 import { Repository } from 'typeorm';
 
@@ -16,6 +18,7 @@ export class UserService {
     private readonly bookmarkRepository: Repository<Bookmark>,
     @InjectRepository(BookmarkGroup)
     private readonly bookmarkGroupRepository: Repository<BookmarkGroup>,
+    private readonly printShopReviewService: PrintShopReviewService,
     private readonly productReviewService: ProductReviewService,
   ) {}
 
@@ -61,6 +64,13 @@ export class UserService {
     return this.userRepository.findOneBy({ id: userId });
   }
 
+  // 사용자가 작성한 인쇄사 리뷰 조회
+  async getPrintShopReviewsByUserId(
+    userId: number,
+  ): Promise<PrintShopReview[]> {
+    return await this.printShopReviewService.findAllByUserId(userId);
+  }
+
   // 사용자가 작성한 제품 리뷰 조회
   async getProductReviewsByUserId(userId: number): Promise<ProductReview[]> {
     return await this.productReviewService.findAllByUserId(userId);
@@ -85,7 +95,8 @@ export class UserService {
 
     await this.bookmarkGroupRepository.remove(userBookmarkGroups);
 
-    // TODO: 사용자가 작성한 인쇄사 리뷰 삭제
+    // 사용자가 작성한 인쇄사 리뷰 삭제
+    await this.printShopReviewService.deleteByUserId(userId);
 
     // 사용자가 작성한 제품 리뷰 삭제
     await this.productReviewService.deleteByUserId(userId);

@@ -135,10 +135,20 @@ export class ProductService {
     });
     await this.bookmarkRepository.remove(bookmarks);
 
-    //  제품에 대한 리뷰 삭제
+    //  제품 리뷰 삭제
     await this.productReviewService.deleteByProductId(id);
 
     await this.productRepository.delete(id);
+  }
+
+  async deleteByPrintShopId(printShopId: number): Promise<void> {
+    const products = await this.productRepository.find({
+      where: { printShop: { id: printShopId } },
+    });
+
+    for (const product of products) {
+      await this.delete(product.id);
+    }
   }
 
   private async findAllProducts(
