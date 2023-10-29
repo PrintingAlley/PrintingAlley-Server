@@ -23,7 +23,7 @@ export class Bookmark {
     description: '제품',
     type: () => Product,
   })
-  @ManyToOne(() => Product)
+  @ManyToOne(() => Product, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'product_id' })
   product: Product;
 
@@ -31,7 +31,9 @@ export class Bookmark {
     description: '북마크 그룹',
     type: () => BookmarkGroup,
   })
-  @ManyToOne(() => BookmarkGroup, (group) => group.bookmarks)
+  @ManyToOne(() => BookmarkGroup, (group) => group.bookmarks, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'bookmark_group_id' })
   bookmarkGroup: BookmarkGroup;
 

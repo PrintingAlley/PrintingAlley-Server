@@ -86,16 +86,6 @@ export class PrintShopReviewService {
     await this.printShopReviewRepository.delete({ id: reviewId });
   }
 
-  async deleteByPrintShopId(printShopId: number): Promise<void> {
-    await this.printShopReviewRepository.delete({
-      printShop: { id: printShopId },
-    });
-  }
-
-  async deleteByUserId(userId: number): Promise<void> {
-    await this.printShopReviewRepository.delete({ user: { id: userId } });
-  }
-
   async countByPrintShopId(printShopId: number): Promise<number> {
     return await this.printShopReviewRepository.count({
       where: { printShop: { id: printShopId } },

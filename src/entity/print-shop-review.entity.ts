@@ -47,14 +47,18 @@ export class PrintShopReview {
     description: '작성자',
     type: () => User,
   })
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @ApiProperty({
     description: '인쇄소',
     type: () => PrintShop,
   })
-  @ManyToOne(() => PrintShop, (printShop) => printShop.id)
+  @ManyToOne(() => PrintShop, (printShop) => printShop.id, {
+    onDelete: 'CASCADE',
+  })
   printShop: PrintShop;
 
   @ApiProperty({ description: '생성일' })

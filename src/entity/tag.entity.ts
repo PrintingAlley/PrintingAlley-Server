@@ -31,7 +31,10 @@ export class Tag {
   image?: string;
 
   @ApiProperty({ description: '부모 태그', type: () => Tag })
-  @ManyToOne(() => Tag, (tag) => tag.children, { nullable: true })
+  @ManyToOne(() => Tag, (tag) => tag.children, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'parent_id' })
   parent?: Tag;
 

@@ -86,14 +86,6 @@ export class ProductReviewService {
     await this.productReviewRepository.delete({ id: reviewId });
   }
 
-  async deleteByProductId(productId: number): Promise<void> {
-    await this.productReviewRepository.delete({ product: { id: productId } });
-  }
-
-  async deleteByUserId(userId: number): Promise<void> {
-    await this.productReviewRepository.delete({ user: { id: userId } });
-  }
-
   async countByProductId(productId: number): Promise<number> {
     return await this.productReviewRepository.count({
       where: { product: { id: productId } },

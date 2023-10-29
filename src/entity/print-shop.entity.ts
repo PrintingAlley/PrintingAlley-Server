@@ -111,15 +111,11 @@ export class PrintShop {
     description: '제품 목록',
     type: () => [Product],
   })
-  @OneToMany(() => Product, (product) => product.printShop, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Product, (product) => product.printShop)
   products: Product[];
 
   @ApiProperty({ description: '리뷰 목록', type: () => [PrintShopReview] })
-  @OneToMany(() => PrintShopReview, (review) => review.printShop, {
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => PrintShopReview, (review) => review.printShop)
   reviews: PrintShopReview[];
 
   @ApiProperty({ description: '생성일' })

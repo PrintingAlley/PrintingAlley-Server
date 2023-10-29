@@ -77,14 +77,18 @@ export class Product {
     required: true,
     example: '명함',
   })
-  @ManyToOne(() => Category, (category) => category.products)
+  @ManyToOne(() => Category, (category) => category.products, {
+    onDelete: 'CASCADE',
+  })
   category: Category;
 
   @ApiProperty({
     description: '제품 제작 인쇄사',
     type: () => PrintShop,
   })
-  @ManyToOne(() => PrintShop, (printShop) => printShop.products)
+  @ManyToOne(() => PrintShop, (printShop) => printShop.products, {
+    onDelete: 'CASCADE',
+  })
   printShop: PrintShop;
 
   @ApiProperty({ description: '리뷰 목록', type: () => [ProductReview] })

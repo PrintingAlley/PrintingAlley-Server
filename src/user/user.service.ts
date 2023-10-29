@@ -1,4 +1,3 @@
-import { BookmarkService } from './../bookmark/bookmark.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PrintShopReview } from 'src/entity/print-shop-review.entity';
@@ -13,7 +12,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly bookmarkService: BookmarkService,
     private readonly printShopReviewService: PrintShopReviewService,
     private readonly productReviewService: ProductReviewService,
   ) {}
@@ -80,19 +78,6 @@ export class UserService {
 
   // 사용자 삭제
   async deleteUser(userId: number): Promise<void> {
-    // 사용자와 연결된 북마크 및 북마크 그룹 삭제
-    await this.bookmarkService.deleteByUserId(userId);
-
-    // 사용자가 작성한 인쇄사 리뷰 삭제
-    await this.printShopReviewService.deleteByUserId(userId);
-
-    // 사용자가 작성한 제품 리뷰 삭제
-    await this.productReviewService.deleteByUserId(userId);
-
-    // TODO: 사용자가 관리하는 인쇄사 삭제
-
-    // TODO: 전체적인 삭제 로직을 transaction으로 묶기
-
     await this.userRepository.delete(userId);
   }
 }

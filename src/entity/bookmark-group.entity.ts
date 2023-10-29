@@ -29,7 +29,9 @@ export class BookmarkGroup {
   @Column()
   name: string;
 
-  @ManyToOne(() => User, (user) => user.bookmarkGroups)
+  @ManyToOne(() => User, (user) => user.bookmarkGroups, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'user_id' })
   user: User;
 

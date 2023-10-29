@@ -12,7 +12,6 @@ import { Tag } from 'src/entity/tag.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductsResponseDto } from './dto/product-response.dto';
 import { BookmarkService } from './../bookmark/bookmark.service';
-import { ProductReviewService } from 'src/product-review/product-review.service';
 
 @Injectable()
 export class ProductService {
@@ -26,7 +25,6 @@ export class ProductService {
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
     private readonly bookmarkService: BookmarkService,
-    private readonly productReviewService: ProductReviewService,
   ) {}
 
   async findAll(
@@ -125,14 +123,6 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('제품을 찾을 수 없습니다.');
     }
-
-    // 제품에 대한 북마크 삭제
-    await this.bookmarkService.deleteBookmarksByProductId(id);
-
-    //  제품 리뷰 삭제
-    await this.productReviewService.deleteByProductId(id);
-
-    // TODO: 전체적인 삭제 로직을 transaction으로 묶기
 
     await this.productRepository.delete(id);
   }

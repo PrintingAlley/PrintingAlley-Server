@@ -47,14 +47,18 @@ export class ProductReview {
     description: '작성자',
     type: () => User,
   })
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @ApiProperty({
     description: '제품',
     type: () => Product,
   })
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.id, {
+    onDelete: 'CASCADE',
+  })
   product: Product;
 
   @ApiProperty({ description: '생성일' })
