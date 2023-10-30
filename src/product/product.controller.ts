@@ -26,14 +26,15 @@ import { ProductsResponseDto } from './dto/product-response.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
-import { ProductsResponseSwaggerDto } from './dto/product-list.swagger.dto';
-import { ProductDetailSwaggerDto } from './dto/product-detail.swagger.dto';
+import { ProductsResponseSwaggerDto } from './dto/swagger/product-list.swagger.dto';
+import { ProductDetailSwaggerDto } from './dto/swagger/product-detail.swagger.dto';
 import { ProductReviewService } from 'src/product-review/product-review.service';
 import { CreateProductReviewDto } from 'src/product-review/dto/create-product-review.dto';
 import { GetUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entity/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { ProductReview } from 'src/entity/product-review.entity';
+import { ProductReviewListSwaggerDto } from './dto/swagger/product-review-list.swagger.dto';
 
 @Controller('product')
 @ApiTags('Product')
@@ -172,7 +173,7 @@ export class ProductController {
   })
   @ApiOkResponse({
     description: '제품 리뷰 조회 성공',
-    type: [ProductReview],
+    type: [ProductReviewListSwaggerDto],
   })
   async getReview(
     @Param('id', ParseIntPipe) id: number,

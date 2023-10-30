@@ -6,6 +6,7 @@ import { User } from 'src/entity/user.entity';
 import { PrintShopReviewService } from 'src/print-shop-review/print-shop-review.service';
 import { ProductReviewService } from 'src/product-review/product-review.service';
 import { Repository } from 'typeorm';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -55,7 +56,10 @@ export class UserService {
 
   // ID로 사용자 조회
   async getUserById(userId: number): Promise<User> {
-    return this.userRepository.findOneBy({ id: userId });
+    const user = await this.userRepository.findOneBy({ id: userId });
+    delete user.id;
+
+    return user;
   }
 
   // 사용자가 작성한 인쇄사 리뷰 조회
@@ -68,6 +72,15 @@ export class UserService {
   // 사용자가 작성한 제품 리뷰 조회
   async getProductReviewsByUserId(userId: number): Promise<ProductReview[]> {
     return await this.productReviewService.findAllByUserId(userId);
+  }
+
+  // 프로필 수정
+  async updateProfile(
+    userId: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    await this.userRepository.update(userId, updateUserDto);
+    return this.userRepository.findOneBy({ id: userId });
   }
 
   // 이름 수정

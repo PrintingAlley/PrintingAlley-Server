@@ -80,7 +80,7 @@ class TagSwaggerDto {
   updatedAt: string;
 }
 
-class ReviewSwaggerDto {
+class ProductReviewSwaggerDto {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -107,7 +107,7 @@ class ReviewSwaggerDto {
 }
 
 export class ProductDetailSwaggerDto {
-  @ApiProperty({ example: 4 })
+  @ApiProperty({ example: 1 })
   id: number;
 
   @ApiProperty({ example: '특수컬러 명함' })
@@ -149,8 +149,8 @@ export class ProductDetailSwaggerDto {
   @ApiProperty({ type: [TagSwaggerDto] })
   tags: TagSwaggerDto[];
 
-  @ApiProperty({ type: [ReviewSwaggerDto] })
-  reviews: ReviewSwaggerDto[];
+  @ApiProperty({ type: [ProductReviewSwaggerDto] })
+  reviews: ProductReviewSwaggerDto[];
 
   @ApiProperty({ example: 1 })
   bookmarkCount: number;

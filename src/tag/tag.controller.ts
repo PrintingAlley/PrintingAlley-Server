@@ -18,7 +18,7 @@ import {
   TagResponseDTOForSwagger,
   TagsResponseDTO,
   TagsResponseDTOForSwagger,
-} from './dto/tag-response.dto';
+} from './dto/swagger/tag-response.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 
 @ApiTags('Tag')

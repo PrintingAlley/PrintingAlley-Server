@@ -27,8 +27,8 @@ import { createResponse } from 'src/common/utils/response.helper';
 import { DeleteMultipleGroupsDto } from './dto/delete-multiple-groups.dto';
 import { DeleteMultipleBookmarksDto } from './dto/delete-multiple-bookmarks.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
-import { BookmarkGroupResponseDto } from './dto/bookmark-group-response.dto';
-import { BookmarkGroupDetailResponseDto } from './dto/bookmark-group-detail-response.dto';
+import { BookmarkGroupListSwaggerDto } from './dto/swagger/bookmark-group-list.swagger.dto';
+import { BookmarkDetailSwaggerDto } from './dto/swagger/bookmark-group-detail.swagger.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('bookmark')
@@ -47,7 +47,7 @@ export class BookmarkController {
   })
   @ApiOkResponse({
     description: '내 북마크 그룹 조회 성공',
-    type: [BookmarkGroupResponseDto],
+    type: [BookmarkGroupListSwaggerDto],
   })
   async getMyBookmarkGroups(@GetUser() user: User): Promise<BookmarkGroup[]> {
     return this.bookmarkService.getBookmarkGroupsByUser(user.id);
@@ -60,7 +60,7 @@ export class BookmarkController {
   })
   @ApiOkResponse({
     description: '북마크 그룹 조회 성공',
-    type: BookmarkGroupDetailResponseDto,
+    type: BookmarkDetailSwaggerDto,
   })
   async getBookmarkGroup(@Param('id') id: number): Promise<BookmarkGroup> {
     return this.bookmarkService.getBookmarkGroupById(id);

@@ -7,10 +7,13 @@ class ProductSwaggerDto {
   @ApiProperty({ example: '특수컬러 명함' })
   name: string;
 
-  @ApiProperty({ example: null })
+  @ApiProperty({ example: '100장에 10,000원' })
   priceInfo: string;
 
-  @ApiProperty({ example: '특수컬러 명함입니다.' })
+  @ApiProperty({ example: '스크래치에 강하고 우수한 탄성을 갖춘 7색상의 제품' })
+  introduction: string;
+
+  @ApiProperty({ example: '특수컬러 명함에 대한 자세한 설명' })
   description: string;
 
   @ApiProperty({ example: 'https://www.printshop.com/image1.jpg' })
@@ -43,8 +46,8 @@ class ProductSwaggerDto {
   category: any;
 }
 
-export class ReviewSwaggerDto {
-  @ApiProperty({ example: 4 })
+export class PrintShopReviewSwaggerDto {
+  @ApiProperty({ example: 1 })
   id: number;
 
   @ApiProperty({ example: '인쇄사 리뷰 내용입니다. 사장님이 친절하세요' })
@@ -121,6 +124,6 @@ export class PrintShopDetailSwaggerDto {
   @ApiProperty({ type: [ProductSwaggerDto] })
   products: ProductSwaggerDto[];
 
-  @ApiProperty({ type: [ReviewSwaggerDto] })
-  reviews: ReviewSwaggerDto[];
+  @ApiProperty({ type: [PrintShopReviewSwaggerDto] })
+  reviews: PrintShopReviewSwaggerDto[];
 }

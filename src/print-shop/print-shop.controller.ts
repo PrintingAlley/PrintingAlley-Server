@@ -24,15 +24,16 @@ import { PrintShop } from 'src/entity/print-shop.entity';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
-import { PrintShopsResponseSwaggerDto } from './dto/print-shop-list.swagger.dto';
 import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
-import { PrintShopDetailSwaggerDto } from './dto/print-shop-detail.swagger.dto';
+import { PrintShopsResponseSwaggerDto } from './dto/swagger/print-shop-list.swagger.dto';
+import { PrintShopDetailSwaggerDto } from './dto/swagger/print-shop-detail.swagger.dto';
 import { PrintShopReviewService } from 'src/print-shop-review/print-shop-review.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/decorators/user.decorator';
 import { PrintShopReview } from 'src/entity/print-shop-review.entity';
 import { CreatePrintShopReviewDto } from 'src/print-shop-review/dto/create-print-shop-review.dto';
 import { User } from 'src/entity/user.entity';
+import { PrintShopReviewListSwaggerDto } from './dto/swagger/print-shop-review-list.swagger.dto';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
@@ -163,7 +164,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄사 리뷰 조회 성공',
-    type: [PrintShopReview],
+    type: [PrintShopReviewListSwaggerDto],
   })
   async getReview(
     @Param('id', ParseIntPipe) id: number,
