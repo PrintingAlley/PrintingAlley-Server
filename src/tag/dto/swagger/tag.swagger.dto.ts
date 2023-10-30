@@ -1,15 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Tag } from 'src/entity/tag.entity';
 
-export class TagsResponseDTO {
-  @ApiProperty({
-    description: '태그 계층 구조',
-    type: () => [TagResponseDTOForSwagger],
-  })
-  hierarchies: Tag[];
-}
-
-class ChildDTOForSwagger {
+class TagChildSwaggerDto {
   @ApiProperty({
     description: '하위 태그의 아이디',
     example: 6,
@@ -38,12 +29,12 @@ class ChildDTOForSwagger {
 
   @ApiProperty({
     description: '하위 태그의 자식들',
-    type: () => [ChildDTOForSwagger],
+    type: () => [TagChildSwaggerDto],
   })
-  children: ChildDTOForSwagger[];
+  children: TagChildSwaggerDto[];
 }
 
-export class TagResponseDTOForSwagger {
+export class TagSwaggerDto {
   @ApiProperty({
     description: '태그의 아이디',
     example: 1,
@@ -72,15 +63,15 @@ export class TagResponseDTOForSwagger {
 
   @ApiProperty({
     description: '태그의 자식들',
-    type: () => [ChildDTOForSwagger],
+    type: () => [TagChildSwaggerDto],
   })
-  children: ChildDTOForSwagger[];
+  children: TagChildSwaggerDto[];
 }
 
-export class TagsResponseDTOForSwagger {
+export class TagListSwaggerDto {
   @ApiProperty({
     description: '태그 계층 구조',
-    type: () => [TagResponseDTOForSwagger],
+    type: () => [TagSwaggerDto],
   })
-  hierarchies: TagResponseDTOForSwagger[];
+  hierarchies: TagSwaggerDto[];
 }
