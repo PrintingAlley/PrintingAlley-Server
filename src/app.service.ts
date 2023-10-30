@@ -11,4 +11,8 @@ export class AppService {
   getApiUrl(): string {
     return process.env.API_URL;
   }
+
+  getApiVersion(): string {
+    return process.env.API_VERSION;
+  }
 }

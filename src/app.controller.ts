@@ -22,4 +22,12 @@ export class AppController {
   getApiUrl(): string {
     return this.appService.getApiUrl();
   }
+
+  @Get('api-version')
+  @ApiOkResponse({
+    description: 'API Version',
+  })
+  getApiVersion(): string {
+    return this.appService.getApiVersion();
+  }
 }
