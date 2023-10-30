@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class TagSwaggerDto {
+class TagDtoForProductList {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -24,7 +24,7 @@ class ProductListSwaggerDto {
   @ApiProperty({ example: '특수컬러 명함' })
   name: string;
 
-  @ApiProperty({ example: '100장에 10,000원' })
+  @ApiProperty({ example: '100장에 10,000원', nullable: true })
   priceInfo: string;
 
   @ApiProperty({ example: '스크래치에 강하고 우수한 탄성을 갖춘 7색상의 제품' })
@@ -51,8 +51,8 @@ class ProductListSwaggerDto {
   @ApiProperty({ example: '2023-10-27T13:19:16.784Z' })
   updatedAt: string;
 
-  @ApiProperty({ type: [TagSwaggerDto] })
-  tags: TagSwaggerDto[];
+  @ApiProperty({ type: [TagDtoForProductList] })
+  tags: TagDtoForProductList[];
 }
 
 export class ProductsResponseSwaggerDto {

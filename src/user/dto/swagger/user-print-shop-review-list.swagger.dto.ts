@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class PrintShopDto {
+class PrintShopDtoForUser {
   @ApiProperty({ description: '인쇄사 ID', example: 1 })
   id: number;
 
@@ -104,7 +104,7 @@ export class UserPrintShopReviewListSwaggerDto {
 
   @ApiProperty({
     description: '인쇄소 정보',
-    type: () => PrintShopDto,
+    type: () => PrintShopDtoForUser,
   })
-  printShop: PrintShopDto;
+  printShop: PrintShopDtoForUser;
 }

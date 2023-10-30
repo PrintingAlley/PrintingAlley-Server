@@ -56,10 +56,7 @@ export class UserService {
 
   // ID로 사용자 조회
   async getUserById(userId: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id: userId });
-    delete user.id;
-
-    return user;
+    return await this.userRepository.findOneBy({ id: userId });
   }
 
   // 사용자가 작성한 인쇄사 리뷰 조회

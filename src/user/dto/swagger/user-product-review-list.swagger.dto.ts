@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class ProductDto {
+class ProductDtoForUser {
   @ApiProperty({ description: '제품 ID', example: 1 })
   id: number;
 
@@ -78,6 +78,6 @@ export class UserProductReviewListSwaggerDto {
   @ApiProperty({ description: '수정일', example: '2023-10-30T00:49:31.037Z' })
   updateAt: string;
 
-  @ApiProperty({ description: '제품 정보', type: () => ProductDto })
-  product: ProductDto;
+  @ApiProperty({ description: '제품 정보', type: () => ProductDtoForUser })
+  product: ProductDtoForUser;
 }

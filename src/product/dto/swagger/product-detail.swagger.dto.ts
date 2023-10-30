@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class CategorySwaggerDto {
+class CategoryDtoForProduct {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -17,7 +17,7 @@ class CategorySwaggerDto {
   updatedAt: string;
 }
 
-class PrintShopSwaggerDto {
+class PrintShopDtoForProduct {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -63,7 +63,7 @@ class PrintShopSwaggerDto {
   updateAt: string;
 }
 
-class TagSwaggerDto {
+class TagSwaggerDtoForProduct {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -80,7 +80,7 @@ class TagSwaggerDto {
   updatedAt: string;
 }
 
-class ProductReviewSwaggerDto {
+class ProductReviewDtoForProduct {
   @ApiProperty({ example: 1 })
   id: number;
 
@@ -113,7 +113,7 @@ export class ProductDetailSwaggerDto {
   @ApiProperty({ example: '특수컬러 명함' })
   name: string;
 
-  @ApiProperty({ example: '100장에 10,000원' })
+  @ApiProperty({ example: '100장에 10,000원', nullable: true })
   priceInfo: string;
 
   @ApiProperty({ example: '스크래치에 강하고 우수한 탄성을 갖춘 7색상의 제품' })
@@ -140,17 +140,17 @@ export class ProductDetailSwaggerDto {
   @ApiProperty({ example: '2023-10-27T13:19:16.784Z' })
   updateAt: string;
 
-  @ApiProperty({ type: CategorySwaggerDto })
-  category: CategorySwaggerDto;
+  @ApiProperty({ type: CategoryDtoForProduct })
+  category: CategoryDtoForProduct;
 
-  @ApiProperty({ type: PrintShopSwaggerDto })
-  printShop: PrintShopSwaggerDto;
+  @ApiProperty({ type: PrintShopDtoForProduct })
+  printShop: PrintShopDtoForProduct;
 
-  @ApiProperty({ type: [TagSwaggerDto] })
-  tags: TagSwaggerDto[];
+  @ApiProperty({ type: [TagSwaggerDtoForProduct] })
+  tags: TagSwaggerDtoForProduct[];
 
-  @ApiProperty({ type: [ProductReviewSwaggerDto] })
-  reviews: ProductReviewSwaggerDto[];
+  @ApiProperty({ type: [ProductReviewDtoForProduct] })
+  reviews: ProductReviewDtoForProduct[];
 
   @ApiProperty({ example: 1 })
   bookmarkCount: number;

@@ -3,6 +3,12 @@ import { UserType } from 'src/entity/user.entity';
 
 export class UserDetailSwaggerDto {
   @ApiProperty({
+    description: '유저 ID',
+    example: 1,
+  })
+  id: number;
+
+  @ApiProperty({
     description: '소셜 로그인 제공업체',
     example: 'naver',
   })

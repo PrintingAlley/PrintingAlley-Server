@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class ProductSwaggerDto {
+class ProductDtoForPrintShop {
   @ApiProperty({ example: 1 })
   id: number;
 
   @ApiProperty({ example: '특수컬러 명함' })
   name: string;
 
-  @ApiProperty({ example: '100장에 10,000원' })
+  @ApiProperty({ example: '100장에 10,000원', nullable: true })
   priceInfo: string;
 
   @ApiProperty({ example: '스크래치에 강하고 우수한 탄성을 갖춘 7색상의 제품' })
@@ -121,8 +121,8 @@ export class PrintShopDetailSwaggerDto {
   @ApiProperty({ example: '2023-10-25T12:58:04.560Z' })
   updateAt: string;
 
-  @ApiProperty({ type: [ProductSwaggerDto] })
-  products: ProductSwaggerDto[];
+  @ApiProperty({ type: [ProductDtoForPrintShop] })
+  products: ProductDtoForPrintShop[];
 
   @ApiProperty({ type: [PrintShopReviewSwaggerDto] })
   reviews: PrintShopReviewSwaggerDto[];
