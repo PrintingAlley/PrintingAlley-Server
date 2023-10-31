@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SimpleBookmarkGroupSwaggerDto } from './simple-bookmark-group.swagger.dto';
-import { ProductSwaggerDto } from 'src/product/dto/swagger/product-response.swagger.dto';
+import { ProductWithTagSwaggerDto } from 'src/product/dto/swagger/product-response.swagger.dto';
 
 export class BookmarkGroupListSwaggerDto {
   @ApiProperty({
@@ -20,8 +20,8 @@ class BookmarkSwaggerDto {
   @ApiProperty({ description: '수정일', example: '2023-10-31T03:13:46.219Z' })
   updatedAt: string;
 
-  @ApiProperty({ description: '제품 정보', type: ProductSwaggerDto })
-  product: ProductSwaggerDto;
+  @ApiProperty({ description: '제품 정보', type: ProductWithTagSwaggerDto })
+  product: ProductWithTagSwaggerDto;
 }
 
 class BookmarkGroupSwaggerDto {

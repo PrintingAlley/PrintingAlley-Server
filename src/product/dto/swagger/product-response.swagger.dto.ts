@@ -5,7 +5,7 @@ import { SimpleTagSwaggerDto } from 'src/tag/dto/swagger/simple-tag.swagger.dto'
 import { SimpleProductSwaggerDto } from './simple-product.swagger.dto';
 import { SimpleProductReviewSwaggerDto } from 'src/product-review/dto/swagger/simple-product-review.swagger.dto';
 
-export class ProductSwaggerDto extends SimpleProductSwaggerDto {
+export class ProductWithTagSwaggerDto extends SimpleProductSwaggerDto {
   @ApiProperty({
     description: '태그 목록',
     type: [SimpleTagSwaggerDto],
@@ -16,15 +16,15 @@ export class ProductSwaggerDto extends SimpleProductSwaggerDto {
 export class ProductListSwaggerDto {
   @ApiProperty({
     description: '제품 목록',
-    type: [ProductSwaggerDto],
+    type: [ProductWithTagSwaggerDto],
   })
-  products: ProductSwaggerDto[];
+  products: ProductWithTagSwaggerDto[];
 
   @ApiProperty({ description: '전체 제품 수', example: 1 })
   totalCount: number;
 }
 
-export class ProductDetailSwaggerDto extends ProductSwaggerDto {
+export class ProductSwaggerDto extends ProductWithTagSwaggerDto {
   @ApiProperty({
     description: '카테고리 정보',
     type: SimpleCategorySwaggerDto,
@@ -45,4 +45,12 @@ export class ProductDetailSwaggerDto extends ProductSwaggerDto {
 
   @ApiProperty({ description: '북마크 수', example: 0 })
   bookmarkCount: number;
+}
+
+export class ProductDetailSwaggerDto {
+  @ApiProperty({
+    description: '제품',
+    type: ProductSwaggerDto,
+  })
+  product: ProductSwaggerDto;
 }
