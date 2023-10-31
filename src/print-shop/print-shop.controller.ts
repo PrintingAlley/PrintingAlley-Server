@@ -33,6 +33,11 @@ import { GetUser } from 'src/decorators/user.decorator';
 import { CreatePrintShopReviewDto } from 'src/print-shop-review/dto/create-print-shop-review.dto';
 import { User } from 'src/entity/user.entity';
 import { PrintShopReviewResponseDto } from './dto/print-shop-review-response.dto';
+import {
+  PrintShopDetailSwaggerDto,
+  PrintShopListSwaggerDto,
+} from './dto/swagger/print-shop-response.swagger.dto';
+import { PrintShopReviewListSwaggerDto } from './dto/swagger/print-shop-review-response.swagger.dto';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
@@ -49,7 +54,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 목록 조회 성공',
-    type: PrintShopsResponseDto,
+    type: PrintShopListSwaggerDto,
   })
   @ApiQuery({
     name: 'page',
@@ -86,7 +91,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 조회 성공',
-    type: PrintShopResponseDto,
+    type: PrintShopDetailSwaggerDto,
   })
   async findOne(
     @Param('id', ParseIntPipe) id: number,
@@ -166,7 +171,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄사 리뷰 조회 성공',
-    type: PrintShopReviewResponseDto,
+    type: PrintShopReviewListSwaggerDto,
   })
   async getReview(
     @Param('id', ParseIntPipe) id: number,

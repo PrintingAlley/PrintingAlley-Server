@@ -30,6 +30,10 @@ import {
   BookmarkGroupResponseDto,
   BookmarkGroupsResponseDto,
 } from './dto/bookmark-group.response.dto';
+import {
+  BookmarkGroupDetailSwaggerDto,
+  BookmarkGroupListSwaggerDto,
+} from './dto/swagger/bookmark-group-response.swagger.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('bookmark')
@@ -48,7 +52,7 @@ export class BookmarkController {
   })
   @ApiOkResponse({
     description: '내 북마크 그룹 조회 성공',
-    type: BookmarkGroupsResponseDto,
+    type: BookmarkGroupListSwaggerDto,
   })
   async getMyBookmarkGroups(
     @GetUser() user: User,
@@ -66,7 +70,7 @@ export class BookmarkController {
   })
   @ApiOkResponse({
     description: '북마크 그룹 조회 성공',
-    type: BookmarkGroupResponseDto,
+    type: BookmarkGroupDetailSwaggerDto,
   })
   async getBookmarkGroup(
     @Param('id') id: number,

@@ -21,8 +21,11 @@ import { createResponse } from 'src/common/utils/response.helper';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserNameDto } from './dto/update-user-name.dto';
 import { UserResponseDto } from './dto/user-response.dto';
-import { PrintShopReviewResponseDto } from './dto/print-shop-review-response.dto';
-import { ProductReviewResponseDto } from './dto/product-review-response.dto';
+import { UserDetailSwaggerDto } from './dto/swagger/user-response.swagger.dto';
+import { UserPrintShopReviewResponseDto } from './dto/user-print-shop-review-response.dto';
+import { UserProductReviewResponseDto } from './dto/user-product-review-response.dto';
+import { UserPrintShopReviewListSwaggerDto } from './dto/swagger/user-print-shop-review-response.swagger.dto';
+import { UserProductReviewListSwaggerDto } from './dto/swagger/user-product-review-response.swagger.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
@@ -42,7 +45,7 @@ export class UserController {
   })
   @ApiOkResponse({
     description: '내 정보 조회 성공',
-    type: UserResponseDto,
+    type: UserDetailSwaggerDto,
   })
   async getMyInfo(@GetUser() currentUser: User): Promise<UserResponseDto> {
     const user = await this.userService.getUserById(currentUser.id);
@@ -57,11 +60,11 @@ export class UserController {
   })
   @ApiOkResponse({
     description: '내가 작성한 인쇄소 리뷰 조회 성공',
-    type: PrintShopReviewResponseDto,
+    type: UserPrintShopReviewListSwaggerDto,
   })
   async getMyPrintShopReviews(
     @GetUser() user: User,
-  ): Promise<PrintShopReviewResponseDto> {
+  ): Promise<UserPrintShopReviewResponseDto> {
     const printShopReviews = await this.userService.getPrintShopReviewsByUserId(
       user.id,
     );
@@ -76,11 +79,11 @@ export class UserController {
   })
   @ApiOkResponse({
     description: '내가 작성한 제품 리뷰 조회 성공',
-    type: ProductReviewResponseDto,
+    type: UserProductReviewListSwaggerDto,
   })
   async getMyProductReviews(
     @GetUser() user: User,
-  ): Promise<ProductReviewResponseDto> {
+  ): Promise<UserProductReviewResponseDto> {
     const productReviews = await this.userService.getProductReviewsByUserId(
       user.id,
     );

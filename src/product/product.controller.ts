@@ -34,6 +34,11 @@ import { GetUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entity/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { ProductReviewResponseDto } from './dto/product-review-response.dto';
+import {
+  ProductDetailSwaggerDto,
+  ProductListSwaggerDto,
+} from './dto/swagger/product-response.swagger.dto';
+import { ProductReviewListSwaggerDto } from './dto/swagger/product-review-response.swagger.dto';
 
 @Controller('product')
 @ApiTags('Product')
@@ -50,7 +55,7 @@ export class ProductController {
   })
   @ApiOkResponse({
     description: '제품 목록 조회 성공',
-    type: ProductsResponseDto,
+    type: ProductListSwaggerDto,
   })
   @ApiQuery({
     name: 'page',
@@ -95,7 +100,7 @@ export class ProductController {
   })
   @ApiOkResponse({
     description: '제품 조회 성공',
-    type: ProductResponseDto,
+    type: ProductDetailSwaggerDto,
   })
   async findOne(
     @Param('id', ParseIntPipe) id: number,
@@ -175,7 +180,7 @@ export class ProductController {
   })
   @ApiOkResponse({
     description: '제품 리뷰 조회 성공',
-    type: ProductReviewResponseDto,
+    type: ProductReviewListSwaggerDto,
   })
   async getReview(
     @Param('id', ParseIntPipe) id: number,
