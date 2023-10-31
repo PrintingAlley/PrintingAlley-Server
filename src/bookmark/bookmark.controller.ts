@@ -12,7 +12,6 @@ import {
 import { BookmarkService } from './bookmark.service';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { CreateBookmarkGroupDto } from './dto/create-bookmark-group.dto';
-import { BookmarkGroup } from 'src/entity/bookmark-group.entity';
 import {
   ApiHeader,
   ApiOkResponse,
@@ -27,8 +26,10 @@ import { createResponse } from 'src/common/utils/response.helper';
 import { DeleteMultipleGroupsDto } from './dto/delete-multiple-groups.dto';
 import { DeleteMultipleBookmarksDto } from './dto/delete-multiple-bookmarks.dto';
 import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
-import { BookmarkGroupListSwaggerDto } from './dto/swagger/bookmark-group-list.swagger.dto';
-import { BookmarkDetailSwaggerDto } from './dto/swagger/bookmark-group-detail.swagger.dto';
+import {
+  BookmarkGroupResponseDto,
+  BookmarkGroupsResponseDto,
+} from './dto/bookmark-group.response.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('bookmark')
@@ -47,10 +48,15 @@ export class BookmarkController {
   })
   @ApiOkResponse({
     description: '내 북마크 그룹 조회 성공',
-    type: [BookmarkGroupListSwaggerDto],
+    type: BookmarkGroupsResponseDto,
   })
-  async getMyBookmarkGroups(@GetUser() user: User): Promise<BookmarkGroup[]> {
-    return this.bookmarkService.getBookmarkGroupsByUser(user.id);
+  async getMyBookmarkGroups(
+    @GetUser() user: User,
+  ): Promise<BookmarkGroupsResponseDto> {
+    const bookmarkGroups = await this.bookmarkService.getBookmarkGroupsByUser(
+      user.id,
+    );
+    return { bookmarkGroups };
   }
 
   @Get('group/:id')
@@ -60,10 +66,13 @@ export class BookmarkController {
   })
   @ApiOkResponse({
     description: '북마크 그룹 조회 성공',
-    type: BookmarkDetailSwaggerDto,
+    type: BookmarkGroupResponseDto,
   })
-  async getBookmarkGroup(@Param('id') id: number): Promise<BookmarkGroup> {
-    return this.bookmarkService.getBookmarkGroupById(id);
+  async getBookmarkGroup(
+    @Param('id') id: number,
+  ): Promise<BookmarkGroupResponseDto> {
+    const bookmarkGroup = await this.bookmarkService.getBookmarkGroupById(id);
+    return { bookmarkGroup };
   }
 
   @Post('group')

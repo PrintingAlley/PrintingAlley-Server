@@ -18,13 +18,11 @@ import {
 import { GetUser } from 'src/decorators/user.decorator';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
-import { PrintShopReview } from 'src/entity/print-shop-review.entity';
-import { ProductReview } from 'src/entity/product-review.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserNameDto } from './dto/update-user-name.dto';
-import { UserDetailSwaggerDto } from './dto/swagger/user-detail.swagger.dto';
-import { UserPrintShopReviewListSwaggerDto } from './dto/swagger/user-print-shop-review-list.swagger.dto';
-import { UserProductReviewListSwaggerDto } from './dto/swagger/user-product-review-list.swagger.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { PrintShopReviewResponseDto } from './dto/print-shop-review-response.dto';
+import { ProductReviewResponseDto } from './dto/product-review-response.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
@@ -44,10 +42,11 @@ export class UserController {
   })
   @ApiOkResponse({
     description: '내 정보 조회 성공',
-    type: UserDetailSwaggerDto,
+    type: UserResponseDto,
   })
-  async getMyInfo(@GetUser() user: User): Promise<User> {
-    return this.userService.getUserById(user.id);
+  async getMyInfo(@GetUser() currentUser: User): Promise<UserResponseDto> {
+    const user = await this.userService.getUserById(currentUser.id);
+    return { user };
   }
 
   // 작성한 인쇄소 리뷰 조회
@@ -58,12 +57,15 @@ export class UserController {
   })
   @ApiOkResponse({
     description: '내가 작성한 인쇄소 리뷰 조회 성공',
-    type: [UserPrintShopReviewListSwaggerDto],
+    type: PrintShopReviewResponseDto,
   })
   async getMyPrintShopReviews(
     @GetUser() user: User,
-  ): Promise<PrintShopReview[]> {
-    return this.userService.getPrintShopReviewsByUserId(user.id);
+  ): Promise<PrintShopReviewResponseDto> {
+    const printShopReviews = await this.userService.getPrintShopReviewsByUserId(
+      user.id,
+    );
+    return { printShopReviews };
   }
 
   // 작성한 제품 리뷰 조회
@@ -74,10 +76,15 @@ export class UserController {
   })
   @ApiOkResponse({
     description: '내가 작성한 제품 리뷰 조회 성공',
-    type: [UserProductReviewListSwaggerDto],
+    type: ProductReviewResponseDto,
   })
-  async getMyProductReviews(@GetUser() user: User): Promise<ProductReview[]> {
-    return this.userService.getProductReviewsByUserId(user.id);
+  async getMyProductReviews(
+    @GetUser() user: User,
+  ): Promise<ProductReviewResponseDto> {
+    const productReviews = await this.userService.getProductReviewsByUserId(
+      user.id,
+    );
+    return { productReviews };
   }
 
   // 프로필 수정

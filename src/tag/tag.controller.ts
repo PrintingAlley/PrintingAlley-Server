@@ -9,16 +9,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
-import { Tag } from 'src/entity/tag.entity';
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
-import { TagsResponseDto } from './dto/tag-response.dto';
-import {
-  TagSwaggerDto,
-  TagListSwaggerDto,
-} from './dto/swagger/tag.swagger.dto';
+import { TagResponseDto, TagsResponseDto } from './dto/tag-response.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 
 @ApiTags('Tag')
@@ -33,7 +28,7 @@ export class TagController {
   })
   @ApiOkResponse({
     description: '전체 태그 계층 구조를 성공적으로 가져왔습니다.',
-    type: TagListSwaggerDto,
+    type: TagsResponseDto,
   })
   async getTags(): Promise<TagsResponseDto> {
     const hierarchies = await this.tagService.getTags();
@@ -47,10 +42,11 @@ export class TagController {
   })
   @ApiOkResponse({
     description: '태그 계층 구조를 성공적으로 가져왔습니다.',
-    type: TagSwaggerDto,
+    type: TagResponseDto,
   })
-  async getTag(@Param('id') id: number): Promise<Tag> {
-    return this.tagService.getTag(id);
+  async getTag(@Param('id') id: number): Promise<TagResponseDto> {
+    const tag = await this.tagService.getTag(id);
+    return { tag };
   }
 
   @Post()

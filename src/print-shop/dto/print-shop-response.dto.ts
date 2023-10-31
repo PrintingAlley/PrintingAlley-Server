@@ -15,3 +15,11 @@ export class PrintShopsResponseDto {
   })
   totalCount: number;
 }
+
+export class PrintShopResponseDto {
+  @ApiProperty({
+    description: '인쇄사',
+    type: PrintShop,
+  })
+  printShop: PrintShop;
+}

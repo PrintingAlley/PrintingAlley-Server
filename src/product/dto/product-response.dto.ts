@@ -15,3 +15,11 @@ export class ProductsResponseDto {
   })
   totalCount: number;
 }
+
+export class ProductResponseDto {
+  @ApiProperty({
+    description: '제품',
+    type: Product,
+  })
+  product: Product;
+}

@@ -20,21 +20,20 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { ParseOptionalArrayPipe } from './pipes/parse-optional-array.pipe';
-import { Product } from 'src/entity/product.entity';
 import { ProductService } from './product.service';
-import { ProductsResponseDto } from './dto/product-response.dto';
+import {
+  ProductResponseDto,
+  ProductsResponseDto,
+} from './dto/product-response.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
-import { ProductsResponseSwaggerDto } from './dto/swagger/product-list.swagger.dto';
-import { ProductDetailSwaggerDto } from './dto/swagger/product-detail.swagger.dto';
 import { ProductReviewService } from 'src/product-review/product-review.service';
 import { CreateProductReviewDto } from 'src/product-review/dto/create-product-review.dto';
 import { GetUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entity/user.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { ProductReview } from 'src/entity/product-review.entity';
-import { ProductReviewListSwaggerDto } from './dto/swagger/product-review-list.swagger.dto';
+import { ProductReviewResponseDto } from './dto/product-review-response.dto';
 
 @Controller('product')
 @ApiTags('Product')
@@ -51,7 +50,7 @@ export class ProductController {
   })
   @ApiOkResponse({
     description: '제품 목록 조회 성공',
-    type: ProductsResponseSwaggerDto,
+    type: ProductsResponseDto,
   })
   @ApiQuery({
     name: 'page',
@@ -96,10 +95,13 @@ export class ProductController {
   })
   @ApiOkResponse({
     description: '제품 조회 성공',
-    type: ProductDetailSwaggerDto,
+    type: ProductResponseDto,
   })
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Product> {
-    return await this.productService.findOne(id);
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ProductResponseDto> {
+    const product = await this.productService.findOne(id);
+    return { product };
   }
 
   @Post()
@@ -173,12 +175,14 @@ export class ProductController {
   })
   @ApiOkResponse({
     description: '제품 리뷰 조회 성공',
-    type: [ProductReviewListSwaggerDto],
+    type: ProductReviewResponseDto,
   })
   async getReview(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<ProductReview[]> {
-    return await this.productReviewService.findAllByProductId(id);
+  ): Promise<ProductReviewResponseDto> {
+    const productReviews =
+      await this.productReviewService.findAllByProductId(id);
+    return { productReviews };
   }
 
   @Post(':id/review')
@@ -210,7 +214,6 @@ export class ProductController {
       user.id,
       reviewData,
     );
-
     return createResponse(200, '성공', createdReview.id);
   }
 

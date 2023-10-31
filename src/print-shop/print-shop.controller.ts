@@ -20,20 +20,19 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { PrintShop } from 'src/entity/print-shop.entity';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
-import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
-import { PrintShopsResponseSwaggerDto } from './dto/swagger/print-shop-list.swagger.dto';
-import { PrintShopDetailSwaggerDto } from './dto/swagger/print-shop-detail.swagger.dto';
+import {
+  PrintShopResponseDto,
+  PrintShopsResponseDto,
+} from './dto/print-shop-response.dto';
 import { PrintShopReviewService } from 'src/print-shop-review/print-shop-review.service';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/decorators/user.decorator';
-import { PrintShopReview } from 'src/entity/print-shop-review.entity';
 import { CreatePrintShopReviewDto } from 'src/print-shop-review/dto/create-print-shop-review.dto';
 import { User } from 'src/entity/user.entity';
-import { PrintShopReviewListSwaggerDto } from './dto/swagger/print-shop-review-list.swagger.dto';
+import { PrintShopReviewResponseDto } from './dto/print-shop-review-response.dto';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
@@ -50,7 +49,7 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 목록 조회 성공',
-    type: PrintShopsResponseSwaggerDto,
+    type: PrintShopsResponseDto,
   })
   @ApiQuery({
     name: 'page',
@@ -87,10 +86,13 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄소 조회 성공',
-    type: PrintShopDetailSwaggerDto,
+    type: PrintShopResponseDto,
   })
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<PrintShop> {
-    return await this.printShopService.findOne(id);
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<PrintShopResponseDto> {
+    const printShop = await this.printShopService.findOne(id);
+    return { printShop };
   }
 
   @Post()
@@ -164,12 +166,14 @@ export class PrintShopController {
   })
   @ApiOkResponse({
     description: '인쇄사 리뷰 조회 성공',
-    type: [PrintShopReviewListSwaggerDto],
+    type: PrintShopReviewResponseDto,
   })
   async getReview(
     @Param('id', ParseIntPipe) id: number,
-  ): Promise<PrintShopReview[]> {
-    return await this.printShopReviewService.findAllByPrintShopId(id);
+  ): Promise<PrintShopReviewResponseDto> {
+    const printShopReviews =
+      await this.printShopReviewService.findAllByPrintShopId(id);
+    return { printShopReviews };
   }
 
   @Post(':id/review')
@@ -201,7 +205,6 @@ export class PrintShopController {
       user.id,
       reviewData,
     );
-
     return createResponse(200, '성공', createdReview.id);
   }
 
