@@ -43,6 +43,9 @@ export class ProductSwaggerDto extends ProductWithTagSwaggerDto {
   })
   reviews: SimpleProductReviewSwaggerDto[];
 
+  @ApiProperty({ description: '북마크 여부', example: false })
+  isBookmarked: boolean;
+
   @ApiProperty({ description: '북마크 수', example: 0 })
   bookmarkCount: number;
 }

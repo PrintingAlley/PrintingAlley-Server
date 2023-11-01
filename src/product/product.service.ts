@@ -42,7 +42,7 @@ export class ProductService {
       : await this.findAllProducts(page, size, searchText);
   }
 
-  async findOne(id: number): Promise<Product> {
+  async findOne(id: number, userId: number | null): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { id },
       relations: ['category', 'printShop', 'tags', 'reviews'],
@@ -50,6 +50,9 @@ export class ProductService {
     if (!product) {
       throw new NotFoundException('제품을 찾을 수 없습니다.');
     }
+
+    const isBookmarked = await this.bookmarkService.isBookmarked(id, userId);
+    product.isBookmarked = isBookmarked;
 
     const bookmarkCount = await this.bookmarkService.countByProductId(id);
     product.bookmarkCount = bookmarkCount;

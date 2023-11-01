@@ -112,6 +112,16 @@ export class Product {
   })
   tags: Tag[];
 
+  @ApiProperty({ description: '북마크 여부', example: false })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: false,
+  })
+  isBookmarked?: boolean;
+
   @ApiProperty({ description: '북마크 수', example: 0 })
   @Column({
     select: false,

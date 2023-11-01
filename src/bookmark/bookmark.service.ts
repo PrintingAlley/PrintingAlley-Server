@@ -263,6 +263,22 @@ export class BookmarkService {
     }
   }
 
+  async isBookmarked(
+    productId: number,
+    userId: number | null,
+  ): Promise<boolean> {
+    if (!userId) {
+      return false;
+    }
+    const bookmark = await this.bookmarkRepository.findOne({
+      where: {
+        product: { id: productId },
+        bookmarkGroup: { user: { id: userId } },
+      },
+    });
+    return !!bookmark;
+  }
+
   async countByProductId(productId: number): Promise<number> {
     return await this.bookmarkRepository.count({
       where: { product: { id: productId } },

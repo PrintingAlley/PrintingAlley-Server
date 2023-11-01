@@ -39,6 +39,7 @@ import {
   ProductListSwaggerDto,
 } from './dto/swagger/product-response.swagger.dto';
 import { ProductReviewListSwaggerDto } from './dto/swagger/product-review-response.swagger.dto';
+import { OptionalJwtAuthGuard } from 'src/guards/optional-jwt-auth.guard';
 
 @Controller('product')
 @ApiTags('Product')
@@ -89,6 +90,7 @@ export class ProductController {
   }
 
   @Get(':id')
+  @UseGuards(OptionalJwtAuthGuard)
   @ApiOperation({
     summary: '제품 조회',
     description: '제품을 조회하는 API입니다.',
@@ -104,8 +106,9 @@ export class ProductController {
   })
   async findOne(
     @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
   ): Promise<ProductResponseDto> {
-    const product = await this.productService.findOne(id);
+    const product = await this.productService.findOne(id, user.id);
     return { product };
   }
 
