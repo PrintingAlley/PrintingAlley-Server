@@ -106,9 +106,9 @@ export class ProductController {
   })
   async findOne(
     @Param('id', ParseIntPipe) id: number,
-    @GetUser() user: User,
+    @GetUser() user: User | null,
   ): Promise<ProductResponseDto> {
-    const product = await this.productService.findOne(id, user.id);
+    const product = await this.productService.findOne(id, user?.id);
     return { product };
   }
 
