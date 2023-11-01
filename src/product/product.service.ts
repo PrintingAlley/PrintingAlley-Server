@@ -110,15 +110,13 @@ export class ProductService {
 
     product.category = category;
     product.printShop = printShop;
-
-    await this.productRepository.update(id, restData);
+    Object.assign(product, restData);
 
     if (tagIds !== undefined) {
       product.tags = tagIds.length ? await this.findTagsByIds(tagIds) : [];
-      await this.productRepository.save(product);
     }
 
-    return product;
+    return this.productRepository.save(product);
   }
 
   async delete(id: number): Promise<void> {
