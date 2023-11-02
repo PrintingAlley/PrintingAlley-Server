@@ -14,6 +14,7 @@ export class ProductReviewService {
   async findAll(): Promise<ProductReview[]> {
     return await this.productReviewRepository.find({
       relations: ['product', 'user'],
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -21,6 +22,7 @@ export class ProductReviewService {
     return await this.productReviewRepository.find({
       where: { product: { id: productId } },
       relations: ['user'],
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -28,6 +30,7 @@ export class ProductReviewService {
     return await this.productReviewRepository.find({
       where: { user: { id: userId } },
       relations: ['product'],
+      order: { createdAt: 'DESC' },
     });
   }
 

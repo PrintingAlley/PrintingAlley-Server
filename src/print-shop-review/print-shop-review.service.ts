@@ -14,6 +14,7 @@ export class PrintShopReviewService {
   async findAll(): Promise<PrintShopReview[]> {
     return await this.printShopReviewRepository.find({
       relations: ['printShop', 'user'],
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -21,6 +22,7 @@ export class PrintShopReviewService {
     return await this.printShopReviewRepository.find({
       where: { printShop: { id: printShopId } },
       relations: ['user'],
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -28,6 +30,7 @@ export class PrintShopReviewService {
     return await this.printShopReviewRepository.find({
       where: { user: { id: userId } },
       relations: ['printShop'],
+      order: { createdAt: 'DESC' },
     });
   }
 

@@ -12,7 +12,9 @@ export class CategoryService {
   ) {}
 
   async getCategories(): Promise<Category[]> {
-    const categories = await this.categoryRepository.find();
+    const categories = await this.categoryRepository.find({
+      order: { createdAt: 'DESC' },
+    });
     return categories;
   }
 
