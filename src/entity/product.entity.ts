@@ -57,6 +57,14 @@ export class Product {
   afterProcess: string;
 
   @ApiProperty({
+    description: '디자이너 또는 디자인 스튜디오 이름',
+    required: true,
+    example: '프린팅 스튜디오',
+  })
+  @Column()
+  designer: string;
+
+  @ApiProperty({
     description: '제품 소개',
     required: true,
     example: '간단한 제품 소개',

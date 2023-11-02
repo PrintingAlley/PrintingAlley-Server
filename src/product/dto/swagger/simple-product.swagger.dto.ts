@@ -17,6 +17,12 @@ export class SimpleProductSwaggerDto {
   afterProcess: string;
 
   @ApiProperty({
+    description: '디자이너 또는 디자인 스튜디오 이름',
+    example: '프린팅 스튜디오',
+  })
+  designer: string;
+
+  @ApiProperty({
     description: '제품 소개',
     example: '스크래치에 강하고 우수한 탄성을 갖춘 7색상의 제품',
   })
