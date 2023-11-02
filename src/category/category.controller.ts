@@ -13,7 +13,8 @@ import { Category } from 'src/entity/category.entity';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
 import { createResponse } from 'src/common/utils/response.helper';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { CategoryResponseSwaggerDto } from './dto/swagger/category-response.swagger.dto';
+import { CategoriesResponseDto } from './dto/category-response.dto';
+import { CategoryListSwaggerDto } from './dto/swagger/category-response.swagger.dto';
 
 @Controller('category')
 @ApiTags('Category')
@@ -27,11 +28,11 @@ export class CategoryController {
   })
   @ApiOkResponse({
     description: '카테고리 목록 조회 성공',
-    type: CategoryResponseSwaggerDto,
+    type: CategoryListSwaggerDto,
   })
-  async getCategories(): Promise<Category[]> {
+  async getCategories(): Promise<CategoriesResponseDto> {
     const categories = await this.categoryService.getCategories();
-    return categories;
+    return { categories };
   }
 
   // TODO: ADMIN 권한 필요
