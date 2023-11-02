@@ -33,12 +33,28 @@ export class Product {
   name: string;
 
   @ApiProperty({
-    description: '제품 가격 정보',
-    required: false,
-    example: '100장에 10,000원',
+    description: '제품 크기',
+    required: true,
+    example: '90*50mm',
   })
-  @Column({ nullable: true })
-  priceInfo?: string;
+  @Column()
+  size: string;
+
+  @ApiProperty({
+    description: '종이 종류',
+    required: true,
+    example: '종이이름+평량(g)',
+  })
+  @Column()
+  paper: string;
+
+  @ApiProperty({
+    description: '후가공',
+    required: true,
+    example: '도무송',
+  })
+  @Column()
+  afterProcess: string;
 
   @ApiProperty({
     description: '제품 소개',

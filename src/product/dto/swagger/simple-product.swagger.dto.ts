@@ -7,8 +7,14 @@ export class SimpleProductSwaggerDto {
   @ApiProperty({ description: '제품 이름', example: '특수컬러 명함' })
   name: string;
 
-  @ApiProperty({ description: '가격 정보', nullable: true, example: null })
-  priceInfo: string | null;
+  @ApiProperty({ description: '제품 크기', example: '90*50mm' })
+  size: string;
+
+  @ApiProperty({ description: '종이 종류', example: '종이이름+평량(g)' })
+  paper: string;
+
+  @ApiProperty({ description: '후가공', example: '도무송' })
+  afterProcess: string;
 
   @ApiProperty({
     description: '제품 소개',
