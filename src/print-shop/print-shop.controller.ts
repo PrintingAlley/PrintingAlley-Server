@@ -116,6 +116,7 @@ export class PrintShopController {
     return createResponse(200, '성공', createdPrintShop.id);
   }
 
+  // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 수정 가능
   @Put(':id')
   @ApiOperation({
     summary: '인쇄소 수정',
@@ -138,6 +139,7 @@ export class PrintShopController {
     return createResponse(200, '성공', id);
   }
 
+  // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 삭제 가능
   @Delete(':id')
   @ApiOperation({
     summary: '인쇄소 삭제',

@@ -53,6 +53,7 @@ export class TagController {
     return { tag };
   }
 
+  // TODO: ADMIN 권한 필요
   @Post()
   @ApiOperation({
     summary: '태그 생성',
@@ -70,6 +71,7 @@ export class TagController {
     return createResponse(200, '성공', tag.id);
   }
 
+  // TODO: ADMIN 권한 필요
   @Put(':id')
   @ApiOperation({
     summary: '태그 수정',
@@ -88,6 +90,7 @@ export class TagController {
     return createResponse(200, '성공', id);
   }
 
+  // TODO: ADMIN 권한 필요
   @Delete(':id')
   @ApiOperation({
     summary: '태그 삭제',

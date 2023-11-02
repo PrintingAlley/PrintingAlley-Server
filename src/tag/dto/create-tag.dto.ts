@@ -3,7 +3,6 @@ import {
   IsInt,
   IsNotEmpty,
   IsOptional,
-  IsUrl,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -25,7 +24,6 @@ export class CreateTagDto {
     example: 'https://www.printshop.com',
   })
   @IsOptional()
-  @IsUrl()
   image?: string;
 
   @ApiProperty({

@@ -12,6 +12,7 @@ import { UploadModule } from './upload/upload.module';
 import { ProductModule } from './product/product.module';
 import { ProductReviewModule } from './product-review/product-review.module';
 import { PrintShopReviewModule } from './print-shop-review/print-shop-review.module';
+import { CategoryModule } from './category/category.module';
 import ConfigModule from './config';
 
 @Module({
@@ -37,6 +38,7 @@ import ConfigModule from './config';
     PrintShopModule,
     BookmarkModule,
     TagModule,
+    CategoryModule,
     AuthModule,
     UploadModule,
     ProductReviewModule,
