@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -39,4 +40,7 @@ export class Notice {
   @ApiProperty({ description: '수정일' })
   @UpdateDateColumn({ name: 'updated_at' })
   updateAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  deletedAt?: Date;
 }

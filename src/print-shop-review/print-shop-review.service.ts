@@ -83,7 +83,7 @@ export class PrintShopReviewService {
       throw new NotFoundException('사용자가 작성한 리뷰를 찾을 수 없습니다.');
     }
 
-    await this.printShopReviewRepository.delete({ id: reviewId });
+    await this.printShopReviewRepository.softDelete({ id: reviewId });
   }
 
   async countByPrintShopId(printShopId: number): Promise<number> {

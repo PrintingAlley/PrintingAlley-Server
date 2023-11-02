@@ -8,6 +8,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Bookmark } from './bookmark.entity';
 import { User } from './user.entity';
@@ -49,4 +50,7 @@ export class BookmarkGroup {
   @ApiProperty({ description: '수정일' })
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  deletedAt?: Date;
 }

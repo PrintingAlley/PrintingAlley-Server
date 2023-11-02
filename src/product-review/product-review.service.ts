@@ -83,7 +83,7 @@ export class ProductReviewService {
       throw new NotFoundException('사용자가 작성한 리뷰를 찾을 수 없습니다.');
     }
 
-    await this.productReviewRepository.delete({ id: reviewId });
+    await this.productReviewRepository.softDelete({ id: reviewId });
   }
 
   async countByProductId(productId: number): Promise<number> {

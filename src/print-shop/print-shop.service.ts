@@ -61,7 +61,7 @@ export class PrintShopService {
       throw new NotFoundException(`인쇄사 ID ${id}를 찾을 수 없습니다.`);
     }
 
-    await this.printShopRepository.remove(printShop);
+    await this.printShopRepository.softRemove(printShop);
   }
 
   private async findAllPrintShops(
