@@ -15,4 +15,10 @@ export class SimpleBookmarkGroupSwaggerDto {
 
   @ApiProperty({ description: '북마크 수', example: 1 })
   bookmarkCount: number;
+
+  @ApiProperty({
+    description: '최근 북마크 이미지 URL',
+    example: 'https://www.printshop.com/image1.jpg',
+  })
+  recentImage?: string;
 }

@@ -27,16 +27,21 @@ export class BookmarkService {
     const groups = await this.groupRepository.find({
       where: { user: { id: userId } },
       order: { createdAt: 'DESC' },
-      relations: ['bookmarks'],
+      relations: ['bookmarks', 'bookmarks.product'],
     });
 
-    // 각 그룹의 북마크 수를 계산하고 bookmarkCount 필드를 업데이트합니다.
     for (const group of groups) {
       group.bookmarkCount = group.bookmarks.length;
-    }
 
-    // 북마크 배열은 필요하지 않으므로 삭제합니다.
-    groups.forEach((group) => delete group.bookmarks);
+      group.bookmarks.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+
+      const recentBookmark = group.bookmarks[0];
+      if (recentBookmark && recentBookmark.product) {
+        group.recentImage = recentBookmark.product.mainImage;
+      }
+
+      delete group.bookmarks;
+    }
 
     return groups;
   }

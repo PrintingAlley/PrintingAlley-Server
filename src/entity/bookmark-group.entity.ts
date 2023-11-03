@@ -42,6 +42,12 @@ export class BookmarkGroup {
   @ApiProperty({ description: '북마크 개수', example: 3 })
   bookmarkCount?: number;
 
+  @ApiProperty({
+    description: '최근 이미지',
+    example: 'https://www.printshop.com',
+  })
+  recentImage?: string;
+
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
