@@ -125,7 +125,7 @@ export class ProductService {
       throw new NotFoundException('제품을 찾을 수 없습니다.');
     }
 
-    await this.productRepository.softDelete(id);
+    await this.productRepository.delete(id);
   }
 
   async deleteByPrintShopId(printShopId: number): Promise<void> {

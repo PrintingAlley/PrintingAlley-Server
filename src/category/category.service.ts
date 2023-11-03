@@ -41,6 +41,6 @@ export class CategoryService {
       throw new NotFoundException(`카테고리 ID ${id}를 찾을 수 없습니다.`);
     }
 
-    await this.categoryRepository.softDelete(id);
+    await this.categoryRepository.delete(id);
   }
 }

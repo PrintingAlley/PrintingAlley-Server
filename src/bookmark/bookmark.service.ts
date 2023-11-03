@@ -101,10 +101,10 @@ export class BookmarkService {
     });
 
     // 해당 북마크들을 삭제합니다.
-    await this.bookmarkRepository.softRemove(bookmarks);
+    await this.bookmarkRepository.remove(bookmarks);
 
     // 북마크 그룹을 삭제합니다.
-    const result = await this.groupRepository.softDelete(groupId);
+    const result = await this.groupRepository.delete(groupId);
 
     if (result.affected === 0) {
       throw new NotFoundException(
@@ -120,11 +120,11 @@ export class BookmarkService {
       const bookmarks = await this.bookmarkRepository.find({
         where: { bookmarkGroup: { id: groupId } },
       });
-      await this.bookmarkRepository.softRemove(bookmarks);
+      await this.bookmarkRepository.remove(bookmarks);
     }
 
     // 모든 북마크가 삭제된 후 해당 북마크 그룹들을 삭제합니다.
-    await this.groupRepository.softDelete(groupIds);
+    await this.groupRepository.delete(groupIds);
   }
 
   // 북마크 추가
@@ -208,7 +208,7 @@ export class BookmarkService {
 
   // 북마크 삭제
   async deleteBookmark(bookmarkId: number): Promise<void> {
-    const result = await this.bookmarkRepository.softDelete(bookmarkId);
+    const result = await this.bookmarkRepository.delete(bookmarkId);
     if (result.affected === 0) {
       throw new NotFoundException(
         `북마크 ID ${bookmarkId}를 찾을 수 없습니다.`,
@@ -218,7 +218,7 @@ export class BookmarkService {
 
   // 여러 북마크 삭제
   async deleteMultipleBookmarks(bookmarkIds: number[]): Promise<void> {
-    await this.bookmarkRepository.softDelete(bookmarkIds);
+    await this.bookmarkRepository.delete(bookmarkIds);
   }
 
   // 유저의 기본 북마크 그룹 가져오기 (없으면 생성)

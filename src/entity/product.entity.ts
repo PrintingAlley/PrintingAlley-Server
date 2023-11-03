@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
@@ -164,7 +163,4 @@ export class Product {
   @ApiProperty({ description: '수정일' })
   @UpdateDateColumn({ name: 'updated_at' })
   updateAt: Date;
-
-  @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deletedAt?: Date;
 }

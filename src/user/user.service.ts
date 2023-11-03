@@ -88,6 +88,6 @@ export class UserService {
 
   // 사용자 삭제
   async deleteUser(userId: number): Promise<void> {
-    await this.userRepository.softDelete(userId);
+    await this.userRepository.delete(userId);
   }
 }

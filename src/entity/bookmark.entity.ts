@@ -5,7 +5,6 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  DeleteDateColumn,
 } from 'typeorm';
 import { BookmarkGroup } from './bookmark-group.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -45,7 +44,4 @@ export class Bookmark {
   @ApiProperty({ description: '수정일' })
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-
-  @DeleteDateColumn({ type: 'timestamp', nullable: true })
-  deletedAt?: Date;
 }

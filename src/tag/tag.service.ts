@@ -56,7 +56,7 @@ export class TagService {
   }
 
   async deleteTag(tagId: number): Promise<void> {
-    const result = await this.tagRepository.softDelete(tagId);
+    const result = await this.tagRepository.delete(tagId);
     if (result.affected === 0) {
       throw new NotFoundException(`ID가 "${tagId}"인 태그를 찾을 수 없습니다.`);
     }
