@@ -94,17 +94,17 @@ export class PrintShop {
   @ApiProperty({
     description: '위도',
     required: true,
-    example: 37.123456,
+    example: '37.123456',
   })
-  @Column({ type: 'real' })
+  @Column()
   latitude: string;
 
   @ApiProperty({
     description: '경도',
     required: true,
-    example: 127.123456,
+    example: '127.123456',
   })
-  @Column({ type: 'real' })
+  @Column()
   longitude: string;
 
   @ApiProperty({

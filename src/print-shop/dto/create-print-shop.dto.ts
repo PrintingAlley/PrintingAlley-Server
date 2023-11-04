@@ -94,7 +94,7 @@ export class CreatePrintShopDto {
   @ApiProperty({
     description: '위도',
     required: true,
-    example: 37.123456,
+    example: '37.123456',
   })
   @IsNotEmpty()
   latitude: string;
@@ -102,7 +102,7 @@ export class CreatePrintShopDto {
   @ApiProperty({
     description: '경도',
     required: true,
-    example: 127.123456,
+    example: '127.123456',
   })
   @IsNotEmpty()
   longitude: string;

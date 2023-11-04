@@ -46,11 +46,11 @@ export class SimplePrintShopSwaggerDto {
   })
   backgroundImage: string;
 
-  @ApiProperty({ description: '위도', example: 37.5665 })
-  latitude: number;
+  @ApiProperty({ description: '위도', example: '37.5665' })
+  latitude: string;
 
-  @ApiProperty({ description: '경도', example: 126.978 })
-  longitude: number;
+  @ApiProperty({ description: '경도', example: '126.978' })
+  longitude: string;
 
   @ApiProperty({ description: '생성일', example: '2023-10-31T01:02:40.301Z' })
   createdAt: string;
