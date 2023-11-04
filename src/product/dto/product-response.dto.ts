@@ -22,4 +22,11 @@ export class ProductResponseDto {
     type: Product,
   })
   product: Product;
+
+  @ApiProperty({
+    description: '북마크 아이디',
+    type: Number,
+    example: 1,
+  })
+  bookmarkId: number | null;
 }

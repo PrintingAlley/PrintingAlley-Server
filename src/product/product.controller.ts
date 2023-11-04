@@ -108,8 +108,11 @@ export class ProductController {
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User | null,
   ): Promise<ProductResponseDto> {
-    const product = await this.productService.findOne(id, user?.id);
-    return { product };
+    const { product, bookmarkId } = await this.productService.findOne(
+      id,
+      user?.id,
+    );
+    return { product, bookmarkId };
   }
 
   // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 제품 생성 가능

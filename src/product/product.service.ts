@@ -42,7 +42,10 @@ export class ProductService {
       : await this.findAllProducts(page, size, searchText);
   }
 
-  async findOne(id: number, userId: number | null): Promise<Product> {
+  async findOne(
+    id: number,
+    userId: number | null,
+  ): Promise<{ product: Product; bookmarkId?: number }> {
     const product = await this.productRepository.findOne({
       where: { id },
       relations: ['category', 'printShop', 'tags', 'reviews'],
@@ -57,7 +60,12 @@ export class ProductService {
     const bookmarkCount = await this.bookmarkService.countByProductId(id);
     product.bookmarkCount = bookmarkCount;
 
-    return product;
+    const bookmarkId = await this.bookmarkService.getBookmarkIdByProductId(
+      id,
+      userId,
+    );
+
+    return { product, bookmarkId };
   }
 
   async create(productData: CreateProductDto): Promise<Product> {
