@@ -19,7 +19,7 @@ const categories = [
   {
     name: '명함',
     image:
-      'https://printingstreets.uk/2c4f62e3-21cd-4eba-8115-f014d5e3cca1_icon_postcard.svg',
+      'https://printingstreets.uk/cd2d4a68-c3a0-4266-9db7-cd5d7f8c1bcf_icon_businesscard.svg',
   },
   {
     name: '엽서/카드',
@@ -90,7 +90,7 @@ const runTagSeeder = async (dataSource: DataSource) => {
     {
       name: '명함',
       image:
-        'https://printingstreets.uk/2c4f62e3-21cd-4eba-8115-f014d5e3cca1_icon_postcard.svg',
+        'https://printingstreets.uk/cd2d4a68-c3a0-4266-9db7-cd5d7f8c1bcf_icon_businesscard.svg',
     },
     {
       name: '엽서/카드',
@@ -223,7 +223,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [4, 5, 9].includes(tag.id)),
+        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
       },
       {
         name: 'NOMART NAMECARD',
@@ -243,7 +243,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [4, 5, 9].includes(tag.id)),
+        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
       },
       {
         name: 'Graphics thisisgrey likes',
@@ -263,7 +263,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [4, 5, 9].includes(tag.id)),
+        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
       },
       {
         name: 'untitled studio',
@@ -283,7 +283,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [4, 5, 9].includes(tag.id)),
+        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
       },
       {
         name: 'PAGE GALLERIES',
@@ -303,7 +303,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [4, 5, 9].includes(tag.id)),
+        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
       },
       {
         name: 'SPACELOGIC',
@@ -323,7 +323,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [4, 5, 9].includes(tag.id)),
+        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
       },
     ];
 
