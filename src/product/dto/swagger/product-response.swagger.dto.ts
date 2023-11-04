@@ -56,4 +56,11 @@ export class ProductDetailSwaggerDto {
     type: ProductSwaggerDto,
   })
   product: ProductSwaggerDto;
+
+  @ApiProperty({
+    description: '북마크 ID',
+    type: Number,
+    example: 1,
+  })
+  bookmarkId: number | null;
 }
