@@ -14,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { TokenBlacklistService } from './token-blacklist.service';
 import { ProductReviewModule } from 'src/product-review/product-review.module';
 import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
+import { VersionModule } from 'src/version/version.module';
 // TODO:: Add Apple Auth Setting
 // import { AppleStrategy } from './apple.strategy';
 
@@ -28,6 +29,7 @@ import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.m
         signOptions: { expiresIn: '1y' },
       }),
     }),
+    VersionModule,
     PrintShopReviewModule,
     ProductReviewModule,
   ],

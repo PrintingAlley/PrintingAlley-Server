@@ -1,7 +1,6 @@
 export default () => ({
   ENVIRONMENT: process.env.NODE_ENV || 'local',
   API_URL: process.env.API_URL || 'http://localhost:8080',
-  API_VERSION: process.env.API_VERSION || 'v1',
   DB_HOST: process.env.DB_HOST || 'localhost',
   DB_PORT: process.env.DB_PORT || 5432,
   DB_USERNAME: process.env.DB_USERNAME || 'admin',

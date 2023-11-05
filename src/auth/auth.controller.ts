@@ -11,6 +11,7 @@ import {
   Headers,
   BadRequestException,
   InternalServerErrorException,
+  Param,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
@@ -29,6 +30,8 @@ import { createResponse } from 'src/common/utils/response.helper';
 import { GetUser } from 'src/decorators/user.decorator';
 import { User } from 'src/entity/user.entity';
 import { VerifyTokenResponseDto } from './dto/verify-token-response.dto';
+import { VersionService } from 'src/version/version.service';
+import { VersionResponseDto } from 'src/version/dto/verson-response';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -37,6 +40,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly versionService: VersionService,
   ) {}
 
   @Post('login')
@@ -154,6 +158,26 @@ export class AuthController {
         '회원 탈퇴 실패: ' + error.message,
       );
     }
+  }
+
+  @Get('api-version/:version')
+  @ApiOperation({
+    summary: '버전 확인',
+    description: '버전 확인 API입니다. 버전 예시: v1.0.0',
+  })
+  @ApiOkResponse({
+    description: '버전 확인 성공',
+    type: VersionResponseDto,
+  })
+  async checkVersion(
+    @Param('version') version: string,
+  ): Promise<VersionResponseDto> {
+    const result = this.versionService.checkVersion(version);
+    return {
+      statusCode: 200,
+      message: '성공',
+      code: result,
+    };
   }
 
   @Get('google')

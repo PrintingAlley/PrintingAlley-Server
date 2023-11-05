@@ -223,7 +223,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
+        tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
       },
       {
         name: 'NOMART NAMECARD',
@@ -243,7 +243,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
+        tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
       },
       {
         name: 'Graphics thisisgrey likes',
@@ -263,7 +263,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
+        tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
       },
       {
         name: 'untitled studio',
@@ -283,7 +283,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
+        tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
       },
       {
         name: 'PAGE GALLERIES',
@@ -303,7 +303,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
+        tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
       },
       {
         name: 'SPACELOGIC',
@@ -323,7 +323,7 @@ export default class DemoSeeder implements Seeder {
         ],
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
-        tags: createdTags.filter((tag) => [77, 78, 79].includes(tag.id)),
+        tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
       },
     ];
 
