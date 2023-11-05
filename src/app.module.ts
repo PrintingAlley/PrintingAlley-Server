@@ -14,6 +14,7 @@ import { ProductReviewModule } from './product-review/product-review.module';
 import { PrintShopReviewModule } from './print-shop-review/print-shop-review.module';
 import { CategoryModule } from './category/category.module';
 import { VersionModule } from './version/version.module';
+import { ContentModule } from './content/content.module';
 import ConfigModule from './config';
 
 @Module({
@@ -40,6 +41,7 @@ import ConfigModule from './config';
     BookmarkModule,
     TagModule,
     CategoryModule,
+    ContentModule,
     AuthModule,
     UploadModule,
     ProductReviewModule,
