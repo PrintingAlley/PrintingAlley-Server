@@ -21,4 +21,12 @@ export class UpdateContentDto {
   @MinLength(2)
   @MaxLength(50000)
   content?: string;
+
+  @ApiProperty({
+    description: '콘텐츠 썸네일 이미지',
+    required: false,
+    example: 'https://www.printshop.com',
+  })
+  @IsOptional()
+  thumbnail?: string;
 }

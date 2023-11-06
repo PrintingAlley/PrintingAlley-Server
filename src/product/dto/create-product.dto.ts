@@ -76,7 +76,7 @@ export class CreateProductDto {
   })
   @IsNotEmpty()
   @MinLength(2)
-  @MaxLength(2000)
+  @MaxLength(50000)
   description: string;
 
   @ApiProperty({

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, MinLength, MaxLength } from 'class-validator';
+import { IsNotEmpty, MinLength, MaxLength, IsOptional } from 'class-validator';
 
 export class CreateContentDto {
   @ApiProperty({
@@ -21,4 +21,12 @@ export class CreateContentDto {
   @MinLength(2)
   @MaxLength(50000)
   content: string;
+
+  @ApiProperty({
+    description: '콘텐츠 썸네일 이미지',
+    required: false,
+    example: 'https://www.printshop.com',
+  })
+  @IsOptional()
+  thumbnail?: string;
 }

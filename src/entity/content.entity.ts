@@ -32,6 +32,14 @@ export class Content {
   @Column({ type: 'text' })
   content: string;
 
+  @ApiProperty({
+    description: '콘텐츠 썸네일 이미지',
+    required: false,
+    example: 'https://www.printshop.com',
+  })
+  @Column({ nullable: true })
+  thumbnail?: string;
+
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
