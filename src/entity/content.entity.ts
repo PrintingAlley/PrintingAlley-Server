@@ -40,6 +40,18 @@ export class Content {
   @Column({ nullable: true })
   thumbnail?: string;
 
+  @ApiProperty({
+    description: '웹뷰 URL',
+    example: 'https://www.printshop.com',
+  })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+  })
+  webViewUrl?: string;
+
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

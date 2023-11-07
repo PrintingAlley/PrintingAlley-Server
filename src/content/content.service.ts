@@ -16,11 +16,22 @@ export class ContentService {
     const contents = await this.contentRepository.find({
       order: { createdAt: 'DESC' },
     });
+
+    contents.forEach((content) => {
+      content.webViewUrl = `${process.env.CLIENT_URL}/content-webview/${content.id}`;
+    });
+
     return contents;
   }
 
   async getContent(id: number): Promise<Content> {
     const content = await this.contentRepository.findOneBy({ id });
+    if (!content) {
+      throw new NotFoundException(`콘텐츠 ID ${id}를 찾을 수 없습니다.`);
+    }
+
+    content.webViewUrl = `${process.env.CLIENT_URL}/content-webview/${content.id}`;
+
     return content;
   }
 
@@ -37,7 +48,7 @@ export class ContentService {
       where: { id },
     });
     if (!content) {
-      throw new NotFoundException(`컨텐츠 ID ${id}를 찾을 수 없습니다.`);
+      throw new NotFoundException(`콘텐츠 ID ${id}를 찾을 수 없습니다.`);
     }
 
     await this.contentRepository.update(id, contentData);
@@ -48,7 +59,7 @@ export class ContentService {
       where: { id },
     });
     if (!content) {
-      throw new NotFoundException(`컨텐츠 ID ${id}를 찾을 수 없습니다.`);
+      throw new NotFoundException(`콘텐츠 ID ${id}를 찾을 수 없습니다.`);
     }
 
     await this.contentRepository.delete(id);
