@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   UseGuards,
@@ -16,6 +17,7 @@ import {
   ApiHeader,
   ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -29,6 +31,7 @@ import { UpdateBookmarkDto } from './dto/update-bookmark.dto';
 import {
   BookmarkGroupResponseDto,
   BookmarkGroupsResponseDto,
+  BookmarkGroupsWithHasProductResponseDto,
 } from './dto/bookmark-group.response.dto';
 import {
   BookmarkGroupDetailSwaggerDto,
@@ -73,10 +76,37 @@ export class BookmarkController {
     type: BookmarkGroupDetailSwaggerDto,
   })
   async getBookmarkGroup(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<BookmarkGroupResponseDto> {
     const bookmarkGroup = await this.bookmarkService.getBookmarkGroupById(id);
     return { bookmarkGroup };
+  }
+
+  @Get('group/has-product/:productId')
+  @ApiOperation({
+    summary: '북마크 그룹에 제품이 포함되어 있는지 여부 조회',
+    description:
+      '북마크 그룹에 제품이 포함되어 있는지 여부를 조회하는 API입니다.',
+  })
+  @ApiParam({
+    name: 'productId',
+    required: true,
+    description: '제품 ID',
+  })
+  @ApiOkResponse({
+    description: '북마크 그룹에 제품이 포함되어 있는지 여부 조회 성공',
+    type: BookmarkGroupsWithHasProductResponseDto,
+  })
+  async getBookmarkGroupsWithHasProduct(
+    @Param('productId', ParseIntPipe) productId: number,
+    @GetUser() user: User,
+  ): Promise<BookmarkGroupsWithHasProductResponseDto> {
+    const bookmarkGroups =
+      await this.bookmarkService.getBookmarkGroupsWithHasProduct(
+        productId,
+        user.id,
+      );
+    return bookmarkGroups;
   }
 
   @Post('group')
@@ -109,12 +139,14 @@ export class BookmarkController {
     type: CommonResponseDto,
   })
   async updateBookmarkGroup(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) createBookmarkGroupDto: CreateBookmarkGroupDto,
+    @GetUser() user: User,
   ): Promise<CommonResponseDto> {
     const updatedGroup = await this.bookmarkService.updateBookmarkGroup(
       id,
       createBookmarkGroupDto,
+      user.id,
     );
     return createResponse(200, '성공', updatedGroup.id);
   }
@@ -129,7 +161,7 @@ export class BookmarkController {
     type: CommonResponseDto,
   })
   async deleteBookmarkGroup(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<CommonResponseDto> {
     await this.bookmarkService.deleteBookmarkGroup(id);
     return createResponse(200, '성공', id);
@@ -181,7 +213,7 @@ export class BookmarkController {
     type: CommonResponseDto,
   })
   async connectGroupToBookmark(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) connectGroupDto: UpdateBookmarkDto,
   ): Promise<CommonResponseDto> {
     await this.bookmarkService.connectGroupToBookmark(
@@ -215,7 +247,9 @@ export class BookmarkController {
     description: '북마크를 해제하는 API입니다.',
   })
   @ApiOkResponse({ description: '북마크 해제 성공', type: CommonResponseDto })
-  async deleteBookmark(@Param('id') id: number): Promise<CommonResponseDto> {
+  async deleteBookmark(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<CommonResponseDto> {
     await this.bookmarkService.deleteBookmark(id);
     return createResponse(200, '성공', id);
   }

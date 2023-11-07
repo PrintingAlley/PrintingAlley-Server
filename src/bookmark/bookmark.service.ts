@@ -10,6 +10,10 @@ import { Repository } from 'typeorm';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { CreateBookmarkGroupDto } from './dto/create-bookmark-group.dto';
 import { Product } from 'src/entity/product.entity';
+import {
+  BookmarkGroupWithHasProduct,
+  BookmarkGroupsWithHasProductResponseDto,
+} from './dto/bookmark-group.response.dto';
 
 @Injectable()
 export class BookmarkService {
@@ -62,15 +66,38 @@ export class BookmarkService {
     return group;
   }
 
+  // 북마크 그룹에 제품이 포함되어 있는지 여부 가져오기
+  async getBookmarkGroupsWithHasProduct(
+    productId: number,
+    userId: number,
+  ): Promise<BookmarkGroupsWithHasProductResponseDto> {
+    const groups = await this.groupRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: 'DESC' },
+      relations: ['bookmarks', 'bookmarks.product'],
+    });
+
+    const bookmarkGroupsWithHasProduct: BookmarkGroupWithHasProduct[] =
+      groups.map((group) => ({
+        id: group.id,
+        name: group.name,
+        hasProduct: group.bookmarks.some(
+          (bookmark) => bookmark.product.id === productId,
+        ),
+        bookmarkId: group.bookmarks.find(
+          (bookmark) => bookmark.product.id === productId,
+        )?.id,
+      }));
+
+    return { bookmarkGroups: bookmarkGroupsWithHasProduct };
+  }
+
   // 북마크 그룹 생성
   async createBookmarkGroup(
     data: CreateBookmarkGroupDto,
     userId: number,
   ): Promise<BookmarkGroup> {
-    // 이미 같은 이름의 그룹이 있는지 확인
-    const existing = await this.groupRepository.findOne({
-      where: { name: data.name, user: { id: userId } },
-    });
+    const existing = await this.checkExistBookmarkGroupName(userId, data.name);
     if (existing) {
       throw new BadRequestException('이미 같은 이름의 그룹이 있습니다.');
     }
@@ -86,6 +113,7 @@ export class BookmarkService {
   async updateBookmarkGroup(
     groupId: number,
     data: CreateBookmarkGroupDto,
+    userId: number,
   ): Promise<BookmarkGroup> {
     const group = await this.groupRepository.findOneBy({ id: groupId });
     if (!group) {
@@ -93,6 +121,12 @@ export class BookmarkService {
         `북마크 그룹 ID ${groupId}를 찾을 수 없습니다.`,
       );
     }
+
+    const existing = await this.checkExistBookmarkGroupName(userId, data.name);
+    if (existing) {
+      throw new BadRequestException('이미 같은 이름의 그룹이 있습니다.');
+    }
+
     group.name = data.name;
     return await this.groupRepository.save(group);
   }
@@ -228,7 +262,7 @@ export class BookmarkService {
 
   // 유저의 기본 북마크 그룹 가져오기 (없으면 생성)
   private async getDefaultGroupForUser(userId: number): Promise<BookmarkGroup> {
-    const defaultGroupName = '기본 북마크 그룹';
+    const defaultGroupName = '기본 그룹';
     let group = await this.groupRepository.findOne({
       where: { name: defaultGroupName, user: { id: userId } },
     });
@@ -266,6 +300,16 @@ export class BookmarkService {
     if (existingProduct) {
       throw new BadRequestException('이미 해당 그룹에 동일한 제품이 있습니다.');
     }
+  }
+
+  private async checkExistBookmarkGroupName(
+    userId: number,
+    name: string,
+  ): Promise<boolean> {
+    const bookmarkGroup = await this.groupRepository.findOne({
+      where: { user: { id: userId }, name },
+    });
+    return !!bookmarkGroup;
   }
 
   async isBookmarked(
