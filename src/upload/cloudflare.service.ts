@@ -24,20 +24,37 @@ export class CloudflareService {
     width: number = DEFAULT_WIDTH,
     height?: number,
   ): Promise<string> {
-    const resizedBuffer = await this.resizeImage(fileBuffer, width, height);
-    await this.uploadToR2(resizedBuffer, fileName);
-    return this.buildFilePath(fileName);
+    const {
+      buffer: resizedBuffer,
+      width: resizedWidth,
+      height: resizedHeight,
+    } = await this.resizeImage(fileBuffer, width, height);
+
+    const resizedFileName = `${fileName}?width=${resizedWidth}&height=${resizedHeight}`;
+
+    await this.uploadToR2(fileBuffer, fileName);
+    await this.uploadToR2(resizedBuffer, resizedFileName);
+    return this.buildFilePath(resizedFileName);
   }
 
   private async resizeImage(
     fileBuffer: Buffer,
     width: number,
     height?: number,
-  ): Promise<Buffer> {
+  ): Promise<{ buffer: Buffer; width: number; height: number }> {
     try {
-      return await sharp(fileBuffer)
-        .resize(width, height || undefined)
-        .toBuffer();
+      const sharpInstance = sharp(fileBuffer).resize(
+        width,
+        height || undefined,
+      );
+      const metadata = await sharpInstance.metadata();
+      const resizedBuffer = await sharpInstance.toBuffer();
+
+      return {
+        buffer: resizedBuffer,
+        width: metadata.width,
+        height: metadata.height,
+      };
     } catch (error) {
       console.error('Failed to resize image:', error);
       throw new NotFoundException('Failed to resize image');
