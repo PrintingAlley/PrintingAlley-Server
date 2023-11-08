@@ -30,11 +30,9 @@ export class CloudflareService {
       height: resizedHeight,
     } = await this.resizeImage(fileBuffer, width, height);
 
-    const resizedFileName = `${fileName}?width=${resizedWidth}&height=${resizedHeight}`;
+    await this.uploadToR2(resizedBuffer, fileName);
 
-    await this.uploadToR2(fileBuffer, fileName);
-    await this.uploadToR2(resizedBuffer, resizedFileName);
-    return this.buildFilePath(resizedFileName);
+    return this.buildFilePath(fileName, resizedWidth, resizedHeight);
   }
 
   private async resizeImage(
@@ -71,6 +69,8 @@ export class CloudflareService {
           Bucket: this.configService.get('R2_BUCKET_NAME'),
           Key: fileName,
           Body: fileBuffer,
+          ContentType: 'image/jpeg',
+          ContentDisposition: 'inline',
         })
         .promise();
     } catch (error) {
@@ -79,8 +79,12 @@ export class CloudflareService {
     }
   }
 
-  private buildFilePath(fileName: string): string {
+  private buildFilePath(
+    fileName: string,
+    width: number,
+    height: number,
+  ): string {
     const publicDomain = this.configService.get('R2_PUBLIC_DOMAIN');
-    return `${publicDomain}/${fileName}`;
+    return `${publicDomain}/${fileName}?width=${width}&height=${height}`;
   }
 }
