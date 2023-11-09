@@ -242,7 +242,7 @@ export class AuthController {
   })
   appleAuth() {}
 
-  @Get('apple/callback')
+  @Post('apple/callback')
   @UseGuards(AuthGuard('apple'))
   @ApiOperation({
     summary: '애플 로그인 콜백',

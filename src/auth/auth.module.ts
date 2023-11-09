@@ -8,6 +8,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
 import { GoogleStrategy } from './google.strategy';
+import { AppleStrategy } from './apple.strategy';
 import { NaverStrategy } from './naver.strategy';
 import { KakaoStrategy } from './kakao.strategy';
 import { ConfigService } from '@nestjs/config';
@@ -15,8 +16,6 @@ import { TokenBlacklistService } from './token-blacklist.service';
 import { ProductReviewModule } from 'src/product-review/product-review.module';
 import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
 import { VersionModule } from 'src/version/version.module';
-// TODO:: Add Apple Auth Setting
-// import { AppleStrategy } from './apple.strategy';
 
 @Module({
   imports: [
@@ -40,10 +39,9 @@ import { VersionModule } from 'src/version/version.module';
     TokenBlacklistService,
     JwtStrategy,
     GoogleStrategy,
+    AppleStrategy,
     NaverStrategy,
     KakaoStrategy,
-    // TODO:: Add Apple Auth Setting
-    // AppleStrategy,
   ],
   exports: [AuthService],
 })

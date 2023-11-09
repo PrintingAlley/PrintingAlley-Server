@@ -10,7 +10,7 @@ export class AppleStrategy extends PassportStrategy(Strategy, 'apple') {
       teamID: process.env.APPLE_TEAM_ID,
       callbackURL: `${process.env.API_URL}/auth/apple/callback`,
       keyID: process.env.APPLE_KEY_ID,
-      privateKeyLocation: process.env.APPLE_PRIVATE_KEY_PATH,
+      privateKeyString: process.env.APPLE_PRIVATE_KEY,
       passReqToCallback: true,
       scope: ['name', 'email'],
     });
