@@ -2,8 +2,17 @@ import { Category } from 'src/entity/category.entity';
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { Product } from 'src/entity/product.entity';
 import { Tag } from 'src/entity/tag.entity';
+import { User } from 'src/entity/user.entity';
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
+
+const demoUser = {
+  name: '홍길동',
+  email: 'abc@gmail.com',
+  provider: 'google',
+  socialId: '123456789',
+  accessToken: '123456789',
+};
 
 const categories = [
   {
@@ -35,40 +44,6 @@ const categories = [
     name: '책',
     image:
       'https://printingstreets.uk/ad493692-303f-44dc-b250-c42f417b9757_icon_book.svg',
-  },
-];
-
-const printShops = [
-  {
-    name: '디자인점빵',
-    address: '서울 중구 퇴계로 210-33',
-    phone: '02-123-4567',
-    email: 'oldpress@naver.com',
-    homepage: 'https://www.instagram.com/oldpress',
-    representative: '홍길동',
-    introduction: '전통기법의 인쇄공방',
-    logoImage:
-      'https://printingstreets.uk/ecbf52ed-2bbc-4445-be60-989316f45fbb_%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A5%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%AE%C3%A1%C2%86%C2%AF_%C3%A1%C2%84%C2%83%C3%A1%C2%85%C2%B5%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A1%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%A6%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A5_%C3%A1%C2%84%C2%8D%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%A8%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B3%C3%A1%C2%86%C2%AB_%C3%A1%C2%84%C2%85%C3%A1%C2%85%C2%B5%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A9%C3%A1%C2%84%C2%80%C3%A1%C2%85%C2%B3%C3%A1%C2%84%C2%85%C3%A1%C2%85%C2%A2%C3%A1%C2%84%C2%91%C3%A1%C2%85%C2%B3_%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%AB_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A6%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%A8%C3%A1%C2%84%C2%86%C3%A1%C2%85%C2%AE%C3%A1%C2%86%C2%AF%C3%A1%C2%84%C2%83%C3%A1%C2%85%C2%B3%C3%A1%C2%86%C2%AF.jpeg',
-    backgroundImage:
-      'https://printingstreets.uk/d90bb8f8-1473-49f4-a3cd-3431c69f2a56_%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A5%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%AE%C3%A1%C2%86%C2%AF_%C3%A1%C2%84%C2%83%C3%A1%C2%85%C2%B5%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A1%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%80%C3%A1%C2%85%C2%A7%C3%A1%C2%86%C2%BC(14).jpeg',
-    latitude: '37.5607495419269',
-    longitude: '126.995362279837',
-  },
-  {
-    name: '밀리스트',
-    address: '서울 성동구 성수동2가 299-104',
-    phone: '02-123-4567',
-    email: 'oldpress@naver.com',
-    homepage: 'https://www.millist.co.kr/',
-    representative: '정우진',
-    introduction:
-      '밀리스트는 오래된 인쇄방식인 레터프레스/활판인쇄로 청첩장, 엽서, 명함 등을 제작합니다',
-    logoImage:
-      'https://contents.sixshop.com/thumbnails/uploadedFiles/209565/default/image_1696921727277_500.jpg',
-    backgroundImage:
-      'https://contents.sixshop.com/thumbnails/uploadedFiles/209565/default/image_1696921624500_2500.jpg',
-    latitude: '37.5495503467056',
-    longitude: '127.053739188792',
   },
 ];
 
@@ -196,12 +171,51 @@ const runTagSeeder = async (dataSource: DataSource) => {
 
 export default class DemoSeeder implements Seeder {
   async run(dataSource: DataSource): Promise<any> {
+    const userRepository = dataSource.getRepository(User);
     const categoryRepository = dataSource.getRepository(Category);
     const printShopRepository = dataSource.getRepository(PrintShop);
     const productRepository = dataSource.getRepository(Product);
 
+    const user = await userRepository.save(demoUser);
     const createdCategories = await categoryRepository.save(categories);
     const createdTags = await runTagSeeder(dataSource);
+
+    const printShops = [
+      {
+        name: '디자인점빵',
+        address: '서울 중구 퇴계로 210-33',
+        phone: '02-123-4567',
+        email: 'oldpress@naver.com',
+        homepage: 'https://www.instagram.com/oldpress',
+        representative: '홍길동',
+        introduction: '전통기법의 인쇄공방',
+        logoImage:
+          'https://printingstreets.uk/ecbf52ed-2bbc-4445-be60-989316f45fbb_%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A5%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%AE%C3%A1%C2%86%C2%AF_%C3%A1%C2%84%C2%83%C3%A1%C2%85%C2%B5%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A1%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%A6%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A5_%C3%A1%C2%84%C2%8D%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%A8%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B3%C3%A1%C2%86%C2%AB_%C3%A1%C2%84%C2%85%C3%A1%C2%85%C2%B5%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A9%C3%A1%C2%84%C2%80%C3%A1%C2%85%C2%B3%C3%A1%C2%84%C2%85%C3%A1%C2%85%C2%A2%C3%A1%C2%84%C2%91%C3%A1%C2%85%C2%B3_%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%AB_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A6%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%A8%C3%A1%C2%84%C2%86%C3%A1%C2%85%C2%AE%C3%A1%C2%86%C2%AF%C3%A1%C2%84%C2%83%C3%A1%C2%85%C2%B3%C3%A1%C2%86%C2%AF.jpeg',
+        backgroundImage:
+          'https://printingstreets.uk/d90bb8f8-1473-49f4-a3cd-3431c69f2a56_%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A5%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%AE%C3%A1%C2%86%C2%AF_%C3%A1%C2%84%C2%83%C3%A1%C2%85%C2%B5%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A1%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%80%C3%A1%C2%85%C2%A7%C3%A1%C2%86%C2%BC(14).jpeg',
+        latitude: '37.5607495419269',
+        longitude: '126.995362279837',
+        user,
+      },
+      {
+        name: '밀리스트',
+        address: '서울 성동구 성수동2가 299-104',
+        phone: '02-123-4567',
+        email: 'oldpress@naver.com',
+        homepage: 'https://www.millist.co.kr/',
+        representative: '정우진',
+        introduction:
+          '밀리스트는 오래된 인쇄방식인 레터프레스/활판인쇄로 청첩장, 엽서, 명함 등을 제작합니다',
+        logoImage:
+          'https://contents.sixshop.com/thumbnails/uploadedFiles/209565/default/image_1696921727277_500.jpg',
+        backgroundImage:
+          'https://contents.sixshop.com/thumbnails/uploadedFiles/209565/default/image_1696921624500_2500.jpg',
+        latitude: '37.5495503467056',
+        longitude: '127.053739188792',
+        user,
+      },
+    ];
+
     const createdPrintShops = await printShopRepository.save(printShops);
 
     const products = [
@@ -224,6 +238,7 @@ export default class DemoSeeder implements Seeder {
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
         tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
+        user,
       },
       {
         name: 'NOMART NAMECARD',
@@ -244,6 +259,7 @@ export default class DemoSeeder implements Seeder {
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
         tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
+        user,
       },
       {
         name: 'Graphics thisisgrey likes',
@@ -264,6 +280,7 @@ export default class DemoSeeder implements Seeder {
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
         tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
+        user,
       },
       {
         name: 'untitled studio',
@@ -284,6 +301,7 @@ export default class DemoSeeder implements Seeder {
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
         tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
+        user,
       },
       {
         name: 'PAGE GALLERIES',
@@ -304,6 +322,7 @@ export default class DemoSeeder implements Seeder {
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
         tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
+        user,
       },
       {
         name: 'SPACELOGIC',
@@ -324,6 +343,7 @@ export default class DemoSeeder implements Seeder {
         category: createdCategories.find((category) => category.id === 3),
         printShop: createdPrintShops.find((shop) => shop.id === 1),
         tags: createdTags.filter((tag) => [73, 77, 78, 79].includes(tag.id)),
+        user,
       },
     ];
 
