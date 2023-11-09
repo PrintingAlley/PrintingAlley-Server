@@ -124,7 +124,6 @@ export class PrintShop {
     nullable: true,
     insert: false,
     update: false,
-    default: 0,
   })
   ownerId?: number;
 
