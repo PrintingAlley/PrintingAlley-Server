@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { Tag } from 'src/entity/tag.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductsResponseDto } from './dto/product-response.dto';
 import { BookmarkService } from './../bookmark/bookmark.service';
+import { User } from 'src/entity/user.entity';
 
 @Injectable()
 export class ProductService {
@@ -48,11 +50,14 @@ export class ProductService {
   ): Promise<{ product: Product; bookmarkId?: number }> {
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['category', 'printShop', 'tags', 'reviews'],
+      relations: ['user', 'category', 'printShop', 'tags', 'reviews'],
     });
     if (!product) {
       throw new NotFoundException('제품을 찾을 수 없습니다.');
     }
+
+    product.ownerId = product.user.id;
+    delete product.user;
 
     const isBookmarked = await this.bookmarkService.isBookmarked(id, userId);
     product.isBookmarked = isBookmarked;
@@ -68,25 +73,34 @@ export class ProductService {
     return { product, bookmarkId };
   }
 
-  async create(productData: CreateProductDto): Promise<Product> {
-    const { categoryId, printShopId, tagIds, ...restData } = productData;
+  async create(
+    productData: CreateProductDto,
+    userId: number,
+  ): Promise<Product> {
+    const { categoryId, tagIds, ...restData } = productData;
 
-    const product = this.productRepository.create(restData);
-
-    const [category, printShop] = await Promise.all([
-      this.categoryRepository.findOneBy({ id: categoryId }),
-      this.printShopRepository.findOneBy({ id: printShopId }),
-    ]);
-
-    if (!category) {
-      throw new NotFoundException('카테고리를 찾을 수 없습니다.');
-    }
+    const printShop = await this.printShopRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
     if (!printShop) {
       throw new NotFoundException('인쇄소를 찾을 수 없습니다.');
     }
+    if (printShop.user.id !== userId) {
+      throw new ForbiddenException('이 인쇄사에 대한 권한이 없습니다.');
+    }
 
-    product.category = category;
+    const category = await this.categoryRepository.findOneBy({
+      id: categoryId,
+    });
+    if (!category) {
+      throw new NotFoundException('카테고리를 찾을 수 없습니다.');
+    }
+
+    const product = this.productRepository.create(restData);
+    product.user = { id: userId } as User;
     product.printShop = printShop;
+    product.category = category;
 
     if (tagIds && tagIds.length) {
       const tags = await this.findTagsByIds(tagIds);
@@ -96,28 +110,32 @@ export class ProductService {
     return this.productRepository.save(product);
   }
 
-  async update(id: number, updateData: CreateProductDto): Promise<Product> {
-    const { categoryId, printShopId, tagIds, ...restData } = updateData;
+  async update(
+    id: number,
+    updateData: CreateProductDto,
+    userId: number,
+  ): Promise<Product> {
+    const { categoryId, tagIds, ...restData } = updateData;
 
-    const product = await this.productRepository.findOneBy({ id });
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
     if (!product) {
       throw new NotFoundException('제품을 찾을 수 없습니다.');
     }
+    if (product.user.id !== userId) {
+      throw new ForbiddenException('이 제품에 대한 권한이 없습니다.');
+    }
 
-    const [category, printShop] = await Promise.all([
-      this.categoryRepository.findOneBy({ id: categoryId }),
-      this.printShopRepository.findOneBy({ id: printShopId }),
-    ]);
-
+    const category = await this.categoryRepository.findOneBy({
+      id: categoryId,
+    });
     if (!category) {
       throw new NotFoundException('카테고리를 찾을 수 없습니다.');
     }
-    if (!printShop) {
-      throw new NotFoundException('인쇄소를 찾을 수 없습니다.');
-    }
 
     product.category = category;
-    product.printShop = printShop;
     Object.assign(product, restData);
 
     if (tagIds !== undefined) {
@@ -127,23 +145,20 @@ export class ProductService {
     return this.productRepository.save(product);
   }
 
-  async delete(id: number): Promise<void> {
-    const product = await this.productRepository.findOneBy({ id });
+  async delete(id: number, userId: number): Promise<void> {
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
     if (!product) {
       throw new NotFoundException('제품을 찾을 수 없습니다.');
     }
+    if (product.user.id !== userId) {
+      throw new ForbiddenException('이 제품에 대한 권한이 없습니다.');
+    }
 
     await this.productRepository.delete(id);
-  }
-
-  async deleteByPrintShopId(printShopId: number): Promise<void> {
-    const products = await this.productRepository.find({
-      where: { printShop: { id: printShopId } },
-    });
-
-    for (const product of products) {
-      await this.delete(product.id);
-    }
   }
 
   private async findAllProducts(

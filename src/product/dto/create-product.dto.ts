@@ -105,15 +105,6 @@ export class CreateProductDto {
   categoryId: number;
 
   @ApiProperty({
-    description: '인쇄사 ID',
-    required: true,
-    example: 1,
-  })
-  @IsNotEmpty()
-  @IsInt()
-  printShopId: number;
-
-  @ApiProperty({
     description: '태그 ID 목록',
     required: false,
     type: [Number],

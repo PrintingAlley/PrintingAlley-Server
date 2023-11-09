@@ -83,7 +83,6 @@ export class PrintShopService {
     if (!printShop) {
       throw new NotFoundException(`인쇄사 ID ${id}를 찾을 수 없습니다.`);
     }
-
     if (printShop.user.id !== userId) {
       throw new ForbiddenException('이 인쇄사에 대한 권한이 없습니다.');
     }
@@ -103,7 +102,6 @@ export class PrintShopService {
     if (!printShop) {
       throw new NotFoundException(`인쇄사 ID ${id}를 찾을 수 없습니다.`);
     }
-
     if (printShop.user.id !== userId) {
       throw new ForbiddenException('이 인쇄사에 대한 권한이 없습니다.');
     }

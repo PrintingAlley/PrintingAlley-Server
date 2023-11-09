@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { SimplePrintShopSwaggerDto } from 'src/print-shop/dto/swagger/simple-print-shop.swagger.dto';
 
 export class UserSwaggerDto {
   @ApiProperty({
@@ -36,6 +37,12 @@ export class UserSwaggerDto {
     example: 'abc@gmail.com',
   })
   email: string | null;
+
+  @ApiProperty({
+    description: '소유한 인쇄사 목록',
+    type: [SimplePrintShopSwaggerDto],
+  })
+  printShops: SimplePrintShopSwaggerDto[];
 
   @ApiProperty({
     description: '생성일',

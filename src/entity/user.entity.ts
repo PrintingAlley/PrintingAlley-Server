@@ -11,6 +11,7 @@ import { BookmarkGroup } from './bookmark-group.entity';
 import { PrintShopReview } from './print-shop-review.entity';
 import { ProductReview } from './product-review.entity';
 import { PrintShop } from './print-shop.entity';
+import { Product } from './product.entity';
 
 export enum UserType {
   GENERAL = 'GENERAL',
@@ -85,6 +86,13 @@ export class User {
   })
   @OneToMany(() => PrintShop, (printShop) => printShop.user)
   printShops: PrintShop[];
+
+  @ApiProperty({
+    description: '소유 제품 목록',
+    type: [Product],
+  })
+  @OneToMany(() => Product, (product) => product.user)
+  products: Product[];
 
   @ApiProperty({
     description: '작성한 인쇄사 리뷰 목록',

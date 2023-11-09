@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -14,6 +15,7 @@ import { Category } from './category.entity';
 import { Tag } from './tag.entity';
 import { PrintShop } from './print-shop.entity';
 import { ProductReview } from './product-review.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Product {
@@ -135,6 +137,24 @@ export class Product {
     },
   })
   tags: Tag[];
+
+  @ApiProperty({
+    description: '사장님',
+    type: () => User,
+  })
+  @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @ApiProperty({ description: '사장님 ID', example: 1 })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: 0,
+  })
+  ownerId?: number;
 
   @ApiProperty({ description: '북마크 여부', example: false })
   @Column({

@@ -25,6 +25,9 @@ export class ProductListSwaggerDto {
 }
 
 export class ProductSwaggerDto extends ProductWithTagSwaggerDto {
+  @ApiProperty({ description: '사장님 ID', example: 1 })
+  ownerId: number;
+
   @ApiProperty({
     description: '카테고리 정보',
     type: SimpleCategorySwaggerDto,

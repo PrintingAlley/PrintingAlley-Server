@@ -117,9 +117,14 @@ export class ProductController {
 
   // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 제품 생성 가능
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '제품 생성',
     description: '제품을 생성하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '제품 생성 성공',
@@ -127,16 +132,22 @@ export class ProductController {
   })
   async create(
     @Body(new ValidationPipe()) product: CreateProductDto,
+    @GetUser() user: User,
   ): Promise<CommonResponseDto> {
-    const createdProduct = await this.productService.create(product);
+    const createdProduct = await this.productService.create(product, user.id);
     return createResponse(200, '성공', createdProduct.id);
   }
 
   // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 제품 수정 가능
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '제품 수정',
     description: '제품을 수정하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiParam({
     name: 'id',
@@ -150,16 +161,22 @@ export class ProductController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) product: CreateProductDto,
+    @GetUser() user: User,
   ): Promise<CommonResponseDto> {
-    await this.productService.update(id, product);
+    await this.productService.update(id, product, user.id);
     return createResponse(200, '성공', id);
   }
 
   // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 제품 삭제 가능
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '제품 삭제',
     description: '제품을 삭제하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiParam({
     name: 'id',
@@ -172,8 +189,9 @@ export class ProductController {
   })
   async delete(
     @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
   ): Promise<CommonResponseDto> {
-    await this.productService.delete(id);
+    await this.productService.delete(id, user.id);
     return createResponse(200, '성공', id);
   }
 
