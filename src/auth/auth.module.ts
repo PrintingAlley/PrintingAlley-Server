@@ -16,10 +16,11 @@ import { TokenBlacklistService } from './token-blacklist.service';
 import { ProductReviewModule } from 'src/product-review/product-review.module';
 import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
 import { VersionModule } from 'src/version/version.module';
+import { UserCounter } from 'src/entity/user-counter.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, UserCounter]),
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],

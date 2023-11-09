@@ -5,10 +5,11 @@ import { UserController } from './user.controller';
 import { User } from 'src/entity/user.entity';
 import { ProductReviewModule } from 'src/product-review/product-review.module';
 import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
+import { UserCounter } from 'src/entity/user-counter.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, UserCounter]),
     PrintShopReviewModule,
     ProductReviewModule,
   ],

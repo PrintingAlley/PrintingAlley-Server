@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PrintShopReview } from 'src/entity/print-shop-review.entity';
 import { ProductReview } from 'src/entity/product-review.entity';
@@ -7,12 +7,15 @@ import { PrintShopReviewService } from 'src/print-shop-review/print-shop-review.
 import { ProductReviewService } from 'src/product-review/product-review.service';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserCounter } from 'src/entity/user-counter.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(UserCounter)
+    private readonly userCounterRepository: Repository<UserCounter>,
     private readonly printShopReviewService: PrintShopReviewService,
     private readonly productReviewService: ProductReviewService,
   ) {}
@@ -28,8 +31,8 @@ export class UserService {
       where: { socialId, provider },
     });
     if (!user) {
-      const userCount = await this.userRepository.count();
-      const name = `${userCount + 1}번째 골목대장`;
+      const userCounter = await this.retrieveNextUserCounter();
+      const name = `${userCounter}번째 골목대장`;
       user = this.userRepository.create({
         socialId,
         accessToken,
@@ -79,12 +82,44 @@ export class UserService {
     userId: number,
     updateUserDto: UpdateUserDto,
   ): Promise<User> {
+    const { name } = updateUserDto;
+
+    updateUserDto.name = name.trim();
+    if (!updateUserDto.name) {
+      throw new BadRequestException('이름을 입력해주세요.');
+    }
+
+    const user = await this.userRepository.findOneBy({ name });
+    if (user) {
+      throw new BadRequestException('이미 같은 이름이 존재합니다.');
+    }
+
+    const userCounter = await this.retrieveNextUserCounter();
+    if (userCounter <= Number(name.split('번째')[0])) {
+      throw new BadRequestException('이름을 변경할 수 없습니다.');
+    }
+
     await this.userRepository.update(userId, updateUserDto);
     return this.userRepository.findOneBy({ id: userId });
   }
 
   // 이름 수정
   async updateName(userId: number, name: string): Promise<User> {
+    name = name.trim();
+    if (!name) {
+      throw new BadRequestException('이름을 입력해주세요.');
+    }
+
+    const user = await this.userRepository.findOneBy({ name });
+    if (user) {
+      throw new BadRequestException('이미 같은 이름이 존재합니다.');
+    }
+
+    const userCounter = await this.retrieveNextUserCounter();
+    if (userCounter <= Number(name.split('번째')[0])) {
+      throw new BadRequestException('이름을 변경할 수 없습니다.');
+    }
+
     await this.userRepository.update(userId, { name });
     return this.userRepository.findOneBy({ id: userId });
   }
@@ -98,5 +133,20 @@ export class UserService {
   async updateUserType(userId: number, userType: UserType): Promise<User> {
     await this.userRepository.update(userId, { userType });
     return this.userRepository.findOneBy({ id: userId });
+  }
+
+  // 몇 번째 사용자인지 조회
+  async retrieveNextUserCounter(): Promise<number> {
+    let userCounter = await this.userCounterRepository.findOneBy({ id: 1 });
+
+    if (!userCounter) {
+      userCounter = this.userCounterRepository.create({ count: 1 });
+    } else {
+      userCounter.count += 1;
+    }
+
+    await this.userCounterRepository.save(userCounter);
+
+    return userCounter.count;
   }
 }
