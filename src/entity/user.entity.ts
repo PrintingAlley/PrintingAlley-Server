@@ -10,6 +10,7 @@ import {
 import { BookmarkGroup } from './bookmark-group.entity';
 import { PrintShopReview } from './print-shop-review.entity';
 import { ProductReview } from './product-review.entity';
+import { PrintShop } from './print-shop.entity';
 
 export enum UserType {
   GENERAL = 'GENERAL',
@@ -77,6 +78,13 @@ export class User {
   })
   @Column({ nullable: true })
   email?: string;
+
+  @ApiProperty({
+    description: '소유 인쇄사 목록',
+    type: [PrintShop],
+  })
+  @OneToMany(() => PrintShop, (printShop) => printShop.user)
+  printShops: PrintShop[];
 
   @ApiProperty({
     description: '작성한 인쇄사 리뷰 목록',

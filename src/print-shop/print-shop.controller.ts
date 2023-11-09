@@ -1,3 +1,4 @@
+import { UserService } from 'src/user/user.service';
 import {
   Body,
   Controller,
@@ -31,7 +32,7 @@ import { PrintShopReviewService } from 'src/print-shop-review/print-shop-review.
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from 'src/decorators/user.decorator';
 import { CreatePrintShopReviewDto } from 'src/print-shop-review/dto/create-print-shop-review.dto';
-import { User } from 'src/entity/user.entity';
+import { User, UserType } from 'src/entity/user.entity';
 import { PrintShopReviewResponseDto } from './dto/print-shop-review-response.dto';
 import {
   PrintShopDetailSwaggerDto,
@@ -45,6 +46,7 @@ export class PrintShopController {
   constructor(
     private readonly printShopService: PrintShopService,
     private readonly printShopReviewService: PrintShopReviewService,
+    private readonly userService: UserService,
   ) {}
 
   @Get()
@@ -101,9 +103,14 @@ export class PrintShopController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '인쇄소 생성',
     description: '인쇄소를 생성하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '인쇄소 생성 성공',
@@ -111,13 +118,23 @@ export class PrintShopController {
   })
   async create(
     @Body(new ValidationPipe()) printShop: CreatePrintShopDto,
+    @GetUser() user: User,
   ): Promise<CommonResponseDto> {
-    const createdPrintShop = await this.printShopService.create(printShop);
+    const createdPrintShop = await this.printShopService.create(
+      printShop,
+      user.id,
+    );
+
+    if (user.userType !== UserType.PRINTSHOP_OWNER) {
+      user.userType = UserType.PRINTSHOP_OWNER;
+      await this.userService.updateUserType(user.id, UserType.PRINTSHOP_OWNER);
+    }
+
     return createResponse(200, '성공', createdPrintShop.id);
   }
 
-  // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 수정 가능
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '인쇄소 수정',
     description: '인쇄소를 수정하는 API입니다.',
@@ -134,13 +151,14 @@ export class PrintShopController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body(new ValidationPipe()) printShop: CreatePrintShopDto,
+    @GetUser() user: User,
   ): Promise<CommonResponseDto> {
-    await this.printShopService.update(id, printShop);
+    await this.printShopService.update(id, printShop, user.id);
     return createResponse(200, '성공', id);
   }
 
-  // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 삭제 가능
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     summary: '인쇄소 삭제',
     description: '인쇄소를 삭제하는 API입니다.',
@@ -156,8 +174,9 @@ export class PrintShopController {
   })
   async delete(
     @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
   ): Promise<CommonResponseDto> {
-    await this.printShopService.delete(id);
+    await this.printShopService.delete(id, user.id);
     return createResponse(200, '성공', id);
   }
 

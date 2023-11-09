@@ -3,12 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Product } from './product.entity';
 import { PrintShopReview } from './print-shop-review.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class PrintShop {
@@ -106,6 +109,24 @@ export class PrintShop {
   })
   @Column()
   longitude: string;
+
+  @ApiProperty({
+    description: '사장님',
+    type: () => User,
+  })
+  @ManyToOne(() => User, (user) => user.printShops, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @ApiProperty({ description: '사장님 ID', example: 1 })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: 0,
+  })
+  ownerId?: number;
 
   @ApiProperty({
     description: '제품 목록',

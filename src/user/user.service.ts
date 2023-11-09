@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PrintShopReview } from 'src/entity/print-shop-review.entity';
 import { ProductReview } from 'src/entity/product-review.entity';
-import { User } from 'src/entity/user.entity';
+import { User, UserType } from 'src/entity/user.entity';
 import { PrintShopReviewService } from 'src/print-shop-review/print-shop-review.service';
 import { ProductReviewService } from 'src/product-review/product-review.service';
 import { Repository } from 'typeorm';
@@ -89,5 +89,11 @@ export class UserService {
   // 사용자 삭제
   async deleteUser(userId: number): Promise<void> {
     await this.userRepository.delete(userId);
+  }
+
+  // 사용자 Type 변경
+  async updateUserType(userId: number, userType: UserType): Promise<User> {
+    await this.userRepository.update(userId, { userType });
+    return this.userRepository.findOneBy({ id: userId });
   }
 }

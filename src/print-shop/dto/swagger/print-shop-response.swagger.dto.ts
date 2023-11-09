@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { SimplePrintShopSwaggerDto } from './simple-print-shop.swagger.dto';
 import { SimpleProductSwaggerDto } from 'src/product/dto/swagger/simple-product.swagger.dto';
 import { SimplePrintShopReviewSwaggerDto } from 'src/print-shop-review/dto/swagger/simple-print-shop-review.swagger.dto';
+import { UserSwaggerDto } from 'src/user/dto/swagger/user-response.swagger.dto';
 
 export class PrintShopListSwaggerDto {
   @ApiProperty({
@@ -15,6 +16,9 @@ export class PrintShopListSwaggerDto {
 }
 
 class PrintShopSwaggerDto extends SimplePrintShopSwaggerDto {
+  @ApiProperty({ description: '사장님', type: UserSwaggerDto })
+  user: UserSwaggerDto;
+
   @ApiProperty({
     description: '제품 목록',
     type: [SimpleProductSwaggerDto],
