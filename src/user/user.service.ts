@@ -24,7 +24,7 @@ export class UserService {
     socialId: string,
     accessToken: string,
     provider: string,
-    _name: string,
+    realName: string,
     email: string,
   ): Promise<User> {
     let user = await this.userRepository.findOne({
@@ -39,6 +39,7 @@ export class UserService {
         provider,
         name,
         email,
+        realName,
       });
       await this.userRepository.save(user);
     } else {

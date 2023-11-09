@@ -67,10 +67,7 @@ export class AuthController {
       name,
       email,
     );
-
-    const payload = { userId: user.id };
-    const jwt = await this.jwtService.signAsync(payload);
-
+    const jwt = await this.jwtService.signAsync({ userId: user.id });
     return {
       statusCode: 200,
       message: '성공',
@@ -100,7 +97,6 @@ export class AuthController {
       throw new BadRequestException('Invalid token');
     }
     await this.authService.logout(token);
-
     return createResponse(200, '성공', null);
   }
 
@@ -249,15 +245,52 @@ export class AuthController {
     description: '애플 인증 후의 콜백 처리 API입니다.',
   })
   appleAuthRedirect(@Req() req, @Res() res) {
-    return this.handleAuthRedirect(req, res);
+    return this.handleAuthRedirectApple(req, res);
   }
 
   private async handleAuthRedirect(req, res) {
-    const { id, accessToken, provider, displayName, emails } = req.user;
+    const { provider } = req.user;
+    let email, name;
 
-    const email = emails && emails[0]?.value ? emails[0].value : '이메일없음';
-    const name = displayName || '이름없음';
+    switch (provider) {
+      case 'naver':
+        email =
+          req.user.emails && req.user.emails[0]?.value
+            ? req.user.emails[0].value
+            : '이메일없음';
+        name = req.user.displayName || '이름없음';
+        break;
+      case 'kakao':
+        email = req.user._json.kakao_account.email;
+        name = req.user.username || req.user.displayName || '이름없음';
+        break;
+      case 'google':
+        email =
+          req.user.emails && req.user.emails[0]?.value
+            ? req.user.emails[0].value
+            : '이메일없음';
+        name = req.user.displayName || '이름없음';
+        break;
+      default:
+        email = '이메일없음';
+        name = '이름없음';
+    }
 
+    const user = await this.userService.findOrCreate(
+      req.user.id,
+      req.user.accessToken,
+      provider,
+      name,
+      email,
+    );
+    const jwt = await this.jwtService.signAsync({ userId: user.id });
+    res.redirect(`${process.env.CLIENT_URL}/login?token=${jwt}`);
+  }
+
+  private async handleAuthRedirectApple(req, res) {
+    const { id_token } = req.user;
+    const { id, accessToken, provider, name, email } =
+      await this.authService.validateAndRetrieveUser(id_token, 'apple');
     const user = await this.userService.findOrCreate(
       id,
       accessToken,

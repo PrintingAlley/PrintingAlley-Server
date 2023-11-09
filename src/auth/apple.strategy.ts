@@ -29,6 +29,6 @@ export class AppleStrategy extends PassportStrategy(Strategy, 'apple') {
     profile: any,
     done: (error: any, user?: any, info?: any) => void,
   ) {
-    done(null, { ...profile, accessToken });
+    done(null, { id_token: results.id_token });
   }
 }

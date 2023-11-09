@@ -24,18 +24,6 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    name: 'social_id',
-    select: false,
-  })
-  socialId: string;
-
-  @Column({
-    name: 'access_token',
-    select: false,
-  })
-  accessToken: string;
-
   @ApiProperty({
     description: '소셜 로그인 제공업체',
     required: true,
@@ -119,4 +107,23 @@ export class User {
   @ApiProperty({ description: '수정일' })
   @UpdateDateColumn({ name: 'updated_at' })
   updateAt: Date;
+
+  @Column({
+    name: 'social_id',
+    select: false,
+  })
+  socialId: string;
+
+  @Column({
+    name: 'access_token',
+    select: false,
+  })
+  accessToken: string;
+
+  @Column({
+    name: 'real_name',
+    select: false,
+    nullable: true,
+  })
+  realName?: string;
 }
