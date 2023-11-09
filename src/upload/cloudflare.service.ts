@@ -41,10 +41,9 @@ export class CloudflareService {
     height?: number,
   ): Promise<{ buffer: Buffer; width: number; height: number }> {
     try {
-      const sharpInstance = sharp(fileBuffer).resize(
-        width,
-        height || undefined,
-      );
+      const sharpInstance = sharp(fileBuffer)
+        .resize(width, height || undefined)
+        .withMetadata();
       const metadata = await sharpInstance.metadata();
       const resizedBuffer = await sharpInstance.toBuffer();
 
