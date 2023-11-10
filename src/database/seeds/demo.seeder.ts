@@ -17,72 +17,32 @@ const demoUser = {
 const categories = [
   {
     name: '포스터',
-    image:
-      'https://printingstreets.uk/6d23e574-d2a3-421a-ae08-0cbc8a7dc2f9_icon_poster.svg',
+    image: 'https://printingstreets.uk/icon_poster.svg',
   },
   {
     name: '리플렛',
-    image:
-      'https://printingstreets.uk/398304ef-3b19-440a-a32a-25a12354d6e4_icon_leaflet.svg',
+    image: 'https://printingstreets.uk/icon_leaflet.svg',
   },
   {
     name: '명함',
-    image:
-      'https://printingstreets.uk/cd2d4a68-c3a0-4266-9db7-cd5d7f8c1bcf_icon_businesscard.svg',
+    image: 'https://printingstreets.uk/icon_businesscard.svg',
   },
   {
     name: '엽서/카드',
-    image:
-      'https://printingstreets.uk/2c4f62e3-21cd-4eba-8115-f014d5e3cca1_icon_postcard.svg',
+    image: 'https://printingstreets.uk/icon_postcard.svg',
   },
   {
     name: '소책자',
-    image:
-      'https://printingstreets.uk/53837729-0f91-4f83-b716-d9690a22e657_icon_pamphlet.svg',
+    image: 'https://printingstreets.uk/icon_pamphlet.svg',
   },
   {
     name: '책',
-    image:
-      'https://printingstreets.uk/ad493692-303f-44dc-b250-c42f417b9757_icon_book.svg',
+    image: 'https://printingstreets.uk/icon_book.svg',
   },
 ];
 
 const runTagSeeder = async (dataSource: DataSource) => {
   const tagRepository = dataSource.getRepository(Tag);
-
-  // Product categories
-  const categories = [
-    {
-      name: '포스터',
-      image:
-        'https://printingstreets.uk/6d23e574-d2a3-421a-ae08-0cbc8a7dc2f9_icon_poster.svg',
-    },
-    {
-      name: '리플렛',
-      image:
-        'https://printingstreets.uk/398304ef-3b19-440a-a32a-25a12354d6e4_icon_leaflet.svg',
-    },
-    {
-      name: '명함',
-      image:
-        'https://printingstreets.uk/cd2d4a68-c3a0-4266-9db7-cd5d7f8c1bcf_icon_businesscard.svg',
-    },
-    {
-      name: '엽서/카드',
-      image:
-        'https://printingstreets.uk/2c4f62e3-21cd-4eba-8115-f014d5e3cca1_icon_postcard.svg',
-    },
-    {
-      name: '소책자',
-      image:
-        'https://printingstreets.uk/53837729-0f91-4f83-b716-d9690a22e657_icon_pamphlet.svg',
-    },
-    {
-      name: '책',
-      image:
-        'https://printingstreets.uk/ad493692-303f-44dc-b250-c42f417b9757_icon_book.svg',
-    },
-  ];
 
   // For each category, create the tag and its children
   for (const categoryItem of categories) {
