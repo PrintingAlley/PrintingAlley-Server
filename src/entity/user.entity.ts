@@ -47,9 +47,9 @@ export class User {
   @ApiProperty({
     description: '이름',
     required: false,
-    example: '홍길동',
+    example: '1번째 골목대장',
   })
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @ApiProperty({
