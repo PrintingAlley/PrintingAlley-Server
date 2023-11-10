@@ -41,6 +41,18 @@ export class BookmarkGroupWithHasProduct {
     type: Number,
   })
   bookmarkId?: number;
+
+  @ApiProperty({
+    description: '북마크 개수',
+    type: Number,
+  })
+  bookmarkCount?: number;
+
+  @ApiProperty({
+    description: '최근 북마크 이미지 URL',
+    type: String,
+  })
+  recentImage?: string;
 }
 
 export class BookmarkGroupsWithHasProductResponseDto {

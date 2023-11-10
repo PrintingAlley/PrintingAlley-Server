@@ -78,16 +78,21 @@ export class BookmarkService {
     });
 
     const bookmarkGroupsWithHasProduct: BookmarkGroupWithHasProduct[] =
-      groups.map((group) => ({
-        id: group.id,
-        name: group.name,
-        hasProduct: group.bookmarks.some(
-          (bookmark) => bookmark.product.id === productId,
-        ),
-        bookmarkId: group.bookmarks.find(
-          (bookmark) => bookmark.product.id === productId,
-        )?.id,
-      }));
+      groups.map((group) => {
+        group.bookmarks.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+        return {
+          id: group.id,
+          name: group.name,
+          hasProduct: group.bookmarks.some(
+            (bookmark) => bookmark.product.id === productId,
+          ),
+          bookmarkId: group.bookmarks.find(
+            (bookmark) => bookmark.product.id === productId,
+          )?.id,
+          bookmarkCount: group.bookmarks.length,
+          recentImage: group.bookmarks[0]?.product?.mainImage,
+        };
+      });
 
     return { bookmarkGroups: bookmarkGroupsWithHasProduct };
   }
