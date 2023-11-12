@@ -28,8 +28,8 @@ export class UserService {
     socialId: string,
     accessToken: string,
     provider: string,
-    realName: string,
-    email: string,
+    realName: string | null,
+    email: string | null,
   ): Promise<User> {
     let user = await this.userRepository.findOne({
       where: { socialId, provider },

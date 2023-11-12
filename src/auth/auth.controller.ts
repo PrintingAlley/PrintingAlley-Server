@@ -257,23 +257,23 @@ export class AuthController {
         email =
           req.user.emails && req.user.emails[0]?.value
             ? req.user.emails[0].value
-            : '이메일없음';
-        name = req.user.displayName || '이름없음';
+            : null;
+        name = req.user.displayName || null;
         break;
       case 'kakao':
-        email = req.user._json.kakao_account.email;
-        name = req.user.username || req.user.displayName || '이름없음';
+        email = req.user._json.kakao_account.email || null;
+        name = req.user.username || req.user.displayName || null;
         break;
       case 'google':
         email =
           req.user.emails && req.user.emails[0]?.value
             ? req.user.emails[0].value
-            : '이메일없음';
-        name = req.user.displayName || '이름없음';
+            : null;
+        name = req.user.displayName || null;
         break;
       default:
-        email = '이메일없음';
-        name = '이름없음';
+        email = null;
+        name = null;
     }
 
     const user = await this.userService.findOrCreate(

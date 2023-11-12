@@ -21,10 +21,11 @@ export class AuthService {
       case 'google':
         try {
           const googleResponse = await axios.get(
-            `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`,
+            `https://www.googleapis.com/oauth2/v2/userinfo`,
+            { headers: { Authorization: `Bearer ${token}` } },
           );
           userInfo = {
-            id: googleResponse.data.sub,
+            id: googleResponse.data.id,
             accessToken: token,
             provider,
             email: googleResponse.data.email,
@@ -120,7 +121,8 @@ export class AuthService {
       case 'google':
         try {
           const googleResponse = await axios.get(
-            `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`,
+            `https://www.googleapis.com/oauth2/v2/userinfo`,
+            { headers: { Authorization: `Bearer ${token}` } },
           );
           return googleResponse.status === 200;
         } catch (error) {
