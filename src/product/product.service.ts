@@ -107,6 +107,8 @@ export class ProductService {
       product.tags = tags;
     }
 
+    product.images = [productData.mainImage, ...productData.images];
+
     return this.productRepository.save(product);
   }
 
