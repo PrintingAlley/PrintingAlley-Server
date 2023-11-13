@@ -50,7 +50,14 @@ export class ProductService {
   ): Promise<{ product: Product; bookmarkId?: number }> {
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['user', 'category', 'printShop', 'tags', 'reviews'],
+      relations: [
+        'user',
+        'category',
+        'printShop',
+        'tags',
+        'tags.parent',
+        'reviews',
+      ],
     });
     if (!product) {
       throw new NotFoundException('제품을 찾을 수 없습니다.');
@@ -58,6 +65,25 @@ export class ProductService {
 
     product.ownerId = product.user.id;
     delete product.user;
+
+    const printTypeTags = await Promise.all(
+      product.tags.map(async (tag: Tag) => {
+        if (await this.isCategoryTag(tag, '인쇄종류')) {
+          return tag.name;
+        }
+      }),
+    );
+
+    const afterProcessTags = await Promise.all(
+      product.tags.map(async (tag: Tag) => {
+        if (await this.isCategoryTag(tag, '후가공')) {
+          return tag.name;
+        }
+      }),
+    );
+
+    product.printType = printTypeTags.filter(Boolean).join(', ');
+    product.afterProcess = afterProcessTags.filter(Boolean).join(', ');
 
     const isBookmarked = await this.bookmarkService.isBookmarked(id, userId);
     product.isBookmarked = isBookmarked;
@@ -224,5 +250,30 @@ export class ProductService {
       throw new NotFoundException('하나 이상의 태그를 찾을 수 없습니다.');
     }
     return tags;
+  }
+
+  private async isCategoryTag(
+    childTag: Tag,
+    categoryName: string,
+  ): Promise<boolean> {
+    const tag = await this.tagRepository.findOne({
+      where: { id: childTag.id },
+      relations: ['parent'],
+    });
+
+    if (!tag.parent) {
+      return false;
+    }
+
+    const parent = await this.tagRepository.findOneBy({ id: tag.parent.id });
+    if (!parent) {
+      return false;
+    }
+
+    if (parent.name === categoryName) {
+      return true;
+    }
+
+    return await this.isCategoryTag(parent, categoryName);
   }
 }

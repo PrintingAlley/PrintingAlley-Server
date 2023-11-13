@@ -40,16 +40,6 @@ export class CreateProductDto {
   paper: string;
 
   @ApiProperty({
-    description: '후가공',
-    required: true,
-    example: '도무송',
-  })
-  @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(50)
-  afterProcess: string;
-
-  @ApiProperty({
     description: '디자이너 또는 디자인 스튜디오 이름',
     required: true,
     example: '프린팅 스튜디오',

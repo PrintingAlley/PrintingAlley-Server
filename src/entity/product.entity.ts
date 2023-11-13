@@ -51,14 +51,6 @@ export class Product {
   paper: string;
 
   @ApiProperty({
-    description: '후가공',
-    required: true,
-    example: '도무송',
-  })
-  @Column()
-  afterProcess: string;
-
-  @ApiProperty({
     description: '디자이너 또는 디자인 스튜디오 이름',
     required: true,
     example: '프린팅 스튜디오',
@@ -145,6 +137,32 @@ export class Product {
   @ManyToOne(() => User, (user) => user.products, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ApiProperty({
+    description: '인쇄 방식',
+    example: '디지털 인쇄',
+  })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: '',
+  })
+  printType?: string;
+
+  @ApiProperty({
+    description: '후가공',
+    example: '도무송',
+  })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: '',
+  })
+  afterProcess?: string;
 
   @ApiProperty({ description: '사장님 ID', example: 1 })
   @Column({
