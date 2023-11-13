@@ -115,7 +115,6 @@ export class ProductController {
     return { product, bookmarkId };
   }
 
-  // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 제품 생성 가능
   @Post()
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
@@ -138,7 +137,6 @@ export class ProductController {
     return createResponse(200, '성공', createdProduct.id);
   }
 
-  // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 제품 수정 가능
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
@@ -167,7 +165,6 @@ export class ProductController {
     return createResponse(200, '성공', id);
   }
 
-  // TODO: PRINTSHOP_OWNER 권한 필요, 본인만 제품 삭제 가능
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({

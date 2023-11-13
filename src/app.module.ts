@@ -15,6 +15,7 @@ import { PrintShopReviewModule } from './print-shop-review/print-shop-review.mod
 import { CategoryModule } from './category/category.module';
 import { VersionModule } from './version/version.module';
 import { ContentModule } from './content/content.module';
+import { AdminModule } from './admin/admin.module';
 import ConfigModule from './config';
 
 @Module({
@@ -47,6 +48,7 @@ import ConfigModule from './config';
     ProductReviewModule,
     PrintShopReviewModule,
     VersionModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

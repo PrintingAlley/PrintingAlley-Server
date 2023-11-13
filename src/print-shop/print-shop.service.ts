@@ -9,7 +9,7 @@ import { PrintShop } from 'src/entity/print-shop.entity';
 import { Repository } from 'typeorm';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
-import { User } from 'src/entity/user.entity';
+import { User, UserType } from 'src/entity/user.entity';
 
 type FindAllParams = {
   page: number;
@@ -52,20 +52,20 @@ export class PrintShopService {
 
   async create(
     createPrintShopDto: CreatePrintShopDto,
-    userId: number,
+    user: User,
   ): Promise<PrintShop> {
     const existingPrintShop = await this.printShopRepository.findOne({
-      where: { user: { id: userId } },
+      where: { user: { id: user.id } },
     });
 
-    if (existingPrintShop) {
+    if (user.userType !== UserType.ADMIN && existingPrintShop) {
       throw new BadRequestException(
         '사장님은 이미 인쇄사를 소유하고 있습니다.',
       );
     }
 
     const printShop = this.printShopRepository.create(createPrintShopDto);
-    printShop.user = { id: userId } as User;
+    printShop.user = user;
 
     return this.printShopRepository.save(printShop);
   }

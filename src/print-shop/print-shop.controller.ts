@@ -122,10 +122,10 @@ export class PrintShopController {
   ): Promise<CommonResponseDto> {
     const createdPrintShop = await this.printShopService.create(
       printShop,
-      user.id,
+      user,
     );
 
-    if (user.userType !== UserType.PRINTSHOP_OWNER) {
+    if (user.userType === UserType.GENERAL) {
       user.userType = UserType.PRINTSHOP_OWNER;
       await this.userService.updateUserType(user.id, UserType.PRINTSHOP_OWNER);
     }

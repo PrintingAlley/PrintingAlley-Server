@@ -14,6 +14,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { ProductsResponseDto } from './dto/product-response.dto';
 import { BookmarkService } from './../bookmark/bookmark.service';
 import { User } from 'src/entity/user.entity';
+import { CreateProductDtoByAdmin } from 'src/admin/dto/create-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -187,6 +188,73 @@ export class ProductService {
     }
 
     await this.productRepository.delete(id);
+  }
+
+  async createByAdmin(productData: CreateProductDtoByAdmin): Promise<Product> {
+    const { categoryId, tagIds, printShopId, ...restData } = productData;
+
+    const printShop = await this.printShopRepository.findOne({
+      where: { id: printShopId },
+      relations: ['user'],
+    });
+    if (!printShop) {
+      throw new NotFoundException('인쇄소를 찾을 수 없습니다.');
+    }
+
+    const category = await this.categoryRepository.findOneBy({
+      id: categoryId,
+    });
+    if (!category) {
+      throw new NotFoundException('카테고리를 찾을 수 없습니다.');
+    }
+
+    const product = this.productRepository.create(restData);
+    product.user = printShop.user;
+    product.printShop = printShop;
+    product.category = category;
+
+    if (tagIds && tagIds.length) {
+      const tags = await this.findTagsByIds(tagIds);
+      product.tags = tags;
+    }
+
+    product.images = [productData.mainImage, ...productData.images];
+
+    return this.productRepository.save(product);
+  }
+
+  async updateByAdmin(
+    id: number,
+    updateData: CreateProductDtoByAdmin,
+  ): Promise<Product> {
+    const { categoryId, tagIds, printShopId, ...restData } = updateData;
+
+    const product = await this.productRepository.findOne({
+      where: { id },
+      relations: ['printShop'],
+    });
+    if (!product) {
+      throw new NotFoundException('제품을 찾을 수 없습니다.');
+    }
+    if (product.printShop.id !== printShopId) {
+      throw new ForbiddenException('이 인쇄사에 대한 권한이 없습니다.');
+    }
+
+    const category = await this.categoryRepository.findOneBy({
+      id: categoryId,
+    });
+    if (!category) {
+      throw new NotFoundException('카테고리를 찾을 수 없습니다.');
+    }
+
+    product.category = category;
+    Object.assign(product, restData);
+
+    if (tagIds !== undefined) {
+      product.tags = tagIds.length ? await this.findTagsByIds(tagIds) : [];
+    }
+
+    return this.productRepository.save(product);
   }
 
   private async findAllProducts(
