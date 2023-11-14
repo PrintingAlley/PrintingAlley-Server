@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PrintShopReview } from 'src/entity/print-shop-review.entity';
 import { Repository } from 'typeorm';
 import { CreatePrintShopReviewDto } from './dto/create-print-shop-review.dto';
+import * as BadWordsFilter from 'badwords-ko';
 
 @Injectable()
 export class PrintShopReviewService {
@@ -10,6 +11,7 @@ export class PrintShopReviewService {
     @InjectRepository(PrintShopReview)
     private readonly printShopReviewRepository: Repository<PrintShopReview>,
   ) {}
+  private filter = new BadWordsFilter();
 
   async findAll(): Promise<PrintShopReview[]> {
     return await this.printShopReviewRepository.find({
@@ -46,8 +48,13 @@ export class PrintShopReviewService {
     userId: number,
     reviewData: CreatePrintShopReviewDto,
   ): Promise<PrintShopReview> {
+    if (!reviewData.content.replace(/\s/g, '').length) {
+      throw new NotFoundException('리뷰 내용을 입력해주세요.');
+    }
+    const filteredContent = this.filter.clean(reviewData.content);
     const printShopReview = await this.printShopReviewRepository.save({
       ...reviewData,
+      content: filteredContent,
       printShop: { id: printShopId },
       user: { id: userId },
     });
@@ -69,9 +76,13 @@ export class PrintShopReviewService {
       throw new NotFoundException('사용자가 작성한 리뷰를 찾을 수 없습니다.');
     }
 
+    if (!reviewData.content.replace(/\s/g, '').length) {
+      throw new NotFoundException('리뷰 내용을 입력해주세요.');
+    }
+    const filteredContent = this.filter.clean(reviewData.content);
     await this.printShopReviewRepository.update(
       { id: reviewId },
-      { ...reviewData },
+      { ...reviewData, content: filteredContent },
     );
     return await this.printShopReviewRepository.findOne({
       where: { id: reviewId },

@@ -12,6 +12,7 @@ import { ProductReviewService } from 'src/product-review/product-review.service'
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserCounter } from 'src/entity/user-counter.entity';
+import * as BadWordsFilter from 'badwords-ko';
 
 @Injectable()
 export class UserService {
@@ -23,6 +24,7 @@ export class UserService {
     private readonly printShopReviewService: PrintShopReviewService,
     private readonly productReviewService: ProductReviewService,
   ) {}
+  private filter = new BadWordsFilter();
 
   async findOrCreate(
     socialId: string,
@@ -95,17 +97,18 @@ export class UserService {
 
     if (name) {
       const trimmedName = name.trim();
+      const filteredName = this.filter.clean(trimmedName);
       const user = await this.userRepository.findOneBy({ id: userId });
       const userCounter = await this.retrieveUserCount();
 
       if (
-        user.name !== trimmedName &&
-        userCounter < Number(trimmedName.split('번째')[0])
+        user.name !== filteredName &&
+        userCounter < Number(filteredName.split('번째')[0])
       ) {
         throw new BadRequestException('이름을 변경할 수 없습니다.');
       }
 
-      updateUserDto.name = trimmedName;
+      updateUserDto.name = filteredName;
     }
 
     try {
@@ -121,18 +124,23 @@ export class UserService {
 
   // 이름 수정
   async updateName(userId: number, newName: string): Promise<User> {
+    if (newName.trim() === '') {
+      throw new BadRequestException('이름을 입력해주세요.');
+    }
+    const trimmedName = newName.trim();
+    const filteredName = this.filter.clean(trimmedName);
     const user = await this.userRepository.findOneBy({ id: userId });
     const userCounter = await this.retrieveUserCount();
 
     if (
-      user.name !== newName &&
-      userCounter < Number(newName.split('번째')[0])
+      user.name !== filteredName &&
+      userCounter < Number(filteredName.split('번째')[0])
     ) {
       throw new BadRequestException('이름을 변경할 수 없습니다.');
     }
 
     try {
-      await this.userRepository.update(userId, { name: newName });
+      await this.userRepository.update(userId, { name: filteredName });
       return this.userRepository.findOneBy({ id: userId });
     } catch (error) {
       if (error?.driverError?.code === '23505') {
