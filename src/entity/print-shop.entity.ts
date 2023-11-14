@@ -4,6 +4,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -12,6 +14,7 @@ import {
 import { Product } from './product.entity';
 import { PrintShopReview } from './print-shop-review.entity';
 import { User } from './user.entity';
+import { Tag } from './tag.entity';
 
 @Entity()
 export class PrintShop {
@@ -29,6 +32,14 @@ export class PrintShop {
   })
   @Column()
   name: string;
+
+  @ApiProperty({
+    description: '인쇄사 분류',
+    required: true,
+    example: '인쇄사',
+  })
+  @Column()
+  type: string;
 
   @ApiProperty({
     description: '주소',
@@ -61,14 +72,6 @@ export class PrintShop {
   })
   @Column({ nullable: true })
   homepage?: string;
-
-  @ApiProperty({
-    description: '대표자명',
-    required: true,
-    example: '홍길동',
-  })
-  @Column()
-  representative: string;
 
   @ApiProperty({
     description: '인쇄사 소개',
@@ -111,12 +114,46 @@ export class PrintShop {
   longitude: string;
 
   @ApiProperty({
+    description: '영업시간',
+    required: true,
+    example: '평일 09:00 ~ 18:00 / 토요일 09:00 ~ 13:00',
+  })
+  @Column()
+  businessHours: string;
+
+  @ApiProperty({
     description: '사장님',
     type: () => User,
   })
   @ManyToOne(() => User, (user) => user.printShops, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ApiProperty({
+    description: '인쇄 방식',
+    example: '디지털 인쇄',
+  })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: '',
+  })
+  printType?: string;
+
+  @ApiProperty({
+    description: '후가공',
+    example: '도무송',
+  })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: '',
+  })
+  afterProcess?: string;
 
   @ApiProperty({ description: '사장님 ID', example: 1 })
   @Column({
@@ -137,6 +174,21 @@ export class PrintShop {
   @ApiProperty({ description: '리뷰 목록', type: () => [PrintShopReview] })
   @OneToMany(() => PrintShopReview, (review) => review.printShop)
   reviews: PrintShopReview[];
+
+  @ApiProperty({ description: '인쇄사와 연관된 태그들', type: () => [Tag] })
+  @ManyToMany(() => Tag, (tag) => tag.printShops)
+  @JoinTable({
+    name: 'print_shop_tags',
+    joinColumn: {
+      name: 'print_shop_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'tag_id',
+      referencedColumnName: 'id',
+    },
+  })
+  tags: Tag[];
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })

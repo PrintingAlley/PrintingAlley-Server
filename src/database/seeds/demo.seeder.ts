@@ -143,11 +143,11 @@ export default class DemoSeeder implements Seeder {
     const printShops = [
       {
         name: '디자인점빵',
+        type: '인쇄사',
         address: '서울 중구 퇴계로 210-33',
         phone: '02-123-4567',
         email: 'oldpress@naver.com',
         homepage: 'https://www.instagram.com/oldpress',
-        representative: '홍길동',
         introduction: '전통기법의 인쇄공방',
         logoImage:
           'https://printingstreets.uk/ecbf52ed-2bbc-4445-be60-989316f45fbb_%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A5%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%AE%C3%A1%C2%86%C2%AF_%C3%A1%C2%84%C2%83%C3%A1%C2%85%C2%B5%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A1%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%A6%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A5_%C3%A1%C2%84%C2%8D%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%A8%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B3%C3%A1%C2%86%C2%AB_%C3%A1%C2%84%C2%85%C3%A1%C2%85%C2%B5%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A9%C3%A1%C2%84%C2%80%C3%A1%C2%85%C2%B3%C3%A1%C2%84%C2%85%C3%A1%C2%85%C2%A2%C3%A1%C2%84%C2%91%C3%A1%C2%85%C2%B3_%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%AB_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A6%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%A8%C3%A1%C2%84%C2%86%C3%A1%C2%85%C2%AE%C3%A1%C2%86%C2%AF%C3%A1%C2%84%C2%83%C3%A1%C2%85%C2%B3%C3%A1%C2%86%C2%AF.jpeg',
@@ -155,15 +155,19 @@ export default class DemoSeeder implements Seeder {
           'https://printingstreets.uk/d90bb8f8-1473-49f4-a3cd-3431c69f2a56_%C3%A1%C2%84%C2%89%C3%A1%C2%85%C2%A5%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%AE%C3%A1%C2%86%C2%AF_%C3%A1%C2%84%C2%83%C3%A1%C2%85%C2%B5%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A1%C3%A1%C2%84%C2%8B%C3%A1%C2%85%C2%B5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%B7%C3%A1%C2%84%C2%88%C3%A1%C2%85%C2%A1%C3%A1%C2%86%C2%BC_%C3%A1%C2%84%C2%8C%C3%A1%C2%85%C2%A5%C3%A1%C2%86%C2%AB%C3%A1%C2%84%C2%80%C3%A1%C2%85%C2%A7%C3%A1%C2%86%C2%BC(14).jpeg',
         latitude: '37.5607495419269',
         longitude: '126.995362279837',
+        businessHours: '월-금: 09:00-18:00, 토: 10:00-14:00',
+        tags: createdTags.filter((tag) =>
+          [77, 78, 79, 87, 88, 89].includes(tag.id),
+        ),
         user,
       },
       {
         name: '밀리스트',
+        type: '인쇄 기획사',
         address: '서울 성동구 성수동2가 299-104',
         phone: '02-123-4567',
         email: 'oldpress@naver.com',
         homepage: 'https://www.millist.co.kr/',
-        representative: '정우진',
         introduction:
           '밀리스트는 오래된 인쇄방식인 레터프레스/활판인쇄로 청첩장, 엽서, 명함 등을 제작합니다',
         logoImage:
@@ -172,6 +176,10 @@ export default class DemoSeeder implements Seeder {
           'https://contents.sixshop.com/thumbnails/uploadedFiles/209565/default/image_1696921624500_2500.jpg',
         latitude: '37.5495503467056',
         longitude: '127.053739188792',
+        businessHours: '월-금: 09:00-18:00, 토: 10:00-14:00',
+        tags: createdTags.filter((tag) =>
+          [77, 78, 79, 87, 88, 89].includes(tag.id),
+        ),
         user,
       },
     ];

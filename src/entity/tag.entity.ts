@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Product } from './product.entity';
+import { PrintShop } from './print-shop.entity';
 
 @Entity()
 export class Tag {
@@ -45,6 +46,10 @@ export class Tag {
   @ApiProperty({ description: '태그가 연결된 제품', type: () => [Product] })
   @ManyToMany(() => Product, (product) => product.tags)
   products: Product[];
+
+  @ApiProperty({ description: '태그가 연결된 인쇄사', type: () => [PrintShop] })
+  @ManyToMany(() => PrintShop, (printShop) => printShop.tags)
+  printShops: PrintShop[];
 
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })

@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrintShop } from 'src/entity/print-shop.entity';
 import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
 import { UserModule } from 'src/user/user.module';
+import { Tag } from 'src/entity/tag.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PrintShop]),
+    TypeOrmModule.forFeature([PrintShop, Tag]),
     PrintShopReviewModule,
     UserModule,
   ],
