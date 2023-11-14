@@ -197,7 +197,7 @@ export default class DemoSeeder implements Seeder {
         description:
           '해상도\n해상도는 이미지의 PPI(인치당 픽셀 수)를 나타내며 명함 디자인의 품질에 중요한 역할을 합니다. 해상도가 높은 이미지는 더 선명하고 디테일한 인쇄물을 제공합니다. 일반적으로 인쇄용 이미지는 DPI(인치당 도트 수) 단위로 측정되며 명함 디자인에는 최소 300DPI가 권장됩니다.\n\n벡터 형식으로 디자인하기\n명함을 디자인할 때 벡터 그래픽은 많은 이점을 제공합니다. 픽셀로 구성되고 크기를 조정하면 품질이 저하될 수 있는 래스터 이미지와 달리 벡터 그래픽은 선명도를 잃지 않고 무한정 크기를 조정할 수 있는 수학적으로 정의된 선과 모양으로 구성됩니다. Adobe Illustrator의 AI 또는 EPS와 같은 벡터 형식은 디자인에 유연성과 정확성을 제공합니다.',
         mainImage:
-          'https://printingstreets.uk/fd424fe4-f680-47ee-9be5-34b5b51680d4_7098d312b437617da3fcbfa83c6596d4.png',
+          'https://printingstreets.uk/fd424fe4-f680-47ee-9be5-34b5b51680d4_7098d312b437617da3fcbfa83c6596d4.png?width=564&height=564',
         images: [
           'https://printingstreets.uk/f49f9221-39f6-45cd-8ec1-512004558f54_7098d312b437617da3fcbfa83c6596d4.png',
           'https://printingstreets.uk/f9dbf1f6-fc64-4bbc-92e6-4fa55af00f20_a65a33d7408971b2723e59f5eb4da8c8.png',
@@ -218,7 +218,7 @@ export default class DemoSeeder implements Seeder {
         description:
           '해상도\n해상도는 이미지의 PPI(인치당 픽셀 수)를 나타내며 명함 디자인의 품질에 중요한 역할을 합니다. 해상도가 높은 이미지는 더 선명하고 디테일한 인쇄물을 제공합니다. 일반적으로 인쇄용 이미지는 DPI(인치당 도트 수) 단위로 측정되며 명함 디자인에는 최소 300DPI가 권장됩니다.\n\n벡터 형식으로 디자인하기\n명함을 디자인할 때 벡터 그래픽은 많은 이점을 제공합니다. 픽셀로 구성되고 크기를 조정하면 품질이 저하될 수 있는 래스터 이미지와 달리 벡터 그래픽은 선명도를 잃지 않고 무한정 크기를 조정할 수 있는 수학적으로 정의된 선과 모양으로 구성됩니다. Adobe Illustrator의 AI 또는 EPS와 같은 벡터 형식은 디자인에 유연성과 정확성을 제공합니다.',
         mainImage:
-          'https://printingstreets.uk/d96e7f3e-fcbb-4a7f-b73b-34b07386f0b6_2e191c747f2ed38cbed97ec189b82676.png',
+          'https://printingstreets.uk/d96e7f3e-fcbb-4a7f-b73b-34b07386f0b6_2e191c747f2ed38cbed97ec189b82676.png?width=800&height=977',
         images: [
           'https://printingstreets.uk/5f908acc-3ea6-4242-9368-0a08fc214f40_01fd788a64f10b0b8e0bcbcbb316a95b.png',
           'https://printingstreets.uk/f4049ed7-97c0-4b2c-8214-923041d9115e_57a63cbb4b2434e7c82525485f669477.png',
@@ -239,7 +239,7 @@ export default class DemoSeeder implements Seeder {
         description:
           '해상도\n해상도는 이미지의 PPI(인치당 픽셀 수)를 나타내며 명함 디자인의 품질에 중요한 역할을 합니다. 해상도가 높은 이미지는 더 선명하고 디테일한 인쇄물을 제공합니다. 일반적으로 인쇄용 이미지는 DPI(인치당 도트 수) 단위로 측정되며 명함 디자인에는 최소 300DPI가 권장됩니다.\n\n벡터 형식으로 디자인하기\n명함을 디자인할 때 벡터 그래픽은 많은 이점을 제공합니다. 픽셀로 구성되고 크기를 조정하면 품질이 저하될 수 있는 래스터 이미지와 달리 벡터 그래픽은 선명도를 잃지 않고 무한정 크기를 조정할 수 있는 수학적으로 정의된 선과 모양으로 구성됩니다. Adobe Illustrator의 AI 또는 EPS와 같은 벡터 형식은 디자인에 유연성과 정확성을 제공합니다.',
         mainImage:
-          'https://printingstreets.uk/f9dbf1f6-fc64-4bbc-92e6-4fa55af00f20_a65a33d7408971b2723e59f5eb4da8c8.png',
+          'https://printingstreets.uk/f9dbf1f6-fc64-4bbc-92e6-4fa55af00f20_a65a33d7408971b2723e59f5eb4da8c8.png?width=564&height=564',
         images: [
           'https://printingstreets.uk/f49f9221-39f6-45cd-8ec1-512004558f54_7098d312b437617da3fcbfa83c6596d4.png',
           'https://printingstreets.uk/f9dbf1f6-fc64-4bbc-92e6-4fa55af00f20_a65a33d7408971b2723e59f5eb4da8c8.png',
@@ -260,7 +260,7 @@ export default class DemoSeeder implements Seeder {
         description:
           '해상도\n해상도는 이미지의 PPI(인치당 픽셀 수)를 나타내며 명함 디자인의 품질에 중요한 역할을 합니다. 해상도가 높은 이미지는 더 선명하고 디테일한 인쇄물을 제공합니다. 일반적으로 인쇄용 이미지는 DPI(인치당 도트 수) 단위로 측정되며 명함 디자인에는 최소 300DPI가 권장됩니다.\n\n벡터 형식으로 디자인하기\n명함을 디자인할 때 벡터 그래픽은 많은 이점을 제공합니다. 픽셀로 구성되고 크기를 조정하면 품질이 저하될 수 있는 래스터 이미지와 달리 벡터 그래픽은 선명도를 잃지 않고 무한정 크기를 조정할 수 있는 수학적으로 정의된 선과 모양으로 구성됩니다. Adobe Illustrator의 AI 또는 EPS와 같은 벡터 형식은 디자인에 유연성과 정확성을 제공합니다.',
         mainImage:
-          'https://printingstreets.uk/f4049ed7-97c0-4b2c-8214-923041d9115e_57a63cbb4b2434e7c82525485f669477.png',
+          'https://printingstreets.uk/f4049ed7-97c0-4b2c-8214-923041d9115e_57a63cbb4b2434e7c82525485f669477.png?width=800&height=1061',
         images: [
           'https://printingstreets.uk/5f908acc-3ea6-4242-9368-0a08fc214f40_01fd788a64f10b0b8e0bcbcbb316a95b.png',
           'https://printingstreets.uk/f4049ed7-97c0-4b2c-8214-923041d9115e_57a63cbb4b2434e7c82525485f669477.png',
@@ -281,7 +281,7 @@ export default class DemoSeeder implements Seeder {
         description:
           '해상도\n해상도는 이미지의 PPI(인치당 픽셀 수)를 나타내며 명함 디자인의 품질에 중요한 역할을 합니다. 해상도가 높은 이미지는 더 선명하고 디테일한 인쇄물을 제공합니다. 일반적으로 인쇄용 이미지는 DPI(인치당 도트 수) 단위로 측정되며 명함 디자인에는 최소 300DPI가 권장됩니다.\n\n벡터 형식으로 디자인하기\n명함을 디자인할 때 벡터 그래픽은 많은 이점을 제공합니다. 픽셀로 구성되고 크기를 조정하면 품질이 저하될 수 있는 래스터 이미지와 달리 벡터 그래픽은 선명도를 잃지 않고 무한정 크기를 조정할 수 있는 수학적으로 정의된 선과 모양으로 구성됩니다. Adobe Illustrator의 AI 또는 EPS와 같은 벡터 형식은 디자인에 유연성과 정확성을 제공합니다.',
         mainImage:
-          'https://printingstreets.uk/28afe2c0-6042-429a-8289-423e4b4a7800_4c7fdc9ad4ec035f858a142d2177531e.png',
+          'https://printingstreets.uk/28afe2c0-6042-429a-8289-423e4b4a7800_4c7fdc9ad4ec035f858a142d2177531e.png?width=564&height=564',
         images: [
           'https://printingstreets.uk/f49f9221-39f6-45cd-8ec1-512004558f54_7098d312b437617da3fcbfa83c6596d4.png',
           'https://printingstreets.uk/f9dbf1f6-fc64-4bbc-92e6-4fa55af00f20_a65a33d7408971b2723e59f5eb4da8c8.png',
@@ -302,7 +302,7 @@ export default class DemoSeeder implements Seeder {
         description:
           '해상도\n해상도는 이미지의 PPI(인치당 픽셀 수)를 나타내며 명함 디자인의 품질에 중요한 역할을 합니다. 해상도가 높은 이미지는 더 선명하고 디테일한 인쇄물을 제공합니다. 일반적으로 인쇄용 이미지는 DPI(인치당 도트 수) 단위로 측정되며 명함 디자인에는 최소 300DPI가 권장됩니다.\n\n벡터 형식으로 디자인하기\n명함을 디자인할 때 벡터 그래픽은 많은 이점을 제공합니다. 픽셀로 구성되고 크기를 조정하면 품질이 저하될 수 있는 래스터 이미지와 달리 벡터 그래픽은 선명도를 잃지 않고 무한정 크기를 조정할 수 있는 수학적으로 정의된 선과 모양으로 구성됩니다. Adobe Illustrator의 AI 또는 EPS와 같은 벡터 형식은 디자인에 유연성과 정확성을 제공합니다.',
         mainImage:
-          'https://printingstreets.uk/5f908acc-3ea6-4242-9368-0a08fc214f40_01fd788a64f10b0b8e0bcbcbb316a95b.png',
+          'https://printingstreets.uk/5f908acc-3ea6-4242-9368-0a08fc214f40_01fd788a64f10b0b8e0bcbcbb316a95b.png?width=800&height=1040',
         images: [
           'https://printingstreets.uk/5f908acc-3ea6-4242-9368-0a08fc214f40_01fd788a64f10b0b8e0bcbcbb316a95b.png',
           'https://printingstreets.uk/f4049ed7-97c0-4b2c-8214-923041d9115e_57a63cbb4b2434e7c82525485f669477.png',
