@@ -13,12 +13,6 @@ export class SimpleProductSwaggerDto {
   @ApiProperty({ description: '종이 종류', example: '종이이름+평량(g)' })
   paper: string;
 
-  @ApiProperty({ description: '인쇄 방식', example: '디지털 인쇄' })
-  printType: string;
-
-  @ApiProperty({ description: '후가공', example: '도무송' })
-  afterProcess: string;
-
   @ApiProperty({
     description: '디자이너 또는 디자인 스튜디오 이름',
     example: '프린팅 스튜디오',

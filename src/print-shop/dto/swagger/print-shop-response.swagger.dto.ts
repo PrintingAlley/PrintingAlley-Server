@@ -15,6 +15,12 @@ export class PrintShopListSwaggerDto {
 }
 
 class PrintShopSwaggerDto extends SimplePrintShopSwaggerDto {
+  @ApiProperty({ description: '인쇄 방식', example: '디지털 인쇄' })
+  printType: string;
+
+  @ApiProperty({ description: '후가공', example: '도무송' })
+  afterProcess: string;
+
   @ApiProperty({ description: '사장님 ID', example: 1 })
   ownerId: number;
 

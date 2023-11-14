@@ -7,6 +7,9 @@ export class SimplePrintShopSwaggerDto {
   @ApiProperty({ description: '인쇄사 이름', example: '정다운 인쇄사' })
   name: string;
 
+  @ApiProperty({ description: '인쇄사 분류', example: '인쇄사' })
+  type: string;
+
   @ApiProperty({
     description: '주소',
     example: '대구시 중구 동성로 345번길 67, 대구빌딩 6층',
@@ -24,9 +27,6 @@ export class SimplePrintShopSwaggerDto {
     example: 'https://www.publishersglobal.com',
   })
   homepage: string;
-
-  @ApiProperty({ description: '대표자', example: '홍길동' })
-  representative: string;
 
   @ApiProperty({
     description: '소개',
@@ -51,6 +51,12 @@ export class SimplePrintShopSwaggerDto {
 
   @ApiProperty({ description: '경도', example: '126.978' })
   longitude: string;
+
+  @ApiProperty({
+    description: '영업시간',
+    example: '평일 09:00 ~ 18:00 / 토요일 09:00 ~ 13:00',
+  })
+  businessHours: string;
 
   @ApiProperty({ description: '생성일', example: '2023-10-31T01:02:40.301Z' })
   createdAt: string;
