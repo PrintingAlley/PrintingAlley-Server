@@ -48,6 +48,9 @@ export class SimpleProductSwaggerDto {
   })
   images: string[];
 
+  @ApiProperty({ description: '조회수', example: 0 })
+  viewCount: number;
+
   @ApiProperty({ description: '생성일', example: '2023-10-31T01:17:08.955Z' })
   createdAt: string;
 

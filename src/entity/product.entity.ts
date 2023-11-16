@@ -173,6 +173,10 @@ export class Product {
   })
   ownerId?: number;
 
+  @ApiProperty({ description: '조회수', example: 0 })
+  @Column({ default: 0 })
+  viewCount: number;
+
   @ApiProperty({ description: '북마크 여부', example: false })
   @Column({
     select: false,

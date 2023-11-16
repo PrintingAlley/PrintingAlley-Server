@@ -15,6 +15,7 @@ import { ProductsResponseDto } from './dto/product-response.dto';
 import { BookmarkService } from './../bookmark/bookmark.service';
 import { User } from 'src/entity/user.entity';
 import { CreateProductDtoByAdmin } from 'src/admin/dto/create-product.dto';
+import { ViewLog } from 'src/entity/view-log.entity';
 
 @Injectable()
 export class ProductService {
@@ -27,6 +28,8 @@ export class ProductService {
     private readonly printShopRepository: Repository<PrintShop>,
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
+    @InjectRepository(ViewLog)
+    private readonly viewLogRepository: Repository<ViewLog>,
     private readonly bookmarkService: BookmarkService,
   ) {}
 
@@ -255,6 +258,30 @@ export class ProductService {
     }
 
     return this.productRepository.save(product);
+  }
+
+  async increaseViewCount(id: number, userIp: string): Promise<void> {
+    const product = await this.productRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException('제품을 찾을 수 없습니다.');
+    }
+
+    const lastView = await this.viewLogRepository.findOne({
+      where: { productId: id, userIp },
+      order: { timestamp: 'DESC' },
+    });
+
+    const timeLimit = 1 * 60 * 60 * 1000; // 1시간
+    if (!lastView || Date.now() - lastView.timestamp.getTime() > timeLimit) {
+      product.viewCount += 1;
+      await this.productRepository.save(product);
+
+      await this.viewLogRepository.save({
+        productId: id,
+        userIp: userIp,
+        timestamp: new Date(),
+      });
+    }
   }
 
   private async findAllProducts(

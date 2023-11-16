@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -40,6 +41,7 @@ import {
 } from './dto/swagger/product-response.swagger.dto';
 import { ProductReviewListSwaggerDto } from './dto/swagger/product-review-response.swagger.dto';
 import { OptionalJwtAuthGuard } from 'src/guards/optional-jwt-auth.guard';
+import { Request } from 'express';
 
 @Controller('product')
 @ApiTags('Product')
@@ -189,6 +191,30 @@ export class ProductController {
     @GetUser() user: User,
   ): Promise<CommonResponseDto> {
     await this.productService.delete(id, user.id);
+    return createResponse(200, '성공', id);
+  }
+
+  @Post(':id/view')
+  @ApiOperation({
+    summary: '제품 조회수 증가',
+    description: '제품 조회수를 증가하는 API입니다.',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '제품 ID',
+  })
+  @ApiOkResponse({
+    description: '제품 조회수 증가 성공',
+    type: CommonResponseDto,
+  })
+  async increaseViewCount(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+  ): Promise<CommonResponseDto> {
+    const clientIp = req.ip;
+
+    await this.productService.increaseViewCount(id, clientIp);
     return createResponse(200, '성공', id);
   }
 

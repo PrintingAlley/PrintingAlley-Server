@@ -164,6 +164,10 @@ export class PrintShop {
   })
   ownerId?: number;
 
+  @ApiProperty({ description: '조회수', example: 0 })
+  @Column({ default: 0 })
+  viewCount: number;
+
   @ApiProperty({
     description: '제품 목록',
     type: () => [Product],

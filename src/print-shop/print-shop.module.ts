@@ -6,10 +6,11 @@ import { PrintShop } from 'src/entity/print-shop.entity';
 import { PrintShopReviewModule } from 'src/print-shop-review/print-shop-review.module';
 import { UserModule } from 'src/user/user.module';
 import { Tag } from 'src/entity/tag.entity';
+import { ViewLog } from 'src/entity/view-log.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([PrintShop, Tag]),
+    TypeOrmModule.forFeature([PrintShop, Tag, ViewLog]),
     PrintShopReviewModule,
     UserModule,
   ],

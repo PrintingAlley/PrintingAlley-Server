@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
@@ -39,6 +40,7 @@ import {
   PrintShopListSwaggerDto,
 } from './dto/swagger/print-shop-response.swagger.dto';
 import { PrintShopReviewListSwaggerDto } from './dto/swagger/print-shop-review-response.swagger.dto';
+import { Request } from 'express';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
@@ -51,11 +53,11 @@ export class PrintShopController {
 
   @Get()
   @ApiOperation({
-    summary: '인쇄소 목록 조회',
-    description: '인쇄소 목록을 조회하는 API입니다. 페이지네이션을 지원합니다.',
+    summary: '인쇄사 목록 조회',
+    description: '인쇄사 목록을 조회하는 API입니다. 페이지네이션을 지원합니다.',
   })
   @ApiOkResponse({
-    description: '인쇄소 목록 조회 성공',
+    description: '인쇄사 목록 조회 성공',
     type: PrintShopListSwaggerDto,
   })
   @ApiQuery({
@@ -71,7 +73,7 @@ export class PrintShopController {
   @ApiQuery({
     name: 'searchText',
     required: false,
-    description: '검색할 인쇄소 이름입니다.',
+    description: '검색할 인쇄사 이름입니다.',
   })
   async findAll(
     @Query('page') page: number = 1,
@@ -83,16 +85,16 @@ export class PrintShopController {
 
   @Get(':id')
   @ApiOperation({
-    summary: '인쇄소 조회',
-    description: '인쇄소를 조회하는 API입니다.',
+    summary: '인쇄사 조회',
+    description: '인쇄사  조회하는 API입니다.',
   })
   @ApiParam({
     name: 'id',
     required: true,
-    description: '인쇄소 ID',
+    description: '인쇄사 ID',
   })
   @ApiOkResponse({
-    description: '인쇄소 조회 성공',
+    description: '인쇄사 조회 성공',
     type: PrintShopDetailSwaggerDto,
   })
   async findOne(
@@ -105,15 +107,15 @@ export class PrintShopController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
-    summary: '인쇄소 생성',
-    description: '인쇄소를 생성하는 API입니다.',
+    summary: '인쇄사 생성',
+    description: '인쇄사  생성하는 API입니다.',
   })
   @ApiHeader({
     name: 'Authorization',
     description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
-    description: '인쇄소 생성 성공',
+    description: '인쇄사 생성 성공',
     type: CommonResponseDto,
   })
   async create(
@@ -136,16 +138,16 @@ export class PrintShopController {
   @Put(':id')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
-    summary: '인쇄소 수정',
-    description: '인쇄소를 수정하는 API입니다.',
+    summary: '인쇄사 수정',
+    description: '인쇄사  수정하는 API입니다.',
   })
   @ApiParam({
     name: 'id',
     required: true,
-    description: '인쇄소 ID',
+    description: '인쇄사 ID',
   })
   @ApiOkResponse({
-    description: '인쇄소 수정 성공',
+    description: '인쇄사 수정 성공',
     type: CommonResponseDto,
   })
   async update(
@@ -160,16 +162,16 @@ export class PrintShopController {
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
-    summary: '인쇄소 삭제',
-    description: '인쇄소를 삭제하는 API입니다.',
+    summary: '인쇄사 삭제',
+    description: '인쇄사  삭제하는 API입니다.',
   })
   @ApiParam({
     name: 'id',
     required: true,
-    description: '인쇄소 ID',
+    description: '인쇄사 ID',
   })
   @ApiOkResponse({
-    description: '인쇄소 삭제 성공',
+    description: '인쇄사 삭제 성공',
     type: CommonResponseDto,
   })
   async delete(
@@ -177,6 +179,30 @@ export class PrintShopController {
     @GetUser() user: User,
   ): Promise<CommonResponseDto> {
     await this.printShopService.delete(id, user.id);
+    return createResponse(200, '성공', id);
+  }
+
+  @Post(':id/view')
+  @ApiOperation({
+    summary: '인쇄사 조회수 증가',
+    description: '인쇄사 조회수를 증가하는 API입니다.',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: '인쇄사 ID',
+  })
+  @ApiOkResponse({
+    description: '인쇄사 조회수 증가 성공',
+    type: CommonResponseDto,
+  })
+  async increaseViewCount(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+  ): Promise<CommonResponseDto> {
+    const clientIp = req.ip;
+
+    await this.printShopService.increaseViewCount(id, clientIp);
     return createResponse(200, '성공', id);
   }
 

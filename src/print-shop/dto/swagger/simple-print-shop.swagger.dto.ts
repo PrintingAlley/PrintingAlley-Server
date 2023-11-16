@@ -58,6 +58,9 @@ export class SimplePrintShopSwaggerDto {
   })
   businessHours: string;
 
+  @ApiProperty({ description: '조회수', example: 0 })
+  viewCount: number;
+
   @ApiProperty({ description: '생성일', example: '2023-10-31T01:02:40.301Z' })
   createdAt: string;
 

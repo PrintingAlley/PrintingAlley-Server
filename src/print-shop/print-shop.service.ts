@@ -11,6 +11,7 @@ import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
 import { User, UserType } from 'src/entity/user.entity';
 import { Tag } from 'src/entity/tag.entity';
+import { ViewLog } from 'src/entity/view-log.entity';
 
 type FindAllParams = {
   page: number;
@@ -25,6 +26,8 @@ export class PrintShopService {
     private readonly printShopRepository: Repository<PrintShop>,
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
+    @InjectRepository(ViewLog)
+    private readonly viewLogRepository: Repository<ViewLog>,
   ) {}
 
   async findAll(
@@ -141,6 +144,30 @@ export class PrintShopService {
     }
 
     await this.printShopRepository.remove(printShop);
+  }
+
+  async increaseViewCount(id: number, userIp: string): Promise<void> {
+    const printShop = await this.printShopRepository.findOneBy({ id });
+    if (!printShop) {
+      throw new NotFoundException(`인쇄사 ID ${id}를 찾을 수 없습니다.`);
+    }
+
+    const lastView = await this.viewLogRepository.findOne({
+      where: { printShopId: id, userIp },
+      order: { timestamp: 'DESC' },
+    });
+
+    const timeLimit = 1 * 60 * 60 * 1000; // 1시간
+    if (!lastView || Date.now() - lastView.timestamp.getTime() > timeLimit) {
+      printShop.viewCount += 1;
+      await this.printShopRepository.save(printShop);
+
+      await this.viewLogRepository.save({
+        printShopId: id,
+        userIp: userIp,
+        timestamp: new Date(),
+      });
+    }
   }
 
   private async findAllPrintShops(
