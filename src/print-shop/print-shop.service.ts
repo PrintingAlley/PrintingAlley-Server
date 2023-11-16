@@ -13,12 +13,6 @@ import { User, UserType } from 'src/entity/user.entity';
 import { Tag } from 'src/entity/tag.entity';
 import { ViewLog } from 'src/entity/view-log.entity';
 
-type FindAllParams = {
-  page: number;
-  size: number;
-  searchText?: string;
-};
-
 @Injectable()
 export class PrintShopService {
   constructor(
@@ -34,12 +28,15 @@ export class PrintShopService {
     page: number,
     size: number,
     searchText?: string,
+    tagIds?: number[],
   ): Promise<PrintShopsResponseDto> {
     if (page < 1) {
       throw new NotFoundException('page는 1보다 커야 합니다.');
     }
 
-    return this.findAllPrintShops({ page, size, searchText });
+    return tagIds && tagIds.length
+      ? await this.getPrintShopsByTags(page, size, tagIds, searchText)
+      : await this.findAllPrintShops(page, size, searchText);
   }
 
   async findOne(id: number): Promise<PrintShop> {
@@ -171,40 +168,57 @@ export class PrintShopService {
   }
 
   private async findAllPrintShops(
-    params: FindAllParams,
+    page: number,
+    size: number,
+    searchText?: string,
   ): Promise<PrintShopsResponseDto> {
-    const queryBuilder = this.buildQuery(params);
-    const [printShops, totalCount] = await this.executePaginatedQuery(
-      queryBuilder,
-      params.page,
-      params.size,
-    );
-    return { printShops, totalCount };
-  }
-
-  private buildQuery(params: FindAllParams) {
     const queryBuilder =
-      this.printShopRepository.createQueryBuilder('printShop');
+      this.printShopRepository.createQueryBuilder('print_shop');
 
-    if (params.searchText) {
-      queryBuilder.where('printShop.name ILIKE :searchText', {
-        searchText: `%${params.searchText}%`,
+    if (searchText) {
+      queryBuilder.where('print_shop.name ILIKE :searchText', {
+        searchText: `%${searchText}%`,
       });
     }
 
-    return queryBuilder;
-  }
+    const totalCount = await queryBuilder.getCount();
 
-  private async executePaginatedQuery(
-    queryBuilder: any,
-    page: number,
-    size: number,
-  ) {
-    const [printShops, totalCount] = await queryBuilder
+    const printShops = await queryBuilder
       .skip((page - 1) * size)
       .take(size)
-      .getManyAndCount();
-    return [printShops, totalCount];
+      .leftJoinAndSelect('print_shop.tags', 'tags')
+      .getMany();
+
+    return { printShops, totalCount };
+  }
+
+  private async getPrintShopsByTags(
+    page: number,
+    size: number,
+    tagIds: number[],
+    searchText?: string,
+  ): Promise<PrintShopsResponseDto> {
+    await this.findTagsByIds(tagIds);
+
+    const queryBuilder = this.printShopRepository
+      .createQueryBuilder('print_shop')
+      .innerJoin('print_shop.tags', 'tag')
+      .where('tag.id IN (:...tagIds)', { tagIds })
+      .groupBy('print_shop.id')
+      .having('COUNT(DISTINCT tag.id) = :tagCount', { tagCount: tagIds.length })
+      .skip((page - 1) * size)
+      .take(size);
+
+    if (searchText) {
+      queryBuilder.andWhere('print_shop.name ILIKE :searchText', {
+        searchText: `%${searchText}%`,
+      });
+    }
+
+    const totalCount = await queryBuilder.getCount();
+    const printShops = await queryBuilder.getMany();
+
+    return { printShops, totalCount };
   }
 
   private async findTagsByIds(tagIds: number[]): Promise<Tag[]> {

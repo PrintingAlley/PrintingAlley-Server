@@ -41,6 +41,7 @@ import {
 } from './dto/swagger/print-shop-response.swagger.dto';
 import { PrintShopReviewListSwaggerDto } from './dto/swagger/print-shop-review-response.swagger.dto';
 import { Request } from 'express';
+import { ParseOptionalArrayPipe } from 'src/product/pipes/parse-optional-array.pipe';
 
 @Controller('print-shop')
 @ApiTags('Print Shop')
@@ -75,12 +76,20 @@ export class PrintShopController {
     required: false,
     description: '검색할 인쇄사 이름입니다.',
   })
+  @ApiQuery({
+    name: 'tagIds',
+    required: false,
+    description:
+      '태그 ID 목록입니다. 태그 ID 목록을 지정하면, 해당 태그와 연관된 제품 목록을 가져옵니다.',
+    type: [Number],
+  })
   async findAll(
     @Query('page') page: number = 1,
     @Query('size') size: number = 20,
     @Query('searchText') searchText?: string,
+    @Query('tagIds', new ParseOptionalArrayPipe()) tagIds?: number[],
   ): Promise<PrintShopsResponseDto> {
-    return await this.printShopService.findAll(page, size, searchText);
+    return await this.printShopService.findAll(page, size, searchText, tagIds);
   }
 
   @Get(':id')
