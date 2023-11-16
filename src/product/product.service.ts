@@ -38,14 +38,23 @@ export class ProductService {
     size: number,
     searchText?: string,
     tagIds?: number[],
+    sortBy?: string,
+    sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<ProductsResponseDto> {
     if (page < 1) {
       throw new BadRequestException('page는 0보다 커야합니다.');
     }
 
     return tagIds && tagIds.length
-      ? await this.getProductsByTags(page, size, tagIds, searchText)
-      : await this.findAllProducts(page, size, searchText);
+      ? await this.getProductsByTags(
+          page,
+          size,
+          tagIds,
+          searchText,
+          sortBy,
+          sortOrder,
+        )
+      : await this.findAllProducts(page, size, searchText, sortBy, sortOrder);
   }
 
   async findOne(
@@ -288,6 +297,8 @@ export class ProductService {
     page: number,
     size: number,
     searchText?: string,
+    sortBy?: string,
+    sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<ProductsResponseDto> {
     const queryBuilder = this.productRepository.createQueryBuilder('product');
 
@@ -297,13 +308,14 @@ export class ProductService {
       });
     }
 
-    const totalCount = await queryBuilder.getCount();
+    if (sortBy) {
+      queryBuilder.orderBy(`product.${sortBy}`, sortOrder);
+    }
 
-    const products = await queryBuilder
-      .skip((page - 1) * size)
-      .take(size)
-      .leftJoinAndSelect('product.tags', 'tags')
-      .getMany();
+    const totalCount = await queryBuilder.getCount();
+    queryBuilder.skip((page - 1) * size).take(size);
+    queryBuilder.leftJoinAndSelect('product.tags', 'tags');
+    const products = await queryBuilder.getMany();
 
     return { products, totalCount };
   }
@@ -313,6 +325,8 @@ export class ProductService {
     size: number,
     tagIds: number[],
     searchText?: string,
+    sortBy?: string,
+    sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<ProductsResponseDto> {
     await this.findTagsByIds(tagIds);
 
@@ -321,9 +335,9 @@ export class ProductService {
       .innerJoin('product.tags', 'tag')
       .where('tag.id IN (:...tagIds)', { tagIds })
       .groupBy('product.id')
-      .having('COUNT(DISTINCT tag.id) = :tagCount', { tagCount: tagIds.length })
-      .skip((page - 1) * size)
-      .take(size);
+      .having('COUNT(DISTINCT tag.id) = :tagCount', {
+        tagCount: tagIds.length,
+      });
 
     if (searchText) {
       queryBuilder.andWhere('product.name ILIKE :searchText', {
@@ -331,7 +345,12 @@ export class ProductService {
       });
     }
 
+    if (sortBy) {
+      queryBuilder.orderBy(`product.${sortBy}`, sortOrder);
+    }
+
     const totalCount = await queryBuilder.getCount();
+    queryBuilder.skip((page - 1) * size).take(size);
     const products = await queryBuilder.getMany();
 
     return { products, totalCount };

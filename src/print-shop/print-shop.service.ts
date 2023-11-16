@@ -29,14 +29,23 @@ export class PrintShopService {
     size: number,
     searchText?: string,
     tagIds?: number[],
+    sortBy?: string,
+    sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<PrintShopsResponseDto> {
     if (page < 1) {
       throw new NotFoundException('page는 1보다 커야 합니다.');
     }
 
     return tagIds && tagIds.length
-      ? await this.getPrintShopsByTags(page, size, tagIds, searchText)
-      : await this.findAllPrintShops(page, size, searchText);
+      ? await this.getPrintShopsByTags(
+          page,
+          size,
+          tagIds,
+          searchText,
+          sortBy,
+          sortOrder,
+        )
+      : await this.findAllPrintShops(page, size, searchText, sortBy, sortOrder);
   }
 
   async findOne(id: number): Promise<PrintShop> {
@@ -171,6 +180,8 @@ export class PrintShopService {
     page: number,
     size: number,
     searchText?: string,
+    sortBy?: string,
+    sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<PrintShopsResponseDto> {
     const queryBuilder =
       this.printShopRepository.createQueryBuilder('print_shop');
@@ -181,13 +192,14 @@ export class PrintShopService {
       });
     }
 
-    const totalCount = await queryBuilder.getCount();
+    if (sortBy) {
+      queryBuilder.orderBy(`print_shop.${sortBy}`, sortOrder);
+    }
 
-    const printShops = await queryBuilder
-      .skip((page - 1) * size)
-      .take(size)
-      .leftJoinAndSelect('print_shop.tags', 'tags')
-      .getMany();
+    const totalCount = await queryBuilder.getCount();
+    queryBuilder.skip((page - 1) * size).take(size);
+    queryBuilder.leftJoinAndSelect('print_shop.tags', 'tags');
+    const printShops = await queryBuilder.getMany();
 
     return { printShops, totalCount };
   }
@@ -197,6 +209,8 @@ export class PrintShopService {
     size: number,
     tagIds: number[],
     searchText?: string,
+    sortBy?: string,
+    sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<PrintShopsResponseDto> {
     await this.findTagsByIds(tagIds);
 
@@ -205,9 +219,9 @@ export class PrintShopService {
       .innerJoin('print_shop.tags', 'tag')
       .where('tag.id IN (:...tagIds)', { tagIds })
       .groupBy('print_shop.id')
-      .having('COUNT(DISTINCT tag.id) = :tagCount', { tagCount: tagIds.length })
-      .skip((page - 1) * size)
-      .take(size);
+      .having('COUNT(DISTINCT tag.id) = :tagCount', {
+        tagCount: tagIds.length,
+      });
 
     if (searchText) {
       queryBuilder.andWhere('print_shop.name ILIKE :searchText', {
@@ -215,7 +229,12 @@ export class PrintShopService {
       });
     }
 
+    if (sortBy) {
+      queryBuilder.orderBy(`print_shop.${sortBy}`, sortOrder);
+    }
+
     const totalCount = await queryBuilder.getCount();
+    queryBuilder.skip((page - 1) * size).take(size);
     const printShops = await queryBuilder.getMany();
 
     return { printShops, totalCount };

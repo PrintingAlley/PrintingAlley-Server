@@ -83,13 +83,32 @@ export class PrintShopController {
       '태그 ID 목록입니다. 태그 ID 목록을 지정하면, 해당 태그와 연관된 제품 목록을 가져옵니다.',
     type: [Number],
   })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    description: '정렬 기준입니다. 기본값은 "id"입니다.',
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    description: '정렬 순서입니다. 기본값은 "ASC"입니다.',
+  })
   async findAll(
     @Query('page') page: number = 1,
     @Query('size') size: number = 20,
     @Query('searchText') searchText?: string,
     @Query('tagIds', new ParseOptionalArrayPipe()) tagIds?: number[],
+    @Query('sortBy') sortBy: string = 'id',
+    @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<PrintShopsResponseDto> {
-    return await this.printShopService.findAll(page, size, searchText, tagIds);
+    return await this.printShopService.findAll(
+      page,
+      size,
+      searchText,
+      tagIds,
+      sortBy,
+      sortOrder,
+    );
   }
 
   @Get(':id')
