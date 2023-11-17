@@ -23,7 +23,9 @@ export class TagService {
     );
     const hierarchies = await Promise.all(hierarchyPromises);
     for (let i = 0; i < topLevelTags.length; i++) {
-      topLevelTags[i] = this.buildTree(hierarchies[i])[0];
+      const tree = this.buildTree(hierarchies[i])[0];
+      this.sortTreeById(tree);
+      topLevelTags[i] = tree;
     }
     return topLevelTags;
   }
@@ -94,6 +96,7 @@ export class TagService {
     return this.tagRepository
       .createQueryBuilder('tag')
       .where('tag.parent_id IS NULL')
+      .orderBy('tag.id', 'ASC')
       .getMany();
   }
 
@@ -142,6 +145,13 @@ export class TagService {
     }
 
     return tag;
+  }
+
+  private sortTreeById(tag: Tag): void {
+    if (tag.children && tag.children.length > 0) {
+      tag.children.sort((a, b) => a.id - b.id);
+      tag.children.forEach((child) => this.sortTreeById(child));
+    }
   }
 
   private async updateTagFields(

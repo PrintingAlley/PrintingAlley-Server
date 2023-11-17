@@ -10,7 +10,7 @@ import { Seeder } from 'typeorm-extension';
 const categories = [
   {
     name: '포스터',
-    image: 'https://printingstreets.uk/522.png',
+    image: 'https://printingstreets.uk/521.png',
   },
   {
     name: '리플렛',
@@ -30,7 +30,7 @@ const categories = [
   },
   {
     name: '책',
-    image: 'https://printingstreets.uk/521.png',
+    image: 'https://printingstreets.uk/522.png',
   },
 ];
 
