@@ -30,6 +30,9 @@ class PrintShopSwaggerDto extends SimplePrintShopSwaggerDto {
   @ApiProperty({ description: '후가공', example: '도무송' })
   afterProcess: string;
 
+  @ApiProperty({ description: '후가공(제본)', example: '양장' })
+  afterProcessBinding: string;
+
   @ApiProperty({ description: '사장님 ID', example: 1 })
   ownerId: number;
 

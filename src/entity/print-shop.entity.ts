@@ -155,6 +155,19 @@ export class PrintShop {
   })
   afterProcess?: string;
 
+  @ApiProperty({
+    description: '후가공(제본)',
+    example: '제본',
+  })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: '',
+  })
+  afterProcessBinding?: string;
+
   @ApiProperty({ description: '사장님 ID', example: 1 })
   @Column({
     select: false,

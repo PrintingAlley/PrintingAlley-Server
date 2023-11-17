@@ -13,6 +13,7 @@ import { User, UserType } from 'src/entity/user.entity';
 import { Tag } from 'src/entity/tag.entity';
 import { ViewLog } from 'src/entity/view-log.entity';
 import {
+  AFTER_PROCESS_BINDING_TAG_NAME,
   AFTER_PROCESS_TAG_NAME,
   PRINT_TYPE_TAG_NAME,
 } from 'src/config/constants';
@@ -71,9 +72,20 @@ export class PrintShopService {
       }),
     );
 
+    const afterProcessBindingTags = await Promise.all(
+      printShop.tags.map(async (tag: Tag) => {
+        if (await this.isCategoryTag(tag, AFTER_PROCESS_BINDING_TAG_NAME)) {
+          return tag.name;
+        }
+      }),
+    );
+
     const afterProcessTags = await Promise.all(
       printShop.tags.map(async (tag: Tag) => {
-        if (await this.isCategoryTag(tag, AFTER_PROCESS_TAG_NAME)) {
+        if (
+          !afterProcessBindingTags.includes(tag.name) &&
+          (await this.isCategoryTag(tag, AFTER_PROCESS_TAG_NAME))
+        ) {
           return tag.name;
         }
       }),
@@ -81,6 +93,9 @@ export class PrintShopService {
 
     printShop.printType = printTypeTags.filter(Boolean).join(', ');
     printShop.afterProcess = afterProcessTags.filter(Boolean).join(', ');
+    printShop.afterProcessBinding = afterProcessBindingTags
+      .filter(Boolean)
+      .join(', ');
 
     return printShop;
   }
