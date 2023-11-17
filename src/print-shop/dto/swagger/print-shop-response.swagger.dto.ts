@@ -4,12 +4,20 @@ import { SimpleProductSwaggerDto } from 'src/product/dto/swagger/simple-product.
 import { SimplePrintShopReviewSwaggerDto } from 'src/print-shop-review/dto/swagger/simple-print-shop-review.swagger.dto';
 import { SimpleTagSwaggerDto } from 'src/tag/dto/swagger/simple-tag.swagger.dto';
 
+export class PrintShopWithTagSwaggerDto extends SimplePrintShopSwaggerDto {
+  @ApiProperty({
+    description: '태그 목록',
+    type: [SimpleTagSwaggerDto],
+  })
+  tags: SimpleTagSwaggerDto[];
+}
+
 export class PrintShopListSwaggerDto {
   @ApiProperty({
     description: '인쇄사 목록',
-    type: [SimplePrintShopSwaggerDto],
+    type: [PrintShopWithTagSwaggerDto],
   })
-  printShops: SimplePrintShopSwaggerDto[];
+  printShops: PrintShopWithTagSwaggerDto[];
 
   @ApiProperty({ description: '총 인쇄사 수', example: 1 })
   totalCount: number;

@@ -36,15 +36,19 @@ export class SimplePrintShopSwaggerDto {
 
   @ApiProperty({
     description: '로고 이미지',
+    nullable: true,
+    required: false,
     example: 'https://www.printshop.com/images/ps_logo.png',
   })
-  logoImage: string;
+  logoImage: string | null;
 
   @ApiProperty({
     description: '배경 이미지',
+    nullable: true,
+    required: false,
     example: 'https://www.printshop.com/images/ps_background.png',
   })
-  backgroundImage: string;
+  backgroundImage: string | null;
 
   @ApiProperty({ description: '위도', example: '37.5665' })
   latitude: string;

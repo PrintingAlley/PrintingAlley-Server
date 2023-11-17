@@ -40,13 +40,15 @@ export class SimpleProductSwaggerDto {
   @ApiProperty({
     description: '이미지 URL 목록',
     type: [String],
+    nullable: true,
+    required: false,
     example: [
       'https://www.printshop.com/image1.jpg',
       'https://www.printshop.com/image2.jpg',
       'https://www.printshop.com/image3.jpg',
     ],
   })
-  images: string[];
+  images: string[] | null;
 
   @ApiProperty({ description: '조회수', example: 0 })
   viewCount: number;
