@@ -12,6 +12,10 @@ import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
 import { User, UserType } from 'src/entity/user.entity';
 import { Tag } from 'src/entity/tag.entity';
 import { ViewLog } from 'src/entity/view-log.entity';
+import {
+  AFTER_PROCESS_TAG_NAME,
+  PRINT_TYPE_TAG_NAME,
+} from 'src/config/constants';
 
 @Injectable()
 export class PrintShopService {
@@ -61,7 +65,7 @@ export class PrintShopService {
 
     const printTypeTags = await Promise.all(
       printShop.tags.map(async (tag: Tag) => {
-        if (await this.isCategoryTag(tag, '인쇄종류')) {
+        if (await this.isCategoryTag(tag, PRINT_TYPE_TAG_NAME)) {
           return tag.name;
         }
       }),
@@ -69,7 +73,7 @@ export class PrintShopService {
 
     const afterProcessTags = await Promise.all(
       printShop.tags.map(async (tag: Tag) => {
-        if (await this.isCategoryTag(tag, '후가공')) {
+        if (await this.isCategoryTag(tag, AFTER_PROCESS_TAG_NAME)) {
           return tag.name;
         }
       }),

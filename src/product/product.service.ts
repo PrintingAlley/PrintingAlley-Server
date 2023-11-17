@@ -16,6 +16,10 @@ import { BookmarkService } from './../bookmark/bookmark.service';
 import { User } from 'src/entity/user.entity';
 import { CreateProductDtoByAdmin } from 'src/admin/dto/create-product.dto';
 import { ViewLog } from 'src/entity/view-log.entity';
+import {
+  AFTER_PROCESS_TAG_NAME,
+  PRINT_TYPE_TAG_NAME,
+} from 'src/config/constants';
 
 @Injectable()
 export class ProductService {
@@ -81,7 +85,7 @@ export class ProductService {
 
     const printTypeTags = await Promise.all(
       product.tags.map(async (tag: Tag) => {
-        if (await this.isCategoryTag(tag, '인쇄종류')) {
+        if (await this.isCategoryTag(tag, PRINT_TYPE_TAG_NAME)) {
           return tag.name;
         }
       }),
@@ -89,7 +93,7 @@ export class ProductService {
 
     const afterProcessTags = await Promise.all(
       product.tags.map(async (tag: Tag) => {
-        if (await this.isCategoryTag(tag, '후가공')) {
+        if (await this.isCategoryTag(tag, AFTER_PROCESS_TAG_NAME)) {
           return tag.name;
         }
       }),
