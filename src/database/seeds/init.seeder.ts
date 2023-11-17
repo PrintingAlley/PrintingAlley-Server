@@ -10,27 +10,27 @@ import { Seeder } from 'typeorm-extension';
 const categories = [
   {
     name: '포스터',
-    image: 'https://printingstreets.uk/518.png',
-  },
-  {
-    name: '리플렛',
-    image: 'https://printingstreets.uk/519.png',
-  },
-  {
-    name: '명함',
-    image: 'https://printingstreets.uk/520.png',
-  },
-  {
-    name: '엽서/카드',
-    image: 'https://printingstreets.uk/521.png',
-  },
-  {
-    name: '소책자',
     image: 'https://printingstreets.uk/522.png',
   },
   {
-    name: '책',
+    name: '리플렛',
+    image: 'https://printingstreets.uk/520.png',
+  },
+  {
+    name: '명함',
+    image: 'https://printingstreets.uk/519.png',
+  },
+  {
+    name: '엽서/카드',
+    image: 'https://printingstreets.uk/518.png',
+  },
+  {
+    name: '소책자',
     image: 'https://printingstreets.uk/523.png',
+  },
+  {
+    name: '책',
+    image: 'https://printingstreets.uk/521.png',
   },
 ];
 
