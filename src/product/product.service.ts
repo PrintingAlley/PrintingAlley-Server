@@ -20,6 +20,7 @@ import {
   AFTER_PROCESS_TAG_NAME,
   PRINT_TYPE_TAG_NAME,
 } from 'src/config/constants';
+import { ProductReview } from 'src/entity/product-review.entity';
 
 @Injectable()
 export class ProductService {
@@ -32,6 +33,8 @@ export class ProductService {
     private readonly printShopRepository: Repository<PrintShop>,
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
+    @InjectRepository(ProductReview)
+    private readonly reviewRepository: Repository<ProductReview>,
     @InjectRepository(ViewLog)
     private readonly viewLogRepository: Repository<ViewLog>,
     private readonly bookmarkService: BookmarkService,
@@ -49,16 +52,56 @@ export class ProductService {
       throw new BadRequestException('page는 0보다 커야합니다.');
     }
 
-    return tagIds && tagIds.length
-      ? await this.getProductsByTags(
-          page,
-          size,
-          tagIds,
-          searchText,
-          sortBy,
-          sortOrder,
-        )
-      : await this.findAllProducts(page, size, searchText, sortBy, sortOrder);
+    const queryBuilder = this.productRepository.createQueryBuilder('product');
+
+    if (tagIds && tagIds.length) {
+      queryBuilder
+        .innerJoin('product.tags', 'tag', 'tag.id IN (:...tagIds)', { tagIds })
+        .groupBy('product.id')
+        .having('COUNT(DISTINCT tag.id) = :tagCount', {
+          tagCount: tagIds.length,
+        });
+    }
+
+    if (searchText) {
+      queryBuilder.andWhere('product.name ILIKE :searchText', {
+        searchText: `%${searchText}%`,
+      });
+    }
+
+    if (sortBy !== 'bookmarkCount' && sortBy !== 'reviewCount') {
+      queryBuilder.orderBy(
+        sortBy ? `product.${sortBy}` : 'product.id',
+        sortOrder,
+      );
+    }
+
+    const products = await queryBuilder.getMany();
+
+    for (const product of products) {
+      product.bookmarkCount = await this.bookmarkService.countByProductId(
+        product.id,
+      );
+      product.reviewCount = await this.reviewRepository.count({
+        where: { product: { id: product.id } },
+      });
+    }
+
+    if (sortBy === 'bookmarkCount' || sortBy === 'reviewCount') {
+      const sortField =
+        sortBy === 'bookmarkCount' ? 'bookmarkCount' : 'reviewCount';
+      products.sort((a, b) =>
+        sortOrder === 'ASC'
+          ? a[sortField] - b[sortField]
+          : b[sortField] - a[sortField],
+      );
+    }
+
+    const paginatedProducts = products.slice((page - 1) * size, page * size);
+
+    const totalCount = products.length;
+
+    return { products: paginatedProducts, totalCount };
   }
 
   async findOne(
@@ -295,69 +338,6 @@ export class ProductService {
         timestamp: new Date(),
       });
     }
-  }
-
-  private async findAllProducts(
-    page: number,
-    size: number,
-    searchText?: string,
-    sortBy?: string,
-    sortOrder: 'ASC' | 'DESC' = 'ASC',
-  ): Promise<ProductsResponseDto> {
-    const queryBuilder = this.productRepository.createQueryBuilder('product');
-
-    if (searchText) {
-      queryBuilder.where('product.name ILIKE :searchText', {
-        searchText: `%${searchText}%`,
-      });
-    }
-
-    if (sortBy) {
-      queryBuilder.orderBy(`product.${sortBy}`, sortOrder);
-    }
-
-    const totalCount = await queryBuilder.getCount();
-    queryBuilder.skip((page - 1) * size).take(size);
-    queryBuilder.leftJoinAndSelect('product.tags', 'tags');
-    const products = await queryBuilder.getMany();
-
-    return { products, totalCount };
-  }
-
-  private async getProductsByTags(
-    page: number,
-    size: number,
-    tagIds: number[],
-    searchText?: string,
-    sortBy?: string,
-    sortOrder: 'ASC' | 'DESC' = 'ASC',
-  ): Promise<ProductsResponseDto> {
-    await this.findTagsByIds(tagIds);
-
-    const queryBuilder = this.productRepository
-      .createQueryBuilder('product')
-      .innerJoin('product.tags', 'tag')
-      .where('tag.id IN (:...tagIds)', { tagIds })
-      .groupBy('product.id')
-      .having('COUNT(DISTINCT tag.id) = :tagCount', {
-        tagCount: tagIds.length,
-      });
-
-    if (searchText) {
-      queryBuilder.andWhere('product.name ILIKE :searchText', {
-        searchText: `%${searchText}%`,
-      });
-    }
-
-    if (sortBy) {
-      queryBuilder.orderBy(`product.${sortBy}`, sortOrder);
-    }
-
-    const totalCount = await queryBuilder.getCount();
-    queryBuilder.skip((page - 1) * size).take(size);
-    const products = await queryBuilder.getMany();
-
-    return { products, totalCount };
   }
 
   private async findTagsByIds(tagIds: number[]): Promise<Tag[]> {

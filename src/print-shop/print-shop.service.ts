@@ -17,6 +17,7 @@ import {
   AFTER_PROCESS_TAG_NAME,
   PRINT_TYPE_TAG_NAME,
 } from 'src/config/constants';
+import { PrintShopReview } from 'src/entity/print-shop-review.entity';
 
 @Injectable()
 export class PrintShopService {
@@ -25,6 +26,8 @@ export class PrintShopService {
     private readonly printShopRepository: Repository<PrintShop>,
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
+    @InjectRepository(PrintShopReview)
+    private readonly reviewRepository: Repository<PrintShopReview>,
     @InjectRepository(ViewLog)
     private readonly viewLogRepository: Repository<ViewLog>,
   ) {}
@@ -38,19 +41,65 @@ export class PrintShopService {
     sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<PrintShopsResponseDto> {
     if (page < 1) {
-      throw new NotFoundException('page는 1보다 커야 합니다.');
+      throw new BadRequestException('page는 0보다 커야합니다.');
     }
 
-    return tagIds && tagIds.length
-      ? await this.getPrintShopsByTags(
-          page,
-          size,
+    const queryBuilder =
+      this.printShopRepository.createQueryBuilder('printShop');
+
+    if (tagIds && tagIds.length) {
+      queryBuilder
+        .innerJoin('printShop.tags', 'tag', 'tag.id IN (:...tagIds)', {
           tagIds,
-          searchText,
-          sortBy,
-          sortOrder,
-        )
-      : await this.findAllPrintShops(page, size, searchText, sortBy, sortOrder);
+        })
+        .groupBy('printShop.id')
+        .having('COUNT(DISTINCT tag.id) = :tagCount', {
+          tagCount: tagIds.length,
+        });
+    }
+
+    if (searchText) {
+      queryBuilder.andWhere('printShop.name ILIKE :searchText', {
+        searchText: `%${searchText}%`,
+      });
+    }
+
+    if (sortBy !== 'bookmarkCount' && sortBy !== 'reviewCount') {
+      queryBuilder.orderBy(
+        sortBy ? `printShop.${sortBy}` : 'printShop.id',
+        sortOrder,
+      );
+    }
+
+    const printShops = await queryBuilder.getMany();
+
+    for (const printShop of printShops) {
+      // printShop.bookmarkCount = await this.bookmarkService.countByPrintShopId(
+      //   printShop.id,
+      // );
+      printShop.reviewCount = await this.reviewRepository.count({
+        where: { printShop: { id: printShop.id } },
+      });
+    }
+
+    if (sortBy === 'bookmarkCount' || sortBy === 'reviewCount') {
+      const sortField =
+        sortBy === 'bookmarkCount' ? 'bookmarkCount' : 'reviewCount';
+      printShops.sort((a, b) =>
+        sortOrder === 'ASC'
+          ? a[sortField] - b[sortField]
+          : b[sortField] - a[sortField],
+      );
+    }
+
+    const paginatedPrintShops = printShops.slice(
+      (page - 1) * size,
+      page * size,
+    );
+
+    const totalCount = printShops.length;
+
+    return { printShops: paginatedPrintShops, totalCount };
   }
 
   async findOne(id: number): Promise<PrintShop> {
@@ -96,6 +145,9 @@ export class PrintShopService {
     printShop.afterProcessBinding = afterProcessBindingTags
       .filter(Boolean)
       .join(', ');
+
+    const reviewCount = printShop.reviews.length;
+    printShop.reviewCount = reviewCount;
 
     return printShop;
   }
@@ -193,70 +245,6 @@ export class PrintShopService {
         timestamp: new Date(),
       });
     }
-  }
-
-  private async findAllPrintShops(
-    page: number,
-    size: number,
-    searchText?: string,
-    sortBy?: string,
-    sortOrder: 'ASC' | 'DESC' = 'ASC',
-  ): Promise<PrintShopsResponseDto> {
-    const queryBuilder =
-      this.printShopRepository.createQueryBuilder('print_shop');
-
-    if (searchText) {
-      queryBuilder.where('print_shop.name ILIKE :searchText', {
-        searchText: `%${searchText}%`,
-      });
-    }
-
-    if (sortBy) {
-      queryBuilder.orderBy(`print_shop.${sortBy}`, sortOrder);
-    }
-
-    const totalCount = await queryBuilder.getCount();
-    queryBuilder.skip((page - 1) * size).take(size);
-    queryBuilder.leftJoinAndSelect('print_shop.tags', 'tags');
-    const printShops = await queryBuilder.getMany();
-
-    return { printShops, totalCount };
-  }
-
-  private async getPrintShopsByTags(
-    page: number,
-    size: number,
-    tagIds: number[],
-    searchText?: string,
-    sortBy?: string,
-    sortOrder: 'ASC' | 'DESC' = 'ASC',
-  ): Promise<PrintShopsResponseDto> {
-    await this.findTagsByIds(tagIds);
-
-    const queryBuilder = this.printShopRepository
-      .createQueryBuilder('print_shop')
-      .innerJoin('print_shop.tags', 'tag')
-      .where('tag.id IN (:...tagIds)', { tagIds })
-      .groupBy('print_shop.id')
-      .having('COUNT(DISTINCT tag.id) = :tagCount', {
-        tagCount: tagIds.length,
-      });
-
-    if (searchText) {
-      queryBuilder.andWhere('print_shop.name ILIKE :searchText', {
-        searchText: `%${searchText}%`,
-      });
-    }
-
-    if (sortBy) {
-      queryBuilder.orderBy(`print_shop.${sortBy}`, sortOrder);
-    }
-
-    const totalCount = await queryBuilder.getCount();
-    queryBuilder.skip((page - 1) * size).take(size);
-    const printShops = await queryBuilder.getMany();
-
-    return { printShops, totalCount };
   }
 
   private async findTagsByIds(tagIds: number[]): Promise<Tag[]> {

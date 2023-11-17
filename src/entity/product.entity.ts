@@ -207,6 +207,16 @@ export class Product {
   })
   bookmarkId?: number;
 
+  @ApiProperty({ description: '리뷰 수', example: 0 })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: 0,
+  })
+  reviewCount?: number;
+
   @ApiProperty({ description: '생성일' })
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -9,10 +9,18 @@ import { PrintShop } from 'src/entity/print-shop.entity';
 import { BookmarkModule } from 'src/bookmark/bookmark.module';
 import { ProductReviewModule } from 'src/product-review/product-review.module';
 import { ViewLog } from 'src/entity/view-log.entity';
+import { ProductReview } from 'src/entity/product-review.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product, Category, PrintShop, Tag, ViewLog]),
+    TypeOrmModule.forFeature([
+      Product,
+      Category,
+      PrintShop,
+      Tag,
+      ProductReview,
+      ViewLog,
+    ]),
     BookmarkModule,
     ProductReviewModule,
   ],

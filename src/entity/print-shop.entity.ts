@@ -181,6 +181,27 @@ export class PrintShop {
   @Column({ default: 0 })
   viewCount: number;
 
+  // TODO: 인쇄사에 북마크 적용시 사용
+  // @ApiProperty({ description: '북마크 수', example: 0 })
+  // @Column({
+  //   select: false,
+  //   nullable: true,
+  //   insert: false,
+  //   update: false,
+  //   default: 0,
+  // })
+  // bookmarkCount?: number;
+
+  @ApiProperty({ description: '리뷰 수', example: 0 })
+  @Column({
+    select: false,
+    nullable: true,
+    insert: false,
+    update: false,
+    default: 0,
+  })
+  reviewCount?: number;
+
   @ApiProperty({
     description: '제품 목록',
     type: () => [Product],
