@@ -23,7 +23,7 @@ export class CreateProductDtoByAdmin {
     required: true,
     example: '종이이름+평량(g)',
   })
-  @IsNotEmpty()
+  @IsOptional()
   paper: string;
 
   @ApiProperty({
@@ -31,7 +31,7 @@ export class CreateProductDtoByAdmin {
     required: true,
     example: '프린팅 스튜디오',
   })
-  @IsNotEmpty()
+  @IsOptional()
   designer: string;
 
   @ApiProperty({
@@ -39,7 +39,7 @@ export class CreateProductDtoByAdmin {
     required: true,
     example: '간단한 제품 소개',
   })
-  @IsNotEmpty()
+  @IsOptional()
   introduction: string;
 
   @ApiProperty({
@@ -47,7 +47,7 @@ export class CreateProductDtoByAdmin {
     required: true,
     example: '제품 설명',
   })
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @ApiProperty({
