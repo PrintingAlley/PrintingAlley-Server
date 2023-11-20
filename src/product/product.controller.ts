@@ -85,7 +85,7 @@ export class ProductController {
   @ApiQuery({
     name: 'sortBy',
     required: false,
-    description: '정렬 기준입니다. 기본값은 "id"입니다.',
+    description: '정렬 기준입니다. 기본값은 "name"입니다.',
   })
   @ApiQuery({
     name: 'sortOrder',
@@ -97,7 +97,7 @@ export class ProductController {
     @Query('size') size: number = 20,
     @Query('searchText') searchText?: string,
     @Query('tagIds', new ParseOptionalArrayPipe()) tagIds?: number[],
-    @Query('sortBy') sortBy: string = 'id',
+    @Query('sortBy') sortBy: string = 'name',
     @Query('sortOrder') sortOrder: 'ASC' | 'DESC' = 'ASC',
   ): Promise<ProductsResponseDto> {
     return await this.productService.findAll(
