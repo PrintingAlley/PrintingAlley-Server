@@ -8,5 +8,6 @@ import { Tag } from 'src/entity/tag.entity';
   imports: [TypeOrmModule.forFeature([Tag])],
   controllers: [TagController],
   providers: [TagService],
+  exports: [TagService],
 })
 export class TagModule {}

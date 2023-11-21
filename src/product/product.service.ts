@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { Product } from 'src/entity/product.entity';
 import { Category } from 'src/entity/category.entity';
 import { PrintShop } from 'src/entity/print-shop.entity';
@@ -21,6 +21,7 @@ import {
   PRINT_TYPE_TAG_NAME,
 } from 'src/config/constants';
 import { ProductReview } from 'src/entity/product-review.entity';
+import { TagService } from 'src/tag/tag.service';
 
 @Injectable()
 export class ProductService {
@@ -31,13 +32,12 @@ export class ProductService {
     private readonly categoryRepository: Repository<Category>,
     @InjectRepository(PrintShop)
     private readonly printShopRepository: Repository<PrintShop>,
-    @InjectRepository(Tag)
-    private readonly tagRepository: Repository<Tag>,
     @InjectRepository(ProductReview)
     private readonly reviewRepository: Repository<ProductReview>,
     @InjectRepository(ViewLog)
     private readonly viewLogRepository: Repository<ViewLog>,
     private readonly bookmarkService: BookmarkService,
+    private readonly tagService: TagService,
   ) {}
 
   async findAll(
@@ -54,9 +54,11 @@ export class ProductService {
 
     const queryBuilder = this.productRepository.createQueryBuilder('product');
 
+    queryBuilder.leftJoin('product.tags', 'tag');
+
     if (tagIds && tagIds.length) {
       queryBuilder
-        .innerJoin('product.tags', 'tag', 'tag.id IN (:...tagIds)', { tagIds })
+        .andWhere('tag.id IN (:...tagIds)', { tagIds })
         .groupBy('product.id')
         .having('COUNT(DISTINCT tag.id) = :tagCount', {
           tagCount: tagIds.length,
@@ -64,9 +66,15 @@ export class ProductService {
     }
 
     if (searchText) {
-      queryBuilder.andWhere('product.name ILIKE :searchText', {
-        searchText: `%${searchText}%`,
-      });
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('product.name ILIKE :searchText', {
+            searchText: `%${searchText}%`,
+          }).orWhere('tag.name ILIKE :searchText', {
+            searchText: `%${searchText}%`,
+          });
+        }),
+      );
     }
 
     if (sortBy !== 'bookmarkCount' && sortBy !== 'reviewCount') {
@@ -128,7 +136,7 @@ export class ProductService {
 
     const printTypeTags = await Promise.all(
       product.tags.map(async (tag: Tag) => {
-        if (await this.isCategoryTag(tag, PRINT_TYPE_TAG_NAME)) {
+        if (await this.tagService.isCategoryTag(tag, PRINT_TYPE_TAG_NAME)) {
           return tag.name;
         }
       }),
@@ -136,7 +144,7 @@ export class ProductService {
 
     const afterProcessTags = await Promise.all(
       product.tags.map(async (tag: Tag) => {
-        if (await this.isCategoryTag(tag, AFTER_PROCESS_TAG_NAME)) {
+        if (await this.tagService.isCategoryTag(tag, AFTER_PROCESS_TAG_NAME)) {
           return tag.name;
         }
       }),
@@ -189,7 +197,7 @@ export class ProductService {
     product.category = category;
 
     if (tagIds && tagIds.length) {
-      const tags = await this.findTagsByIds(tagIds);
+      const tags = await this.tagService.findTagsByIds(tagIds);
       product.tags = tags;
     }
 
@@ -227,7 +235,9 @@ export class ProductService {
     Object.assign(product, restData);
 
     if (tagIds !== undefined) {
-      product.tags = tagIds.length ? await this.findTagsByIds(tagIds) : [];
+      product.tags = tagIds.length
+        ? await this.tagService.findTagsByIds(tagIds)
+        : [];
     }
 
     return this.productRepository.save(product);
@@ -273,7 +283,7 @@ export class ProductService {
     product.category = category;
 
     if (tagIds && tagIds.length) {
-      const tags = await this.findTagsByIds(tagIds);
+      const tags = await this.tagService.findTagsByIds(tagIds);
       product.tags = tags;
     }
 
@@ -310,7 +320,9 @@ export class ProductService {
     Object.assign(product, restData);
 
     if (tagIds !== undefined) {
-      product.tags = tagIds.length ? await this.findTagsByIds(tagIds) : [];
+      product.tags = tagIds.length
+        ? await this.tagService.findTagsByIds(tagIds)
+        : [];
     }
 
     return this.productRepository.save(product);
@@ -338,40 +350,5 @@ export class ProductService {
         timestamp: new Date(),
       });
     }
-  }
-
-  private async findTagsByIds(tagIds: number[]): Promise<Tag[]> {
-    const tags = await this.tagRepository.find({
-      where: tagIds.map((id) => ({ id })),
-    });
-    if (tags.length !== tagIds.length) {
-      throw new NotFoundException('하나 이상의 태그를 찾을 수 없습니다.');
-    }
-    return tags;
-  }
-
-  private async isCategoryTag(
-    childTag: Tag,
-    categoryName: string,
-  ): Promise<boolean> {
-    const tag = await this.tagRepository.findOne({
-      where: { id: childTag.id },
-      relations: ['parent'],
-    });
-
-    if (!tag.parent) {
-      return false;
-    }
-
-    const parent = await this.tagRepository.findOneBy({ id: tag.parent.id });
-    if (!parent) {
-      return false;
-    }
-
-    if (parent.name === categoryName) {
-      return true;
-    }
-
-    return await this.isCategoryTag(parent, categoryName);
   }
 }

@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  MaxLength,
-  MinLength,
-} from 'class-validator';
+import { IsArray, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -15,8 +8,6 @@ export class CreateProductDto {
     example: '특수컬러 명함',
   })
   @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(50)
   name: string;
 
   @ApiProperty({
@@ -25,8 +16,6 @@ export class CreateProductDto {
     example: '90*50mm',
   })
   @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(50)
   size: string;
 
   @ApiProperty({
@@ -34,9 +23,7 @@ export class CreateProductDto {
     required: true,
     example: '종이이름+평량(g)',
   })
-  @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(50)
+  @IsOptional()
   paper: string;
 
   @ApiProperty({
@@ -44,9 +31,7 @@ export class CreateProductDto {
     required: true,
     example: '프린팅 스튜디오',
   })
-  @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(50)
+  @IsOptional()
   designer: string;
 
   @ApiProperty({
@@ -54,9 +39,7 @@ export class CreateProductDto {
     required: true,
     example: '간단한 제품 소개',
   })
-  @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(2000)
+  @IsOptional()
   introduction: string;
 
   @ApiProperty({
@@ -64,9 +47,7 @@ export class CreateProductDto {
     required: true,
     example: '제품 설명',
   })
-  @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(50000)
+  @IsOptional()
   description: string;
 
   @ApiProperty({

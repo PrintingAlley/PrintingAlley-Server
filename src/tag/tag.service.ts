@@ -64,6 +64,38 @@ export class TagService {
     }
   }
 
+  async findTagsByIds(tagIds: number[]): Promise<Tag[]> {
+    const tags = await this.tagRepository.find({
+      where: tagIds.map((id) => ({ id })),
+    });
+    if (tags.length !== tagIds.length) {
+      throw new NotFoundException('하나 이상의 태그를 찾을 수 없습니다.');
+    }
+    return tags;
+  }
+
+  async isCategoryTag(childTag: Tag, categoryName: string): Promise<boolean> {
+    const tag = await this.tagRepository.findOne({
+      where: { id: childTag.id },
+      relations: ['parent'],
+    });
+
+    if (!tag.parent) {
+      return false;
+    }
+
+    const parent = await this.tagRepository.findOneBy({ id: tag.parent.id });
+    if (!parent) {
+      return false;
+    }
+
+    if (parent.name === categoryName) {
+      return true;
+    }
+
+    return await this.isCategoryTag(parent, categoryName);
+  }
+
   private getRecursiveCTEQuery(): string {
     return `
       WITH RECURSIVE hierarchy AS (

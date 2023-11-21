@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PrintShop } from 'src/entity/print-shop.entity';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreatePrintShopDto } from './dto/create-print-shop.dto';
 import { PrintShopsResponseDto } from './dto/print-shop-response.dto';
 import { User, UserType } from 'src/entity/user.entity';
@@ -18,18 +18,18 @@ import {
   PRINT_TYPE_TAG_NAME,
 } from 'src/config/constants';
 import { PrintShopReview } from 'src/entity/print-shop-review.entity';
+import { TagService } from 'src/tag/tag.service';
 
 @Injectable()
 export class PrintShopService {
   constructor(
     @InjectRepository(PrintShop)
     private readonly printShopRepository: Repository<PrintShop>,
-    @InjectRepository(Tag)
-    private readonly tagRepository: Repository<Tag>,
     @InjectRepository(PrintShopReview)
     private readonly reviewRepository: Repository<PrintShopReview>,
     @InjectRepository(ViewLog)
     private readonly viewLogRepository: Repository<ViewLog>,
+    private readonly tagService: TagService,
   ) {}
 
   async findAll(
@@ -47,11 +47,11 @@ export class PrintShopService {
     const queryBuilder =
       this.printShopRepository.createQueryBuilder('printShop');
 
+    queryBuilder.leftJoin('printShop.tags', 'tag');
+
     if (tagIds && tagIds.length) {
       queryBuilder
-        .innerJoin('printShop.tags', 'tag', 'tag.id IN (:...tagIds)', {
-          tagIds,
-        })
+        .andWhere('tag.id IN (:...tagIds)', { tagIds })
         .groupBy('printShop.id')
         .having('COUNT(DISTINCT tag.id) = :tagCount', {
           tagCount: tagIds.length,
@@ -59,9 +59,15 @@ export class PrintShopService {
     }
 
     if (searchText) {
-      queryBuilder.andWhere('printShop.name ILIKE :searchText', {
-        searchText: `%${searchText}%`,
-      });
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('printShop.name ILIKE :searchText', {
+            searchText: `%${searchText}%`,
+          }).orWhere('tag.name ILIKE :searchText', {
+            searchText: `%${searchText}%`,
+          });
+        }),
+      );
     }
 
     if (sortBy !== 'bookmarkCount' && sortBy !== 'reviewCount') {
@@ -115,7 +121,7 @@ export class PrintShopService {
 
     const printTypeTags = await Promise.all(
       printShop.tags.map(async (tag: Tag) => {
-        if (await this.isCategoryTag(tag, PRINT_TYPE_TAG_NAME)) {
+        if (await this.tagService.isCategoryTag(tag, PRINT_TYPE_TAG_NAME)) {
           return tag.name;
         }
       }),
@@ -123,7 +129,12 @@ export class PrintShopService {
 
     const afterProcessBindingTags = await Promise.all(
       printShop.tags.map(async (tag: Tag) => {
-        if (await this.isCategoryTag(tag, AFTER_PROCESS_BINDING_TAG_NAME)) {
+        if (
+          await this.tagService.isCategoryTag(
+            tag,
+            AFTER_PROCESS_BINDING_TAG_NAME,
+          )
+        ) {
           return tag.name;
         }
       }),
@@ -133,7 +144,7 @@ export class PrintShopService {
       printShop.tags.map(async (tag: Tag) => {
         if (
           !afterProcessBindingTags.includes(tag.name) &&
-          (await this.isCategoryTag(tag, AFTER_PROCESS_TAG_NAME))
+          (await this.tagService.isCategoryTag(tag, AFTER_PROCESS_TAG_NAME))
         ) {
           return tag.name;
         }
@@ -172,7 +183,7 @@ export class PrintShopService {
     printShop.user = user;
 
     if (tagIds && tagIds.length) {
-      const tags = await this.findTagsByIds(tagIds);
+      const tags = await this.tagService.findTagsByIds(tagIds);
       printShop.tags = tags;
     }
 
@@ -201,7 +212,9 @@ export class PrintShopService {
     Object.assign(printShop, restData);
 
     if (tagIds !== undefined) {
-      printShop.tags = tagIds.length ? await this.findTagsByIds(tagIds) : [];
+      printShop.tags = tagIds.length
+        ? await this.tagService.findTagsByIds(tagIds)
+        : [];
     }
 
     return this.printShopRepository.save(printShop);
@@ -245,40 +258,5 @@ export class PrintShopService {
         timestamp: new Date(),
       });
     }
-  }
-
-  private async findTagsByIds(tagIds: number[]): Promise<Tag[]> {
-    const tags = await this.tagRepository.find({
-      where: tagIds.map((id) => ({ id })),
-    });
-    if (tags.length !== tagIds.length) {
-      throw new NotFoundException('하나 이상의 태그를 찾을 수 없습니다.');
-    }
-    return tags;
-  }
-
-  private async isCategoryTag(
-    childTag: Tag,
-    categoryName: string,
-  ): Promise<boolean> {
-    const tag = await this.tagRepository.findOne({
-      where: { id: childTag.id },
-      relations: ['parent'],
-    });
-
-    if (!tag.parent) {
-      return false;
-    }
-
-    const parent = await this.tagRepository.findOneBy({ id: tag.parent.id });
-    if (!parent) {
-      return false;
-    }
-
-    if (parent.name === categoryName) {
-      return true;
-    }
-
-    return await this.isCategoryTag(parent, categoryName);
   }
 }
