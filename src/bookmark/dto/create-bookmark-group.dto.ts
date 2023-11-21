@@ -8,7 +8,7 @@ export class CreateBookmarkGroupDto {
     example: '내 주변 인쇄소',
   })
   @IsNotEmpty()
-  @MinLength(2)
+  @MinLength(1)
   @MaxLength(20)
   name: string;
 }
