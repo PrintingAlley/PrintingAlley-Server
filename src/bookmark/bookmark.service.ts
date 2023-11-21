@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -104,7 +105,7 @@ export class BookmarkService {
   ): Promise<BookmarkGroup> {
     const existing = await this.checkExistBookmarkGroupName(userId, data.name);
     if (existing) {
-      throw new BadRequestException('이미 같은 이름의 그룹이 있습니다.');
+      throw new ConflictException('이미 같은 이름의 그룹이 있습니다.');
     }
 
     const group = this.groupRepository.create({
@@ -129,7 +130,7 @@ export class BookmarkService {
 
     const existing = await this.checkExistBookmarkGroupName(userId, data.name);
     if (existing) {
-      throw new BadRequestException('이미 같은 이름의 그룹이 있습니다.');
+      throw new ConflictException('이미 같은 이름의 그룹이 있습니다.');
     }
 
     group.name = data.name;

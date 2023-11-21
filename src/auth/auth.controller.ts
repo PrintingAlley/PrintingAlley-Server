@@ -107,6 +107,24 @@ export class AuthController {
     description: 'Bearer {JWT 토큰}',
   })
   @ApiOperation({
+    summary: 'JWT 토큰 검증',
+    description: 'JWT 토큰 검증 API입니다.',
+  })
+  @ApiOkResponse({
+    description: 'JWT 토큰 검증 성공',
+    type: VerifyTokenResponseDto,
+  })
+  async verifyToken(): Promise<VerifyTokenResponseDto> {
+    return { isValid: true };
+  }
+
+  @Get('verify-social-access-token')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
+  })
+  @ApiOperation({
     summary: '소셜 access Token 검증',
     description: '소셜 access Token 검증 API입니다.',
   })
