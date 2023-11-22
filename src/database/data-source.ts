@@ -16,5 +16,6 @@ export default new DataSource({
   entities: ['src/**/*.entity{.ts,.js}'],
   migrations: ['src/database/migrations/*.ts'],
   migrationsTableName: 'migrations',
+  synchronize: true,
   ssl: ENV_LIST[index] === 'local' ? false : { rejectUnauthorized: false },
 });
