@@ -29,8 +29,8 @@ import ConfigModule from './config';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: true,
-      // TODO :: SSL 인증서 적용
+      synchronize: false,
+      logging: true,
       ssl:
         process.env.NODE_ENV === 'local'
           ? false

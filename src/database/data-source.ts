@@ -14,6 +14,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   entities: ['src/**/*.entity{.ts,.js}'],
-  synchronize: true,
+  migrations: ['src/database/migrations/*.ts'],
+  migrationsTableName: 'migrations',
   ssl: ENV_LIST[index] === 'local' ? false : { rejectUnauthorized: false },
 });
