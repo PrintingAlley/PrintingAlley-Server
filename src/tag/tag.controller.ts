@@ -6,9 +6,15 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiHeader,
+} from '@nestjs/swagger';
 import { TagService } from './tag.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
@@ -19,6 +25,7 @@ import {
   TagDetailSwaggerDto,
   TagListSwaggerDto,
 } from './dto/swagger/tag-response.swagger.dto';
+import { AdminAuthGuard } from 'src/guards/admin-auth.guard';
 
 @ApiTags('Tag')
 @Controller('tag')
@@ -53,12 +60,16 @@ export class TagController {
     return { tag };
   }
 
-  // TODO: ADMIN 권한 필요
   @Post()
+  @UseGuards(AdminAuthGuard)
   @ApiOperation({
     summary: '태그 생성',
     description:
       '태그를 생성하는 API입니다. 부모 태그 ID와 태그 이미지는 옵션입니다. 부모 태그가 없다면, 해당 태그는 최상위 태그가 됩니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '태그가 성공적으로 생성되었습니다.',
@@ -71,11 +82,15 @@ export class TagController {
     return createResponse(200, '성공', tag.id);
   }
 
-  // TODO: ADMIN 권한 필요
   @Put(':id')
+  @UseGuards(AdminAuthGuard)
   @ApiOperation({
     summary: '태그 수정',
     description: '태그를 수정하는 API입니다. 모든 필드는 옵션입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '태그가 성공적으로 수정되었습니다.',
@@ -90,11 +105,15 @@ export class TagController {
     return createResponse(200, '성공', id);
   }
 
-  // TODO: ADMIN 권한 필요
   @Delete(':id')
+  @UseGuards(AdminAuthGuard)
   @ApiOperation({
     summary: '태그 삭제',
     description: '태그를 삭제하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '태그가 성공적으로 삭제되었습니다.',

@@ -7,9 +7,15 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UseGuards,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiHeader,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ContentService } from './content.service';
 import { CreateContentDto } from './dto/create-content.dto';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
@@ -19,6 +25,7 @@ import {
   ContentsResponseDto,
 } from './dto/content.response.dto';
 import { UpdateContentDto } from './dto/update-content.dto';
+import { AdminAuthGuard } from 'src/guards/admin-auth.guard';
 
 @Controller('content')
 @ApiTags('Content')
@@ -56,9 +63,14 @@ export class ContentController {
   }
 
   @Post()
+  @UseGuards(AdminAuthGuard)
   @ApiOperation({
     summary: '콘텐츠 생성',
     description: '콘텐츠를 생성하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '콘텐츠 생성 성공',
@@ -72,9 +84,14 @@ export class ContentController {
   }
 
   @Put(':id')
+  @UseGuards(AdminAuthGuard)
   @ApiOperation({
     summary: '콘텐츠 수정',
     description: '콘텐츠를 수정하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '콘텐츠 수정 성공',
@@ -89,9 +106,14 @@ export class ContentController {
   }
 
   @Delete(':id')
+  @UseGuards(AdminAuthGuard)
   @ApiOperation({
     summary: '콘텐츠 삭제',
     description: '콘텐츠를 삭제하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '콘텐츠 삭제 성공',
