@@ -6,8 +6,14 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiHeader,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CategoryService } from './category.service';
 import { Category } from 'src/entity/category.entity';
 import { CommonResponseDto } from 'src/common/dto/common-response.dto';
@@ -15,6 +21,7 @@ import { createResponse } from 'src/common/utils/response.helper';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CategoriesResponseDto } from './dto/category-response.dto';
 import { CategoryListSwaggerDto } from './dto/swagger/category-response.swagger.dto';
+import { AdminAuthGuard } from 'src/guards/admin-auth.guard';
 
 @Controller('category')
 @ApiTags('Category')
@@ -35,11 +42,15 @@ export class CategoryController {
     return { categories };
   }
 
-  // TODO: ADMIN 권한 필요
   @Post()
+  @UseGuards(AdminAuthGuard)
   @ApiOperation({
     summary: '카테고리 생성',
     description: '카테고리를 생성하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '카테고리 생성 성공',
@@ -52,11 +63,15 @@ export class CategoryController {
     return createResponse(200, '카테고리 생성 성공', category.id);
   }
 
-  // TODO: ADMIN 권한 필요
   @Put(':id')
+  @UseGuards(AdminAuthGuard)
   @ApiOperation({
     summary: '카테고리 수정',
     description: '카테고리를 수정하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '카테고리 수정 성공',
@@ -70,11 +85,15 @@ export class CategoryController {
     return createResponse(200, '카테고리 수정 성공', id);
   }
 
-  // TODO: ADMIN 권한 필요
   @Delete(':id')
+  @UseGuards(AdminAuthGuard)
   @ApiOperation({
     summary: '카테고리 삭제',
     description: '카테고리를 삭제하는 API입니다.',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {JWT 토큰}',
   })
   @ApiOkResponse({
     description: '카테고리 삭제 성공',
