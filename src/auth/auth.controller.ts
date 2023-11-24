@@ -97,7 +97,7 @@ export class AuthController {
       throw new BadRequestException('Invalid token');
     }
     await this.authService.logout(token);
-    return createResponse(200, '성공', null);
+    return createResponse(200, '로그아웃 되었어요.', null);
   }
 
   @Get('verify')
@@ -166,7 +166,7 @@ export class AuthController {
       // Step 2: 사용자 삭제
       await this.userService.deleteUser(user.id);
 
-      return createResponse(200, '성공', null);
+      return createResponse(200, '탈퇴 처리가 완료되었어요.', null);
     } catch (error) {
       throw new InternalServerErrorException(
         '회원 탈퇴 실패: ' + error.message,
